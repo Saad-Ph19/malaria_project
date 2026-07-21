@@ -125,7 +125,7 @@ layout = dbc.Container(
                                 lg=3,
                             ),
                         ],
-                        className="align-items-center",
+                        className="align-items-start",
                     ),
                 ]
             ),
