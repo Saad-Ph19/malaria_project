@@ -134,18 +134,8 @@ layout = dbc.Container(
                                         ),
 
                                         html.Hr(),
-
-                                        html.Small(
-                                            (
-                                                "The age categories overlap and should not "
-                                                "be added together. For example, children "
-                                                "under five are included in the population "
-                                                "under 15."
-                                            ),
-                                            className="text-muted",
-                                        ),
                                     ],
-                                    className="ps-lg-4 pt-3 pt-lg-0",
+                                    className="ps-lg-2 pt-0",
                                 ),
                                 width=12,
                                 lg=4,
