@@ -88,42 +88,6 @@ layout = dbc.Container(
                                 width=12,
                                 lg=9,
                             ),
-
-                            # Explanation
-                            dbc.Col(
-                                html.Div(
-                                    [
-                                        html.H4(
-                                            "Context",
-                                            className="fw-bold mb-3",
-                                        ),
-
-                                        html.P(
-                                            (
-                                                "Siaya County has a projected population of 1,150,131 people for "
-                                                "2024/2025, living in approximately 287,533 households. The county "
-                                                "has a relatively young population, with 475,536 residents under "
-                                                "15 years of age, including 148,044 children under five, a group "
-                                                "particularly vulnerable to severe malaria. Understanding the "
-                                                 "population structure provides important context for interpreting "
-                                                "malaria case counts, estimating healthcare demand, identifying "
-                                                "high-risk populations, and planning disease prevention and "
-                                                "intervention strategies throughout the county."
-                                           ),
-                                          style={
-                                            "textAlign": "justify",
-                                            "fontSize": "17px",
-                                            "lineHeight": "1.8",
-                                        },
-                                    ),
-
-                                        html.Hr(),
-                                    ],
-                                    className="ps-lg-0 h-100 d-flex flex-column justify-content-start",
-                                ),
-                                width=12,
-                                lg=3,
-                            ),
                         ],
                         className="align-items-start",
                     ),
