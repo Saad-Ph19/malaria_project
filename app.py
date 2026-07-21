@@ -137,7 +137,6 @@ app.layout = dbc.Container(
                 overview_tab,
                 climate_tab,
                 malaria_tab,
-                environment_tab,
                 model_tab,
                 about_tab,
             ],
