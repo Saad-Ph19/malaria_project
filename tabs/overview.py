@@ -40,7 +40,7 @@ population_figure.update_layout(
     xaxis_title="Projected population",
     yaxis_title="",
     template="plotly_white",
-    height=480,
+    height=520,
     margin={
         "l": 30,
         "r": 130,
@@ -83,10 +83,10 @@ layout = dbc.Container(
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-                                    style={"height": "500px"},
+                                    style={"height": "540px"},
                                 ),
                                 width=12,
-                                lg=8,
+                                lg=9,
                             ),
 
                             # Explanation
@@ -95,50 +95,34 @@ layout = dbc.Container(
                                     [
                                         html.H4(
                                             "Context",
-                                            className="fw-bold mb-4",
-                                        ),
-
-                                        html.P(
-                                            [
-                                                "Siaya County has a projected population of ",
-                                                html.Strong("1,150,131 people"),
-                                                " for 2024/2025, living in approximately ",
-                                                html.Strong("287,533 households"),
-                                                ".",
-                                            ]
-                                        ),
-
-                                        html.P(
-                                            [
-                                                "Approximately ",
-                                                html.Strong("475,536 residents"),
-                                                " are under 15 years of age.",
-                                            ]
+                                            className="fw-bold mb-3",
                                         ),
 
                                         html.P(
                                             (
-                                                "Children under five are an important group "
-                                                "for malaria monitoring because they are "
-                                                "especially vulnerable to severe malaria."
-                                            )
-                                        ),
-
-                                        html.P(
-                                            (
-                                                "These population estimates provide context "
-                                                "for interpreting malaria case counts, "
-                                                "incidence rates, health-service demand, "
-                                                "and prevention needs."
-                                            )
-                                        ),
+                                                "Siaya County has a projected population of 1,150,131 people for "
+                                                "2024/2025, living in approximately 287,533 households. The county "
+                                                "has a relatively young population, with 475,536 residents under "
+                                                "15 years of age, including 148,044 children under five, a group "
+                                                "particularly vulnerable to severe malaria. Understanding the "
+                                                 "population structure provides important context for interpreting "
+                                                "malaria case counts, estimating healthcare demand, identifying "
+                                                "high-risk populations, and planning disease prevention and "
+                                                "intervention strategies throughout the county."
+                                           ),
+                                          style={
+                                            "textAlign": "justify",
+                                            "fontSize": "17px",
+                                            "lineHeight": "1.8",
+                                        },
+                                    ),
 
                                         html.Hr(),
                                     ],
-                                    className="ps-lg-2 pt-0",
+                                    className="ps-lg-1 h-100 d-flex flex-column justify-content-start",
                                 ),
                                 width=12,
-                                lg=4,
+                                lg=3,
                             ),
                         ],
                         className="align-items-center",
