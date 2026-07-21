@@ -28,6 +28,7 @@ population_figure = go.Figure(
         orientation="h",
         text=[f"{value:,}" for value in population_values],
         textposition="outside",
+        cliponaxis=False,
         hovertemplate=(
             "<b>%{y}</b><br>"
             "Projected population: %{x:,}<extra></extra>"
@@ -36,17 +37,18 @@ population_figure = go.Figure(
 )
 
 population_figure.update_layout(
-    title={
-        "text": "Siaya County Population Profile, 2024/2025",
-        "x": 0.02,
-        "xanchor": "left",
-    },
     xaxis_title="Projected population",
     yaxis_title="",
     template="plotly_white",
     height=480,
-    margin={"l": 20, "r": 80, "t": 70, "b": 50},
+    margin={
+        "l": 30,
+        "r": 130,
+        "t": 20,
+        "b": 60,
+    },
     showlegend=False,
+    bargap=0.22,
 )
 
 population_figure.update_yaxes(
@@ -56,96 +58,105 @@ population_figure.update_yaxes(
 
 population_figure.update_xaxes(
     tickformat=",",
+    range=[0, 560_000],
+    gridcolor="#e9ecef",
 )
-
 
 layout = dbc.Container(
     [
-        dbc.Row(
-            [
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            dcc.Graph(
-                                id="population-profile-chart",
-                                figure=population_figure,
-                                config={
-                                    "displayModeBar": False,
-                                    "responsive": True,
-                                },
-                            )
-                        ),
-                        className="h-100 shadow-sm",
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H3(
+                        "Siaya County Population Profile, 2024/2025",
+                        className="fw-bold mb-4",
                     ),
-                    width=12,
-                    lg=8,
-                ),
 
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            [
-                                html.H4(
-                                    "Population Context",
-                                    className="fw-bold mb-3",
+                    dbc.Row(
+                        [
+                            # Visualization
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="population-profile-chart",
+                                    figure=population_figure,
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+                                    style={"height": "500px"},
                                 ),
+                                width=12,
+                                lg=8,
+                            ),
 
-                                html.P(
+                            # Explanation
+                            dbc.Col(
+                                html.Div(
                                     [
-                                        "Siaya County has a projected population of ",
-                                        html.Strong("1,150,131 people"),
-                                        " for 2024/2025, living in approximately ",
-                                        html.Strong("287,533 households"),
-                                        ".",
-                                    ]
-                                ),
+                                        html.H4(
+                                            "Population Context",
+                                            className="fw-bold mb-3",
+                                        ),
 
-                                html.P(
-                                    [
-                                        "Approximately ",
-                                        html.Strong("475,536 residents"),
-                                        " are under 15 years of age.",
-                                    ]
-                                ),
+                                        html.P(
+                                            [
+                                                "Siaya County has a projected population of ",
+                                                html.Strong("1,150,131 people"),
+                                                " for 2024/2025, living in approximately ",
+                                                html.Strong("287,533 households"),
+                                                ".",
+                                            ]
+                                        ),
 
-                                html.P(
-                                    (
-                                        "Children under five are an important group "
-                                        "for malaria monitoring because they are "
-                                        "especially vulnerable to severe malaria."
-                                    )
-                                ),
+                                        html.P(
+                                            [
+                                                "Approximately ",
+                                                html.Strong("475,536 residents"),
+                                                " are under 15 years of age.",
+                                            ]
+                                        ),
 
-                                html.P(
-                                    (
-                                        "These population estimates provide context "
-                                        "for interpreting malaria case counts, "
-                                        "incidence rates, health-service demand, "
-                                        "and prevention needs."
-                                    )
-                                ),
+                                        html.P(
+                                            (
+                                                "Children under five are an important group "
+                                                "for malaria monitoring because they are "
+                                                "especially vulnerable to severe malaria."
+                                            )
+                                        ),
 
-                                html.Hr(),
+                                        html.P(
+                                            (
+                                                "These population estimates provide context "
+                                                "for interpreting malaria case counts, "
+                                                "incidence rates, health-service demand, "
+                                                "and prevention needs."
+                                            )
+                                        ),
 
-                                html.Small(
-                                    (
-                                        "The age categories overlap and should not "
-                                        "be added together. For example, children "
-                                        "under five are included in the population "
-                                        "under 15."
-                                    ),
-                                    className="text-muted",
+                                        html.Hr(),
+
+                                        html.Small(
+                                            (
+                                                "The age categories overlap and should not "
+                                                "be added together. For example, children "
+                                                "under five are included in the population "
+                                                "under 15."
+                                            ),
+                                            className="text-muted",
+                                        ),
+                                    ],
+                                    className="ps-lg-4 pt-3 pt-lg-0",
                                 ),
-                            ]
-                        ),
-                        className="h-100 shadow-sm",
+                                width=12,
+                                lg=4,
+                            ),
+                        ],
+                        className="align-items-center",
                     ),
-                    width=12,
-                    lg=4,
-                ),
-            ],
-            className="g-4 mt-2",
-        ),
+                ]
+            ),
+            className="mt-4 shadow-sm",
+        )
     ],
     fluid=True,
     className="px-0",
