@@ -119,7 +119,7 @@ layout = dbc.Container(
 
                                         html.Hr(),
                                     ],
-                                    className="ps-lg-1 h-100 d-flex flex-column justify-content-start",
+                                    className="ps-lg-0 h-100 d-flex flex-column justify-content-start",
                                 ),
                                 width=12,
                                 lg=3,
