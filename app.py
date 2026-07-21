@@ -100,12 +100,8 @@ app.layout = dbc.Container(
                     html.Div(
                         [
                             html.H3(
-                                "Malaria Analytics Dashboard",
+                                "Siaya County Disease and Climate Monitoring Dashboard",
                                 className="mb-0 text-white fw-bold",
-                            ),
-                            html.Small(
-                                "Climate, environmental, and malaria surveillance data",
-                                className="text-white-50",
                             ),
                         ]
                     )
@@ -116,21 +112,6 @@ app.layout = dbc.Container(
             dark=True,
             className="mb-4 px-3 py-3",
         ),
-
-        # Dashboard introduction
-        dbc.Row(
-            dbc.Col(
-                [
-                    html.H4("Dashboard"),
-                    html.P(
-                        "Use the tabs below to navigate between dashboard sections.",
-                        className="text-muted",
-                    ),
-                ],
-                width=12,
-            )
-        ),
-
         # Tabs only
         dbc.Tabs(
             [
