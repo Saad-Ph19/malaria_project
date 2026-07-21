@@ -94,8 +94,8 @@ layout = dbc.Container(
                                 html.Div(
                                     [
                                         html.H4(
-                                            "Population Context",
-                                            className="ps-lg-2 pt-0"
+                                            "Context",
+                                            className="fw-bold mb-4",
                                         ),
 
                                         html.P(
