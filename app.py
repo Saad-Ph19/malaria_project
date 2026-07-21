@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
-    title="Malaria Analytics Dashboard",
+    title="Siaya County Disease and Climate Monitoring Dashboard",
     suppress_callback_exceptions=True,
 )
 
@@ -63,17 +63,6 @@ malaria_tab = dbc.Tab(
         placeholder_card(
             "Malaria Data",
             "Malaria cases, rates, and trends will appear here.",
-        )
-    ],
-)
-
-environment_tab = dbc.Tab(
-    label="Environment",
-    tab_id="environment-tab",
-    children=[
-        placeholder_card(
-            "Environmental Data",
-            "NDVI, land cover, elevation, and other environmental measures will appear here.",
         )
     ],
 )
