@@ -1,7 +1,12 @@
-# app.py
-
 from dash import Dash, html
 import dash_bootstrap_components as dbc
+
+from tabs import overview
+from tabs import climate
+from tabs import malaria
+from tabs import prediction
+from tabs import about
+
 
 app = Dash(
     __name__,
@@ -10,115 +15,61 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 
-# Render and Gunicorn need access to the Flask server
 server = app.server
 
 
-# Place holder
-def placeholder_card(title, description):
-
-    return dbc.Card(
-        dbc.CardBody(
-            [
-                html.H4(title, className="card-title"),
-                html.P(description, className="text-muted"),
-                html.Hr(),
-                html.Div(
-                    "Visualization or dashboard content will be added here.",
-                    className="text-center text-secondary py-5",
-                ),
-            ]
-        ),
-        className="mt-4 shadow-sm",
-    )
-
-
-# Tab content
 overview_tab = dbc.Tab(
+    overview.layout,
     label="Overview",
     tab_id="overview-tab",
-    children=[
-        placeholder_card(
-            "Project Overview",
-            "This section will provide a summary of the malaria project.",
-        )
-    ],
 )
 
 climate_tab = dbc.Tab(
+    climate.layout,
     label="Climate",
     tab_id="climate-tab",
-    children=[
-        placeholder_card(
-            "Climate Data",
-            "Temperature, precipitation, and humidity visualizations will appear here.",
-        )
-    ],
 )
 
 malaria_tab = dbc.Tab(
+    malaria.layout,
     label="Malaria",
     tab_id="malaria-tab",
-    children=[
-        placeholder_card(
-            "Malaria Data",
-            "Malaria cases, rates, and trends will appear here.",
-        )
-    ],
 )
 
-model_tab = dbc.Tab(
+prediction_tab = dbc.Tab(
+    prediction.layout,
     label="Prediction Model",
-    tab_id="model-tab",
-    children=[
-        placeholder_card(
-            "Malaria Prediction Model",
-            "Prediction results and model evaluation metrics will appear here.",
-        )
-    ],
+    tab_id="prediction-tab",
 )
 
 about_tab = dbc.Tab(
+    about.layout,
     label="About",
     tab_id="about-tab",
-    children=[
-        placeholder_card(
-            "About the Project",
-            "Project description, collaborators, data sources, and limitations will appear here.",
-        )
-    ],
 )
 
 
-# App layout
 app.layout = dbc.Container(
     [
-        # Header
         dbc.Navbar(
             dbc.Container(
-                [
-                    html.Div(
-                        [
-                            html.H3(
-                                "Siaya County Disease and Climate Monitoring Dashboard",
-                                className="mb-0 text-white fw-bold",
-                            ),
-                        ]
-                    )
-                ],
+                html.H3(
+                    "Siaya County Disease and Climate Monitoring Dashboard",
+                    className="mb-0 text-white fw-bold",
+                ),
                 fluid=True,
             ),
             color="primary",
             dark=True,
             className="mb-4 px-3 py-3",
         ),
-        # Tabs only
+
         dbc.Tabs(
             [
                 overview_tab,
                 climate_tab,
                 malaria_tab,
-                model_tab,
+                prediction_tab,
                 about_tab,
             ],
             id="main-tabs",
@@ -126,10 +77,10 @@ app.layout = dbc.Container(
             className="mt-3",
         ),
 
-        # Footer
         html.Hr(className="mt-5"),
+
         html.P(
-            "Malaria Analytics Dashboard",
+            "Siaya County Disease and Climate Monitoring Dashboard",
             className="text-muted small text-center mb-3",
         ),
     ],
@@ -137,6 +88,5 @@ app.layout = dbc.Container(
 )
 
 
-# Main
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
