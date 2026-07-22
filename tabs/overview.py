@@ -104,44 +104,31 @@ layout = dbc.Container(
                     className="fw-bold mb-3"
                 ),
 
-                dbc.Card(
-                    dbc.CardBody(
-                        [
-                            html.P(
-                                """
-                                Siaya County's projected population for
-                                2024/2025 is predominantly composed of
-                                children, adolescents, and working-age adults.
-                                """,
-                                className="mb-3",
-                            ),
-
-                            html.P(
-                                """
-                                The largest population group is individuals
-                                under 15 years of age, highlighting the
-                                importance of child health interventions,
-                                including malaria prevention and surveillance.
-                                """
-                            ),
-
-                            html.P(
-                                """
-                                This age structure can influence disease
-                                burden, healthcare utilization, and public
-                                health planning across the county.
-                                """
-                            ),
-                        ]
-                    ),
-                    className="shadow-sm",
+                html.Ul(
+                    [
+                        html.Li(
+                            "Children under 15 years represent the largest population group in Siaya County."
+                        ),
+                        html.Li(
+                            "A substantial adolescent and working-age population influences healthcare demand and resource allocation."
+                        ),
+                        html.Li(
+                            "The county's age structure highlights the importance of child health, malaria prevention, and surveillance programs."
+                        ),
+                        html.Li(
+                            "Population demographics can affect disease burden, healthcare utilization, and public health planning."
+                        ),
+                    ],
                     style={
-                        "height": "540px"
+                        "paddingLeft": "20px",
+                        "fontSize": "15px",
+                        "lineHeight": "1.8",
                     },
                 ),
             ],
             width=12,
-            lg=4,
+            lg=3,
+            style={"marginLeft": "-30px"},
         ),
     ],
     className="align-items-start",
