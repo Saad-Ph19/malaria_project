@@ -73,24 +73,79 @@ layout = dbc.Container(
                     ),
 
                     dbc.Row(
+    [
+        # Left: Chart
+        dbc.Col(
+            [
+                html.H5(
+                    "Population Distribution",
+                    className="fw-bold mb-3"
+                ),
+
+                dcc.Graph(
+                    id="population-profile-chart",
+                    figure=population_figure,
+                    config={
+                        "displayModeBar": False,
+                        "responsive": True,
+                    },
+                    style={"height": "540px"},
+                ),
+            ],
+            width=12,
+            lg=8,
+        ),
+
+        # Right: Context Box
+        dbc.Col(
+            [
+                html.H5(
+                    "Context",
+                    className="fw-bold mb-3"
+                ),
+
+                dbc.Card(
+                    dbc.CardBody(
                         [
-                            # Visualization
-                            dbc.Col(
-                                dcc.Graph(
-                                    id="population-profile-chart",
-                                    figure=population_figure,
-                                    config={
-                                        "displayModeBar": False,
-                                        "responsive": True,
-                                    },
-                                    style={"height": "540px"},
-                                ),
-                                width=12,
-                                lg=9,
+                            html.P(
+                                """
+                                Siaya County's projected population for
+                                2024/2025 is predominantly composed of
+                                children, adolescents, and working-age adults.
+                                """,
+                                className="mb-3",
                             ),
-                        ],
-                        className="align-items-start",
+
+                            html.P(
+                                """
+                                The largest population group is individuals
+                                under 15 years of age, highlighting the
+                                importance of child health interventions,
+                                including malaria prevention and surveillance.
+                                """
+                            ),
+
+                            html.P(
+                                """
+                                This age structure can influence disease
+                                burden, healthcare utilization, and public
+                                health planning across the county.
+                                """
+                            ),
+                        ]
                     ),
+                    className="shadow-sm",
+                    style={
+                        "height": "540px"
+                    },
+                ),
+            ],
+            width=12,
+            lg=4,
+        ),
+    ],
+    className="align-items-start",
+)
                 ]
             ),
             className="mt-4 shadow-sm",
