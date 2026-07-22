@@ -110,9 +110,6 @@ layout = dbc.Container(
                             "Children under 15 years represent the largest population group in Siaya County."
                         ),
                         html.Li(
-                            "A substantial adolescent and working-age population influences healthcare demand and resource allocation."
-                        ),
-                        html.Li(
                             "The county's age structure highlights the importance of child health, malaria prevention, and surveillance programs."
                         ),
                         html.Li(
