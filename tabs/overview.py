@@ -129,7 +129,7 @@ layout = dbc.Container(
         ),
     ],
     className="align-items-start",
-)
+),
                 html.Hr(style={"borderTop": "2px solid #dee2e6","marginTop": "20px","marginBottom": "20px",}),
                 ]
             ),
