@@ -130,7 +130,7 @@ layout = dbc.Container(
     ],
     className="align-items-start",
 ),
-                html.Hr(style={"borderTop": "2px solid #dee2e6","marginTop": "20px","marginBottom": "20px",}),
+                html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                 ]
             ),
             className="mt-4 shadow-sm",
