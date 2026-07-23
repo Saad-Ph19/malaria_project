@@ -65,71 +65,49 @@ population_figure.update_xaxes(
 
 # UNDER-5 DISEASE PIE CHART
 grand_total = 551550
-disease_df = pd.DataFrame({
-    "Disease": [
-        "Confirmed malaria",
-        "Upper Respiratory Tract Infections",
-        "Diseases of the skin",
-        "Diarrhoea (no dehydration)",
-        "Pneumonia",
-        "Lower Respiratory Tract Infections",
-        "Gastroenteritis",
-        "Eye Infections",
-        "Tonsillitis",
-        "Ear infection",
-        "Other injuries",
-        "Anaemia",
-        "Intestinal worms",
-        "Burns",
-        "Severe pneumonia",
-        "Urinary Tract Infections",
-        "Diarrhoea (some dehydration)",
-        "Presumed Tuberculosis",
-        "Dental Disorders",
-        "Malnutrition"
-    ],
-    "Cases": [
-        114002,98302,17771,12534,7432,
-        6333,5337,4643,2840,2741,
-        2136,2024,1507,1438,1407,
-        1399,1106,887,877,788
-    ]
-})
+top10_labels = [
+    "Confirmed malaria",
+    "URTI",
+    "Skin diseases",
+    "Diarrhoea",
+    "Pneumonia",
+    "Lower RTI",
+    "Gastroenteritis",
+    "Eye infections",
+    "Tonsillitis",
+    "Ear infection",
+    "Other Conditions"
+]
 
-# Largest to smallest
-disease_df = disease_df.sort_values(
-    "Cases",
-    ascending=False
-)
+top10_values = [
+    114002,
+    98302,
+    17771,
+    12534,
+    7432,
+    6333,
+    5337,
+    4643,
+    2840,
+    2741,
+    296046   # All remaining conditions
+]
 
-disease_df["Percent"] = (
-    disease_df["Cases"] / grand_total * 100
-).round(1)
-
-disease_pie_figure = go.Figure(
+pie_fig = go.Figure(
     go.Pie(
-        labels=disease_df["Disease"],
-        values=disease_df["Cases"],
-        hole=0.4,
-        sort=False,
-        textinfo="none",
-        customdata=disease_df["Percent"],
-        hovertemplate=
-            "<b>%{label}</b><br>" +
-            "Cases: %{value:,}<br>" +
-            "Percent of total: %{customdata}%<extra></extra>"
+        labels=top10_labels,
+        values=top10_values,
+        textinfo="percent+label",
+        textposition="outside",
+        sort=False
     )
 )
 
-disease_pie_figure.update_layout(
+pie_fig.update_layout(
     template="plotly_white",
     height=500,
     margin=dict(l=20, r=20, t=20, b=20),
-    legend=dict(
-        orientation="v",
-        y=1,
-        x=1.02
-    )
+    showlegend=False
 )
 
 layout = dbc.Container(
