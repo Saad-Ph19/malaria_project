@@ -62,6 +62,58 @@ population_figure.update_xaxes(
     gridcolor="#e9ecef",
 )
 
+# UNDER-5 DISEASE PIE CHART
+disease_names = [
+    "Confirmed malaria",
+    "Upper Respiratory Tract Infections",
+    "Diseases of the skin",
+    "Diarrhoea (no dehydration)",
+    "Pneumonia",
+    "Lower Respiratory Tract Infections",
+    "Gastroenteritis",
+    "Eye Infections",
+    "Tonsillitis",
+    "Ear infection",
+    "Other injuries",
+    "Anaemia",
+    "Intestinal worms",
+    "Burns",
+    "Severe pneumonia",
+    "Urinary Tract Infections",
+    "Diarrhoea (some dehydration)",
+    "Presumed Tuberculosis",
+    "Dental Disorders",
+    "Malnutrition"
+]
+
+disease_cases = [
+    114002, 98302, 17771, 12534, 7432,
+    6333, 5337, 4643, 2840, 2741,
+    2136, 2024, 1507, 1438, 1407,
+    1399, 1106, 887, 877, 788
+]
+
+disease_pie_figure = go.Figure(
+    go.Pie(
+        labels=disease_names,
+        values=disease_cases,
+        hole=0.4,  # donut chart
+        textinfo="percent",
+        hovertemplate=
+        "<b>%{label}</b><br>" +
+        "Cases: %{value:,}<br>" +
+        "Percent: %{percent}<extra></extra>"
+    )
+)
+
+disease_pie_figure.update_layout(
+    title="Top 20 Outpatient Conditions Among Children Under 5",
+    template="plotly_white",
+    height=700,
+    margin=dict(l=20, r=20, t=60, b=20),
+    showlegend=True
+)
+
 layout = dbc.Container(
     [
         dbc.Card(
@@ -129,8 +181,30 @@ layout = dbc.Container(
         ),
     ],
     className="align-items-start",
-),
-                html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+            ),
+                            html.Hr(
+                style={
+                    "height": "3px",
+                    "backgroundColor": "#adb5bd",
+                    "border": "none",
+                    "opacity": "0.5",
+                    "margin": "25px 0",
+                }
+            ),
+
+                    html.H4(
+                        "Top Twenty Commonest Outpatient Health Conditions (Under 5 Years)",
+                        className="fw-bold mb-4",
+                    ),
+                    
+                    dcc.Graph(
+                        id="under5-disease-pie-chart",
+                        figure=disease_pie_figure,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
                 ]
             ),
             className="mt-4 shadow-sm",
