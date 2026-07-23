@@ -63,23 +63,22 @@ population_figure.update_xaxes(
     gridcolor="#e9ecef",
 )
 
-# UNDER-5 DISEASE PIE CHART
-grand_total = 551550
-top10_labels = [
+# Under 5 treemap
+disease_labels = [
     "Confirmed malaria",
-    "URTI",
-    "Skin diseases",
-    "Diarrhoea",
+    "Upper Respiratory Tract Infections",
+    "Diseases of the skin",
+    "Diarrhoea (no dehydration)",
     "Pneumonia",
-    "Lower RTI",
+    "Lower Respiratory Tract Infections",
     "Gastroenteritis",
-    "Eye infections",
+    "Eye Infections",
     "Tonsillitis",
     "Ear infection",
     "Other Conditions"
 ]
 
-top10_values = [
+disease_values = [
     114002,
     98302,
     17771,
@@ -90,24 +89,23 @@ top10_values = [
     4643,
     2840,
     2741,
-    296046   # All remaining conditions
+    296046
 ]
 
-pie_fig = go.Figure(
-    go.Pie(
-        labels=top10_labels,
-        values=top10_values,
-        textinfo="percent+label",
-        textposition="outside",
-        sort=False
-    )
+treemap_fig = px.treemap(
+    names=disease_labels,
+    parents=[""] * len(disease_labels),
+    values=disease_values,
 )
 
-pie_fig.update_layout(
+treemap_fig.update_traces(
+    textinfo="label+value+percent root"
+)
+
+treemap_fig.update_layout(
     template="plotly_white",
     height=500,
-    margin=dict(l=20, r=20, t=20, b=20),
-    showlegend=False
+    margin=dict(l=10, r=10, t=10, b=10)
 )
 
 layout = dbc.Container(
@@ -198,7 +196,7 @@ dbc.Row(
         dbc.Col(
             dcc.Graph(
                 id="under5-disease-chart",
-                figure=disease_pie_figure,
+                figure=treemap_fig,
                 config={
                     "displayModeBar": False,
                     "responsive": True,
