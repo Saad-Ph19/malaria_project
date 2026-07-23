@@ -2,6 +2,7 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import pandas as pd
+import plotly.express as px
 
 population_categories = [
     "Children under 1",
