@@ -177,15 +177,8 @@ layout = dbc.Container(
     ],
     className="align-items-start",
             ),
-                            html.Hr(
-                style={
-                    "height": "3px",
-                    "backgroundColor": "#adb5bd",
-                    "border": "none",
-                    "opacity": "0.5",
-                    "margin": "25px 0",
-                }
-            ),
+                    #line breaker
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
 
             html.H5(
                 "Most Common Outpatient Health Conditions (Under 5 Years)",
@@ -231,7 +224,7 @@ layout = dbc.Container(
                                     ),
                                 ],
                                 style={
-                                    "paddingLeft": "20px",
+                                    "paddingLeft": "18px",
                                     "lineHeight": "1.8",
                                     "fontSize": "15px",
                                 },
