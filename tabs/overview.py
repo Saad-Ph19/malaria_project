@@ -1,6 +1,7 @@
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
+import pandas as pd
 
 population_categories = [
     "Children under 1",
@@ -63,55 +64,72 @@ population_figure.update_xaxes(
 )
 
 # UNDER-5 DISEASE PIE CHART
-disease_names = [
-    "Confirmed malaria",
-    "Upper Respiratory Tract Infections",
-    "Diseases of the skin",
-    "Diarrhoea (no dehydration)",
-    "Pneumonia",
-    "Lower Respiratory Tract Infections",
-    "Gastroenteritis",
-    "Eye Infections",
-    "Tonsillitis",
-    "Ear infection",
-    "Other injuries",
-    "Anaemia",
-    "Intestinal worms",
-    "Burns",
-    "Severe pneumonia",
-    "Urinary Tract Infections",
-    "Diarrhoea (some dehydration)",
-    "Presumed Tuberculosis",
-    "Dental Disorders",
-    "Malnutrition"
-]
+grand_total = 551550
+disease_df = pd.DataFrame({
+    "Disease": [
+        "Confirmed malaria",
+        "Upper Respiratory Tract Infections",
+        "Diseases of the skin",
+        "Diarrhoea (no dehydration)",
+        "Pneumonia",
+        "Lower Respiratory Tract Infections",
+        "Gastroenteritis",
+        "Eye Infections",
+        "Tonsillitis",
+        "Ear infection",
+        "Other injuries",
+        "Anaemia",
+        "Intestinal worms",
+        "Burns",
+        "Severe pneumonia",
+        "Urinary Tract Infections",
+        "Diarrhoea (some dehydration)",
+        "Presumed Tuberculosis",
+        "Dental Disorders",
+        "Malnutrition"
+    ],
+    "Cases": [
+        114002,98302,17771,12534,7432,
+        6333,5337,4643,2840,2741,
+        2136,2024,1507,1438,1407,
+        1399,1106,887,877,788
+    ]
+})
 
-disease_cases = [
-    114002, 98302, 17771, 12534, 7432,
-    6333, 5337, 4643, 2840, 2741,
-    2136, 2024, 1507, 1438, 1407,
-    1399, 1106, 887, 877, 788
-]
+# Largest to smallest
+disease_df = disease_df.sort_values(
+    "Cases",
+    ascending=False
+)
+
+disease_df["Percent"] = (
+    disease_df["Cases"] / grand_total * 100
+).round(1)
 
 disease_pie_figure = go.Figure(
     go.Pie(
-        labels=disease_names,
-        values=disease_cases,
-        hole=0.4,  # donut chart
-        textinfo="percent",
+        labels=disease_df["Disease"],
+        values=disease_df["Cases"],
+        hole=0.4,
+        sort=False,
+        textinfo="none",
+        customdata=disease_df["Percent"],
         hovertemplate=
-        "<b>%{label}</b><br>" +
-        "Cases: %{value:,}<br>" +
-        "Percent: %{percent}<extra></extra>"
+            "<b>%{label}</b><br>" +
+            "Cases: %{value:,}<br>" +
+            "Percent of total: %{customdata}%<extra></extra>"
     )
 )
 
 disease_pie_figure.update_layout(
-    title="Top 20 Outpatient Conditions Among Children Under 5",
     template="plotly_white",
-    height=700,
-    margin=dict(l=20, r=20, t=60, b=20),
-    showlegend=True
+    height=500,
+    margin=dict(l=20, r=20, t=20, b=20),
+    legend=dict(
+        orientation="v",
+        y=1,
+        x=1.02
+    )
 )
 
 layout = dbc.Container(
@@ -192,19 +210,62 @@ layout = dbc.Container(
                 }
             ),
 
-                    html.H4(
-                        "Top Twenty Commonest Outpatient Health Conditions (Under 5 Years)",
-                        className="fw-bold mb-4",
-                    ),
-                    
-                    dcc.Graph(
-                        id="under5-disease-pie-chart",
-                        figure=disease_pie_figure,
-                        config={
-                            "displayModeBar": False,
-                            "responsive": True,
-                        },
-                    ),
+html.H5(
+    "Top Twenty Commonest Outpatient Health Conditions (Under 5 Years)",
+    className="fw-bold mb-3"
+),
+
+dbc.Row(
+    [
+        dbc.Col(
+            dcc.Graph(
+                id="under5-disease-chart",
+                figure=disease_pie_figure,
+                config={
+                    "displayModeBar": False,
+                    "responsive": True,
+                },
+                style={"height": "550px"},
+            ),
+            width=12,
+            lg=8,
+        ),
+
+        dbc.Col(
+            [
+                html.H5(
+                    "Context",
+                    className="fw-bold mb-3",
+                ),
+
+                html.Ul(
+                    [
+                        html.Li(
+                            "Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."
+                        ),
+                        html.Li(
+                            "Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."
+                        ),
+                        html.Li(
+                            "Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."
+                        ),
+                        html.Li(
+                            "The top twenty conditions represented 51.8% of all outpatient visits among children under 5 years."
+                        ),
+                    ],
+                    style={
+                        "paddingLeft": "20px",
+                        "lineHeight": "1.8",
+                        "fontSize": "15px",
+                    },
+                ),
+            ],
+            width=12,
+            lg=3,
+            style={"marginLeft": "-30px"},
+        ),
+    ]
+),
                 ]
             ),
             className="mt-4 shadow-sm",
