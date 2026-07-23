@@ -76,7 +76,7 @@ disease_labels = [
     "Eye Infections",
     "Tonsillitis",
     "Ear infection",
-    "Other Conditions"
+    "All Other Conditions/Diseases"
 ]
 
 disease_values = [
@@ -90,7 +90,7 @@ disease_values = [
     4643,
     2840,
     2741,
-    296046
+    279615
 ]
 
 treemap_fig = px.treemap(
@@ -187,62 +187,62 @@ layout = dbc.Container(
                 }
             ),
 
-html.H5(
-    "Top Twenty Commonest Outpatient Health Conditions (Under 5 Years)",
-    className="fw-bold mb-3"
-),
-
-dbc.Row(
-    [
-        dbc.Col(
-            dcc.Graph(
-                id="under5-disease-chart",
-                figure=treemap_fig,
-                config={
-                    "displayModeBar": False,
-                    "responsive": True,
-                },
-                style={"height": "550px"},
+            html.H5(
+                "Most Common Outpatient Health Conditions (Under 5 Years)",
+                className="fw-bold mb-3"
             ),
-            width=12,
-            lg=8,
-        ),
-
-        dbc.Col(
-            [
-                html.H5(
-                    "Context",
-                    className="fw-bold mb-3",
-                ),
-
-                html.Ul(
-                    [
-                        html.Li(
-                            "Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."
+            
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dcc.Graph(
+                            id="under5-disease-chart",
+                            figure=treemap_fig,
+                            config={
+                                "displayModeBar": False,
+                                "responsive": True,
+                            },
+                            style={"height": "550px"},
                         ),
-                        html.Li(
-                            "Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."
-                        ),
-                        html.Li(
-                            "Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."
-                        ),
-                        html.Li(
-                            "The top twenty conditions represented 51.8% of all outpatient visits among children under 5 years."
-                        ),
-                    ],
-                    style={
-                        "paddingLeft": "20px",
-                        "lineHeight": "1.8",
-                        "fontSize": "15px",
-                    },
-                ),
-            ],
-            width=12,
-            lg=3,
-            style={"marginLeft": "-30px"},
-        ),
-    ]
-),
+                        width=12,
+                        lg=8,
+                    ),
+            
+                    dbc.Col(
+                        [
+                            html.H5(
+                                "Context",
+                                className="fw-bold mb-3",
+                            ),
+            
+                            html.Ul(
+                                [
+                                    html.Li(
+                                        "Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."
+                                    ),
+                                    html.Li(
+                                        "Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."
+                                    ),
+                                    html.Li(
+                                        "Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."
+                                    ),
+                                    html.Li(
+                                        "The top 10 conditions represented 49.3% of all outpatient visits among children under 5 years."
+                                    ),
+                                ],
+                                style={
+                                    "paddingLeft": "20px",
+                                    "lineHeight": "1.8",
+                                    "fontSize": "15px",
+                                },
+                            ),
+                        ],
+                        width=12,
+                        lg=3,
+                        style={"marginLeft": "-30px"},
+                    ),
+                ]
+            ),
                 ]
             ),
             className="mt-4 shadow-sm",
