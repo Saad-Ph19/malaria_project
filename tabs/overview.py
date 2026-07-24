@@ -205,6 +205,7 @@ layout = dbc.Container(
                 html.H5(
                     "Context",
                     className="fw-bold mb-3"
+                    style={"marginLeft": "35px"}
                 ),
 
                 html.Ul(
@@ -262,6 +263,7 @@ layout = dbc.Container(
                             html.H5(
                                 "Context",
                                 className="fw-bold mb-3",
+                                style={"marginLeft": "35px"}
                             ),
             
                             html.Ul(
