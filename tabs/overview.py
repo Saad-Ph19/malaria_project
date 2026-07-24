@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 population_categories = [
     "Children under 1",
@@ -108,6 +109,61 @@ treemap_fig.update_layout(
     height=500,
     margin=dict(l=10, r=10, t=10, b=10)
 )
+
+# Bar chart for the causes of death
+conditions = [
+    "Pneumonia",
+    "LBW",
+    "Anaemia",
+    "Acute Malnutrition",
+    "Birth Asphyxia",
+    "Respiratory Distress Syndrome",
+    "Malaria",
+    "Sickle Cell Disease",
+    "Hypoglycemia",
+    "Dehydration"
+]
+
+values = [12, 12, 11, 10, 10, 10, 8, 7, 6, 5]
+
+# Highlight malaria
+colors = [
+    "#4e79a7",  
+    "#4e79a7",  
+    "#4e79a7",  
+    "#4e79a7",  
+    "#4e79a7",  
+    "#4e79a7",  
+    "#d62728",  # Malaria (highlight)
+    "#4e79a7",  
+    "#4e79a7",  
+    "#4e79a7"   
+]
+
+mortality_fig = go.Figure(
+    go.Bar(
+        x=values,
+        y=conditions,
+        orientation="h",
+        text=values,
+        textposition="outside",
+        marker_color=colors,
+    )
+)
+
+mortality_fig.update_layout(
+    template="plotly_white",
+    height=500,
+    margin=dict(l=20, r=40, t=20, b=20),
+    xaxis_title="Occurrence",
+    yaxis_title="",
+    showlegend=False,
+)
+
+mortality_fig.update_yaxes(
+    autorange="reversed"
+)
+
 
 layout = dbc.Container(
     [
@@ -236,6 +292,20 @@ layout = dbc.Container(
                     ),
                 ]
             ),
+                    #line breaker
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                    html.H5(
+                        "Leading Causes of Mortality (Under 5 Years)",
+                        className="fw-bold mb-3"
+                    ),
+                    
+                    dcc.Graph(
+                        figure=mortality_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
                 ]
             ),
             className="mt-4 shadow-sm",
