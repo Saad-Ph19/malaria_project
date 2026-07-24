@@ -134,7 +134,7 @@ colors = [
     "#4e79a7",  
     "#4e79a7",  
     "#4e79a7",  
-    "#d62728",  # Malaria (highlight)
+    "#d62728",  #malaria (highlight)
     "#4e79a7",  
     "#4e79a7",  
     "#4e79a7"   
@@ -220,8 +220,8 @@ layout = dbc.Container(
                         ),
                     ],
                     style={
-                        "paddingLeft": "20px",
-                        "fontSize": "15px",
+                        "paddingLeft": "35px",
+                        "fontSize": "20px",
                         "lineHeight": "1.8",
                     },
                 ),
@@ -280,9 +280,9 @@ layout = dbc.Container(
                                     ),
                                 ],
                                 style={
-                                    "paddingLeft": "25px",
+                                    "paddingLeft": "35px",
                                     "lineHeight": "1.8",
-                                    "fontSize": "15px",
+                                    "fontSize": "20px",
                                 },
                             ),
                         ],
