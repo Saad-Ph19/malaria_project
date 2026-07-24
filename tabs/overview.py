@@ -224,7 +224,7 @@ layout = dbc.Container(
                                     ),
                                 ],
                                 style={
-                                    "paddingLeft": "18px",
+                                    "paddingLeft": "25px",
                                     "lineHeight": "1.8",
                                     "fontSize": "15px",
                                 },
