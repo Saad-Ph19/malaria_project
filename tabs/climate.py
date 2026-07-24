@@ -1,43 +1,77 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+import pandas as pd
+import glob
 import plotly.graph_objects as go
 
-# Placeholder figure
-empty_fig = go.Figure()
+# =====================================================
+# LOAD ALL CLIMATE FILES
+# =====================================================
 
-empty_fig.update_layout(
-    template="plotly_white",
-    height=350,
-    margin=dict(l=20, r=20, t=20, b=20),
-    xaxis=dict(visible=False),
-    yaxis=dict(visible=False),
-    annotations=[
-        dict(
-            text="Select a Subcounty",
-            x=0.5,
-            y=0.5,
-            showarrow=False,
-            font=dict(size=18)
-        )
-    ]
+files = glob.glob("Climate_Data/*.csv")
+
+df_list = []
+
+for file in files:
+    df_list.append(pd.read_csv(file))
+
+df = pd.concat(df_list, ignore_index=True)
+
+# Create date field
+df["Date"] = pd.to_datetime(
+    dict(
+        year=df["Year"],
+        month=df["Month"],
+        day=1
+    )
 )
+
+# Available subcounties
+subcounties = sorted(df["SubCounty"].unique())
+
+# =====================================================
+# EMPTY FIGURES
+# =====================================================
+
+def empty_figure():
+
+    fig = go.Figure()
+
+    fig.update_layout(
+        template="plotly_white",
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        annotations=[
+            dict(
+                text="Loading...",
+                x=0.5,
+                y=0.5,
+                showarrow=False,
+                font=dict(size=18)
+            )
+        ]
+    )
+
+    return fig
+
+# =====================================================
+# LAYOUT
+# =====================================================
 
 layout = dbc.Container(
 
     [
-
-        # =====================================================
-        # PAGE TITLE
-        # =====================================================
 
         html.H3(
             "Climate and Environmental Conditions",
             className="fw-bold mb-4"
         ),
 
-        # =====================================================
+        # ------------------------------------------------
         # SUBCOUNTY DROPDOWN
-        # =====================================================
+        # ------------------------------------------------
 
         dbc.Row(
             [
@@ -45,20 +79,19 @@ layout = dbc.Container(
                     [
                         html.Label(
                             "Select Subcounty",
-                            className="fw-bold mb-2"
+                            className="fw-bold"
                         ),
 
                         dcc.Dropdown(
                             id="climate-subcounty-dropdown",
                             options=[
-                                {"label": "Alego Usonga", "value": "Alego Usonga Sub County"},
-                                {"label": "Bondo", "value": "Bondo Sub County"},
-                                {"label": "Gem", "value": "Gem Sub County"},
-                                {"label": "Rarieda", "value": "Rarieda Sub County"},
-                                {"label": "Ugenya", "value": "Ugenya Sub County"},
-                                {"label": "Ugunja", "value": "Ugunja Sub County"},
+                                {
+                                    "label": s.replace(" Sub County", ""),
+                                    "value": s
+                                }
+                                for s in subcounties
                             ],
-                            value="Alego Usonga Sub County",
+                            value=subcounties[0],
                             clearable=False,
                         ),
                     ],
@@ -70,9 +103,9 @@ layout = dbc.Container(
 
         html.Hr(),
 
-        # =====================================================
+        # ------------------------------------------------
         # TEMPERATURE + RAINFALL
-        # =====================================================
+        # ------------------------------------------------
 
         dbc.Row(
             [
@@ -86,7 +119,7 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="temperature-chart",
-                            figure=empty_fig,
+                            figure=empty_figure(),
                             config={"displayModeBar": False},
                         ),
                     ],
@@ -102,21 +135,20 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="rainfall-chart",
-                            figure=empty_fig,
+                            figure=empty_figure(),
                             config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
                 ),
-
             ]
         ),
 
         html.Hr(),
 
-        # =====================================================
+        # ------------------------------------------------
         # NDVI + HUMIDITY
-        # =====================================================
+        # ------------------------------------------------
 
         dbc.Row(
             [
@@ -130,7 +162,7 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="ndvi-chart",
-                            figure=empty_fig,
+                            figure=empty_figure(),
                             config={"displayModeBar": False},
                         ),
                     ],
@@ -146,13 +178,12 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="humidity-chart",
-                            figure=empty_fig,
+                            figure=empty_figure(),
                             config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
                 ),
-
             ]
         ),
 
