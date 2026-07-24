@@ -1,41 +1,43 @@
-from dash import html, dcc, Input, Output, callback
+from dash import html, dcc
 import dash_bootstrap_components as dbc
-import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
-# =====================================================
-# LOAD DATA
-# =====================================================
+# Placeholder figure
+empty_fig = go.Figure()
 
-df = pd.read_csv("climate_data/climate_data.csv")
-
-# Create date column
-df["Date"] = pd.to_datetime(
-    dict(
-        year=df["Year"],
-        month=df["Month"],
-        day=1
-    )
+empty_fig.update_layout(
+    template="plotly_white",
+    height=350,
+    margin=dict(l=20, r=20, t=20, b=20),
+    xaxis=dict(visible=False),
+    yaxis=dict(visible=False),
+    annotations=[
+        dict(
+            text="Select a Subcounty",
+            x=0.5,
+            y=0.5,
+            showarrow=False,
+            font=dict(size=18)
+        )
+    ]
 )
-
-subcounties = sorted(df["SubCounty"].unique())
-
-# =====================================================
-# PAGE LAYOUT
-# =====================================================
 
 layout = dbc.Container(
 
     [
 
-        # -------------------------------------------------
-        # SUBCOUNTY DROPDOWN
-        # -------------------------------------------------
+        # =====================================================
+        # PAGE TITLE
+        # =====================================================
 
-        html.H4(
-            "Climate Dashboard",
-            className="fw-bold mb-3"
+        html.H3(
+            "Climate and Environmental Conditions",
+            className="fw-bold mb-4"
         ),
+
+        # =====================================================
+        # SUBCOUNTY DROPDOWN
+        # =====================================================
 
         dbc.Row(
             [
@@ -43,19 +45,20 @@ layout = dbc.Container(
                     [
                         html.Label(
                             "Select Subcounty",
-                            className="fw-bold"
+                            className="fw-bold mb-2"
                         ),
 
                         dcc.Dropdown(
-                            id="subcounty-dropdown",
+                            id="climate-subcounty-dropdown",
                             options=[
-                                {
-                                    "label": s,
-                                    "value": s
-                                }
-                                for s in subcounties
+                                {"label": "Alego Usonga", "value": "Alego Usonga Sub County"},
+                                {"label": "Bondo", "value": "Bondo Sub County"},
+                                {"label": "Gem", "value": "Gem Sub County"},
+                                {"label": "Rarieda", "value": "Rarieda Sub County"},
+                                {"label": "Ugenya", "value": "Ugenya Sub County"},
+                                {"label": "Ugunja", "value": "Ugunja Sub County"},
                             ],
-                            value=subcounties[0],
+                            value="Alego Usonga Sub County",
                             clearable=False,
                         ),
                     ],
@@ -67,9 +70,9 @@ layout = dbc.Container(
 
         html.Hr(),
 
-        # -------------------------------------------------
+        # =====================================================
         # TEMPERATURE + RAINFALL
-        # -------------------------------------------------
+        # =====================================================
 
         dbc.Row(
             [
@@ -83,9 +86,8 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="temperature-chart",
-                            config={
-                                "displayModeBar": False
-                            }
+                            figure=empty_fig,
+                            config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
@@ -100,9 +102,8 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="rainfall-chart",
-                            config={
-                                "displayModeBar": False
-                            }
+                            figure=empty_fig,
+                            config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
@@ -113,9 +114,9 @@ layout = dbc.Container(
 
         html.Hr(),
 
-        # -------------------------------------------------
+        # =====================================================
         # NDVI + HUMIDITY
-        # -------------------------------------------------
+        # =====================================================
 
         dbc.Row(
             [
@@ -129,9 +130,8 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="ndvi-chart",
-                            config={
-                                "displayModeBar": False
-                            }
+                            figure=empty_fig,
+                            config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
@@ -146,9 +146,8 @@ layout = dbc.Container(
 
                         dcc.Graph(
                             id="humidity-chart",
-                            config={
-                                "displayModeBar": False
-                            }
+                            figure=empty_fig,
+                            config={"displayModeBar": False},
                         ),
                     ],
                     lg=6,
@@ -161,96 +160,3 @@ layout = dbc.Container(
 
     fluid=True,
 )
-
-# =====================================================
-# CALLBACK
-# =====================================================
-
-@callback(
-    Output("temperature-chart", "figure"),
-    Output("rainfall-chart", "figure"),
-    Output("ndvi-chart", "figure"),
-    Output("humidity-chart", "figure"),
-    Input("subcounty-dropdown", "value"),
-)
-def update_climate_plots(selected_subcounty):
-
-    dff = df[df["SubCounty"] == selected_subcounty]
-
-    # Temperature
-    temp_fig = px.line(
-        dff,
-        x="Date",
-        y="Average_Temp",
-        markers=True
-    )
-
-    temp_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Temperature (°C)",
-        xaxis_title=""
-    )
-
-    # Rainfall
-    rain_fig = px.bar(
-        dff,
-        x="Date",
-        y="Precipitation",
-        color_discrete_sequence=["#1f77b4"]
-    )
-
-    rain_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Rainfall (mm)",
-        xaxis_title=""
-    )
-
-    # NDVI
-    ndvi_fig = px.area(
-        dff,
-        x="Date",
-        y="Vegetation_NDVI"
-    )
-
-    ndvi_fig.update_traces(
-        line_color="green"
-    )
-
-    ndvi_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="NDVI",
-        xaxis_title=""
-    )
-
-    # Humidity
-    humidity_fig = px.line(
-        dff,
-        x="Date",
-        y="Humidity",
-        markers=True
-    )
-
-    humidity_fig.update_traces(
-        fill="tozeroy"
-    )
-
-    humidity_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Humidity (%)",
-        xaxis_title=""
-    )
-
-    return (
-        temp_fig,
-        rain_fig,
-        ndvi_fig,
-        humidity_fig
-    )
