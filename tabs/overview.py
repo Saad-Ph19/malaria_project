@@ -75,14 +75,28 @@ population_figure.update_layout(
     },
     showlegend=False,
     bargap=0.22,
+        font=dict(
+        family="Arial",
+        size=22,
+        color="black"
+    ),
+    xaxis_title=dict(
+        text="Projected population",
+        font=dict(size=28)
+    ),
+    yaxis_title=dict(
+        font=dict(size=28)
+    ),
 )
 
 population_figure.update_yaxes(
     autorange="reversed",
     automargin=True,
+    tickfont=dict(size=22)
 )
 
 population_figure.update_xaxes(
+    tickfont=dict(size=20),
     tickformat=",",
     range=[0, 560_000],
     gridcolor="#e9ecef",
