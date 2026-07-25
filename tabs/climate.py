@@ -207,94 +207,50 @@ layout = dbc.Container(
     Input("climate-subcounty-dropdown", "value"),
     Input("climate-year-dropdown", "value")
 )
-def update_climate_charts(selected_subcounty):
+@callback(
+    Output("temperature-chart", "figure"),
+    Output("rainfall-chart", "figure"),
+    Output("ndvi-chart", "figure"),
+    Output("humidity-chart", "figure"),
+    Input("climate-subcounty-dropdown", "value"),
+    Input("climate-year-dropdown", "value")
+)
+def update_climate_charts(selected_subcounty, selected_year):
 
-    dff = df[df["SubCounty"] == selected_subcounty]
+    dff = df[
+        (df["SubCounty"] == selected_subcounty) &
+        (df["Year"] == selected_year)
+    ]
 
-    # Temperature
     temp_fig = px.line(
         dff,
-        x="Date",
+        x="Month",
         y="Average_Temp",
         markers=True
     )
 
-    temp_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Temperature (°C)",
-        xaxis_title=""
-    )
-
-    # Rainfall
     rain_fig = px.bar(
         dff,
-        x="Date",
-        y="Precipitation",
-        color_discrete_sequence=["#1f77b4"]
+        x="Month",
+        y="Precipitation"
     )
 
-    rain_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Rainfall (mm)",
-        xaxis_title=""
-    )
-
-    # NDVI
     ndvi_fig = px.area(
         dff,
-        x="Date",
+        x="Month",
         y="Vegetation_NDVI"
     )
 
-    ndvi_fig.update_traces(
-        line_color="green"
-    )
-
-    ndvi_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="NDVI",
-        xaxis_title=""
-    )
-
-    # Humidity
     humidity_fig = px.line(
         dff,
-        x="Date",
+        x="Month",
         y="Humidity",
         markers=True
-    )
-
-    humidity_fig.update_traces(
-        fill="tozeroy"
-    )
-
-    humidity_fig.update_layout(
-        template="plotly_white",
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        yaxis_title="Humidity (%)",
-        xaxis_title=""
     )
 
     return (
         temp_fig,
         rain_fig,
         ndvi_fig,
-        humidity_fig,
+        humidity_fig
     )
-
-def update_climate_charts(
-    selected_subcounty,
-    selected_year
-):
-
-    dff = df[
-        (df["SubCounty"] == selected_subcounty) &
-        (df["Year"] == selected_year)
-    ]
