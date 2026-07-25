@@ -1,11 +1,13 @@
-from dash import html, dcc
+from dash import html, dcc, callback, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import glob
 import plotly.graph_objects as go
+import plotly.express as px
 
 # Data
 files = glob.glob("Climate_Data/*.csv")
+print(files)
 
 df_list = []
 
@@ -169,3 +171,92 @@ layout = dbc.Container(
 
     fluid=True,
 )
+# Callback
+@callback(
+    Output("temperature-chart", "figure"),
+    Output("rainfall-chart", "figure"),
+    Output("ndvi-chart", "figure"),
+    Output("humidity-chart", "figure"),
+    Input("climate-subcounty-dropdown", "value")
+)
+def update_climate_charts(selected_subcounty):
+
+    dff = df[df["SubCounty"] == selected_subcounty]
+
+    # Temperature
+    temp_fig = px.line(
+        dff,
+        x="Date",
+        y="Average_Temp",
+        markers=True
+    )
+
+    temp_fig.update_layout(
+        template="plotly_white",
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
+        yaxis_title="Temperature (°C)",
+        xaxis_title=""
+    )
+
+    # Rainfall
+    rain_fig = px.bar(
+        dff,
+        x="Date",
+        y="Precipitation",
+        color_discrete_sequence=["#1f77b4"]
+    )
+
+    rain_fig.update_layout(
+        template="plotly_white",
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
+        yaxis_title="Rainfall (mm)",
+        xaxis_title=""
+    )
+
+    # NDVI
+    ndvi_fig = px.area(
+        dff,
+        x="Date",
+        y="Vegetation_NDVI"
+    )
+
+    ndvi_fig.update_traces(
+        line_color="green"
+    )
+
+    ndvi_fig.update_layout(
+        template="plotly_white",
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
+        yaxis_title="NDVI",
+        xaxis_title=""
+    )
+
+    # Humidity
+    humidity_fig = px.line(
+        dff,
+        x="Date",
+        y="Humidity",
+        markers=True
+    )
+
+    humidity_fig.update_traces(
+        fill="tozeroy"
+    )
+
+    humidity_fig.update_layout(
+        template="plotly_white",
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
+        yaxis_title="Humidity (%)",
+        xaxis_title=""
+    )
+
+    return (
+        temp_fig,
+        rain_fig,
+        ndvi_fig,
+        humidity_fig,
+    )
