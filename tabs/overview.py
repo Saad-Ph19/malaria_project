@@ -212,8 +212,14 @@ layout = dbc.Container(
                     id="population-profile-chart",
                     figure=population_figure,
                     config={
-                        "displayModeBar": False,
-                        "responsive": True,
+                        **svg_download_config,
+                        "toImageButtonOptions": {
+                            "format": "svg",
+                            "filename": "siaya_population_distribution",
+                            "height": 700,
+                            "width": 1200,
+                            "scale": 1,
+                        },
                     },
                     style={"height": "540px"},
                 ),
@@ -322,13 +328,19 @@ layout = dbc.Container(
                     html.H5(
                         "Leading Causes of Mortality (Under 5 Years)",
                         className="fw-bold mb-3"
-                    ),
-                    
+                    ), 
                     dcc.Graph(
+                        id="under5-mortality-chart",
                         figure=mortality_fig,
                         config={
-                            "displayModeBar": False,
-                            "responsive": True,
+                            **svg_download_config,
+                            "toImageButtonOptions": {
+                                "format": "svg",
+                                "filename": "under5_leading_causes_of_mortality",
+                                "height": 700,
+                                "width": 1200,
+                                "scale": 1,
+                            },
                         },
                     ),
                 ]
