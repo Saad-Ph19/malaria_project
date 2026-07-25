@@ -60,12 +60,13 @@ layout = dbc.Container(
             [
                 dbc.Row(
                     [
+                
                         dbc.Col(
                             html.Label(
                                 "Subcounty:",
                                 className="fw-bold mb-0"
                             ),
-                            width="auto"
+                            width="auto",
                         ),
                 
                         dbc.Col(
@@ -81,10 +82,35 @@ layout = dbc.Container(
                                 value=subcounties[0],
                                 clearable=False,
                             ),
-                            width=4
-                        )
+                            width=3,
+                        ),
+                
+                        dbc.Col(
+                            html.Label(
+                                "Year:",
+                                className="fw-bold mb-0"
+                            ),
+                            width="auto",
+                        ),
+                
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="climate-year-dropdown",
+                                options=[
+                                    {
+                                        "label": str(year),
+                                        "value": year
+                                    }
+                                    for year in sorted(df["Year"].unique())
+                                ],
+                                value=max(df["Year"].unique()),
+                                clearable=False,
+                            ),
+                            width=2,
+                        ),
+                
                     ],
-                    className="align-items-center mb-4"
+                    className="align-items-center mb-4",
                 )
             ],
             className="mb-4",
