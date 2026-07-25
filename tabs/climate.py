@@ -58,28 +58,34 @@ layout = dbc.Container(
     [
         dbc.Row(
             [
-                dbc.Col(
+                dbc.Row(
                     [
-                        html.Label(
-                            "Select Subcounty",
-                            className="fw-bold"
+                        dbc.Col(
+                            html.Label(
+                                "Subcounty:",
+                                className="fw-bold mb-0"
+                            ),
+                            width="auto"
                         ),
-
-                        dcc.Dropdown(
-                            id="climate-subcounty-dropdown",
-                            options=[
-                                {
-                                    "label": s.replace(" Sub County", ""),
-                                    "value": s
-                                }
-                                for s in subcounties
-                            ],
-                            value=subcounties[0],
-                            clearable=False,
-                        ),
+                
+                        dbc.Col(
+                            dcc.Dropdown(
+                                id="climate-subcounty-dropdown",
+                                options=[
+                                    {
+                                        "label": s.replace(" Sub County", ""),
+                                        "value": s
+                                    }
+                                    for s in subcounties
+                                ],
+                                value=subcounties[0],
+                                clearable=False,
+                            ),
+                            width=4
+                        )
                     ],
-                    lg=4,
-                ),
+                    className="align-items-center mb-4"
+                )
             ],
             className="mb-4",
         ),
