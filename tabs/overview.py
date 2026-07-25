@@ -5,6 +5,29 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+svg_download_config = {
+    "displayModeBar": True,
+    "displaylogo": False,
+    "responsive": True,
+    "modeBarButtonsToRemove": [
+        "zoom2d",
+        "pan2d",
+        "select2d",
+        "lasso2d",
+        "zoomIn2d",
+        "zoomOut2d",
+        "autoScale2d",
+        "resetScale2d",
+    ],
+    "toImageButtonOptions": {
+        "format": "svg",
+        "filename": "visualization",
+        "height": 700,
+        "width": 1200,
+        "scale": 1,
+    },
+}
+
 population_categories = [
     "Children under 1",
     "Children under 5",
