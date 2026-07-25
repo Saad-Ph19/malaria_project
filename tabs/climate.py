@@ -207,14 +207,6 @@ layout = dbc.Container(
     Input("climate-subcounty-dropdown", "value"),
     Input("climate-year-dropdown", "value")
 )
-@callback(
-    Output("temperature-chart", "figure"),
-    Output("rainfall-chart", "figure"),
-    Output("ndvi-chart", "figure"),
-    Output("humidity-chart", "figure"),
-    Input("climate-subcounty-dropdown", "value"),
-    Input("climate-year-dropdown", "value")
-)
 def update_climate_charts(selected_subcounty, selected_year):
 
     dff = df[
