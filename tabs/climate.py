@@ -204,7 +204,8 @@ layout = dbc.Container(
     Output("rainfall-chart", "figure"),
     Output("ndvi-chart", "figure"),
     Output("humidity-chart", "figure"),
-    Input("climate-subcounty-dropdown", "value")
+    Input("climate-subcounty-dropdown", "value"),
+    Input("climate-year-dropdown", "value")
 )
 def update_climate_charts(selected_subcounty):
 
@@ -287,3 +288,13 @@ def update_climate_charts(selected_subcounty):
         ndvi_fig,
         humidity_fig,
     )
+
+def update_climate_charts(
+    selected_subcounty,
+    selected_year
+):
+
+    dff = df[
+        (df["SubCounty"] == selected_subcounty) &
+        (df["Year"] == selected_year)
+    ]
