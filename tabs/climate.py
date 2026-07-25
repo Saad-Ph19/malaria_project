@@ -4,10 +4,7 @@ import pandas as pd
 import glob
 import plotly.graph_objects as go
 
-# =====================================================
-# LOAD ALL CLIMATE FILES
-# =====================================================
-
+# Data
 files = glob.glob("Climate_Data/*.csv")
 
 df_list = []
@@ -29,10 +26,7 @@ df["Date"] = pd.to_datetime(
 # Available subcounties
 subcounties = sorted(df["SubCounty"].unique())
 
-# =====================================================
-# EMPTY FIGURES
-# =====================================================
-
+# Figures
 def empty_figure():
 
     fig = go.Figure()
@@ -56,10 +50,7 @@ def empty_figure():
 
     return fig
 
-# =====================================================
-# LAYOUT
-# =====================================================
-
+# layout
 layout = dbc.Container(
 
     [
@@ -68,11 +59,6 @@ layout = dbc.Container(
             "Climate and Environmental Conditions",
             className="fw-bold mb-4"
         ),
-
-        # ------------------------------------------------
-        # SUBCOUNTY DROPDOWN
-        # ------------------------------------------------
-
         dbc.Row(
             [
                 dbc.Col(
@@ -102,10 +88,6 @@ layout = dbc.Container(
         ),
 
         html.Hr(),
-
-        # ------------------------------------------------
-        # TEMPERATURE + RAINFALL
-        # ------------------------------------------------
 
         dbc.Row(
             [
@@ -145,10 +127,6 @@ layout = dbc.Container(
         ),
 
         html.Hr(),
-
-        # ------------------------------------------------
-        # NDVI + HUMIDITY
-        # ------------------------------------------------
 
         dbc.Row(
             [
