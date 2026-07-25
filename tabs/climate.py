@@ -56,11 +56,6 @@ def empty_figure():
 layout = dbc.Container(
 
     [
-
-        html.H3(
-            "Climate and Environmental Conditions",
-            className="fw-bold mb-4"
-        ),
         dbc.Row(
             [
                 dbc.Col(
