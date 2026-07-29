@@ -306,7 +306,6 @@ layout = dbc.Container(
             width=12,
             lg=8,
         ),
-            html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
         # Right: Context Box
         dbc.Col(
             [
@@ -334,7 +333,7 @@ layout = dbc.Container(
             ),
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-
+                    html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
                     html.H5("Most Common Outpatient Health Conditions (Under 5 Years)",className="fw-bold mb-3"),
                     dbc.Row(
                         [
@@ -354,7 +353,7 @@ layout = dbc.Container(
                     
                             dbc.Col(
                                 [
-                                    html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
+                                    #html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
                                     html.Ul(
                                         [
                                             html.Li("Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."),
