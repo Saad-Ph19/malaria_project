@@ -332,7 +332,7 @@ layout = dbc.Container(
             ),
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                    html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
+                    #html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
                     html.H5("Most Common Outpatient Health Conditions (Under 5 Years)",className="fw-bold mb-3"),
                     dbc.Row(
                         [
@@ -371,7 +371,7 @@ layout = dbc.Container(
                     ),
                     
                     #line breaker
-                    #html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                         html.H5("Leading Causes of Mortality (Under 5 Years)",className="fw-bold mb-3"), 
                         dcc.Graph(
                             id="under5-mortality-chart",
