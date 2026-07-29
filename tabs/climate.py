@@ -28,12 +28,6 @@ df["Date"] = pd.to_datetime(
 # Available subcounties
 subcounties = sorted(df["SubCounty"].unique())
 
-# Selected option year vs months
-if selected_year == "ALL":
-    x_column = "Date"
-else:
-    x_column = "Month"
-
 # Figures
 def empty_figure():
 
@@ -253,12 +247,35 @@ layout = dbc.Container(
 def update_climate_charts(selected_subcounty, selected_year):
 
     if selected_year == "ALL":
-
-        dff = df[
-            df["SubCounty"] == selected_subcounty
-        ].copy()
-
-        x_column = "Date"
+        for fig in [
+            temp_fig,
+            rain_fig,
+            ndvi_fig,
+            humidity_fig,
+        ]:
+            fig.update_xaxes(
+                title="Year",
+                tickformat="%Y",
+                dtick="M12"
+            )
+    else:
+        figs = [
+            temp_fig,
+            rain_fig,
+            ndvi_fig,
+            humidity_fig,
+        ]
+        month_labels = [
+            "Jan", "Feb", "Mar", "Apr",
+            "May", "Jun", "Jul", "Aug",
+            "Sep", "Oct", "Nov", "Dec"
+        ]
+        for fig in figs:
+            fig.update_xaxes(
+                tickmode="array",
+                tickvals=list(range(1, 13)),
+                ticktext=month_labels
+            )
 
     else:
 
