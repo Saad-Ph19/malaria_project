@@ -46,7 +46,6 @@ population_values = [
     95_106,
 ]
 
-
 population_figure = go.Figure(
     go.Bar(
         x=population_values,
@@ -361,7 +360,7 @@ layout = dbc.Container(
                                             html.Li("Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."),
                                             html.Li("The top 10 conditions represented 49.3% of all outpatient visits among children under 5 years."),
                                         ],
-                                        style={"paddingLeft": "35px","lineHeight": "1.8","fontSize": "20px",},
+                                        style={"paddingLeft": "35px","lineHeight": "1.5","fontSize": "20px",},
                                     ),
                                 ],
                                 width=12,
