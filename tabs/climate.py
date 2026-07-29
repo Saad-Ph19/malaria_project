@@ -57,32 +57,6 @@ layout = dbc.Container(
     [
 
         # =====================================================
-        # HEADER
-        # =====================================================
-
-        html.Div(
-            [
-
-                html.H2(
-                    "Climate & Environmental Conditions Dashboard",
-                    className="fw-bold mb-1",
-                    style={"color": "white"},
-                ),
-
-                html.P(
-                    "Monthly climate indicators across Siaya County subcounties",
-                    className="mb-0",
-                    style={"color": "#dbeafe"},
-                ),
-
-            ],
-            className="p-4 rounded-4 mb-4",
-            style={
-                "background": "linear-gradient(135deg,#0f172a,#2563eb)"
-            },
-        ),
-
-        # =====================================================
         # FILTER PANEL
         # =====================================================
 
@@ -102,7 +76,7 @@ layout = dbc.Container(
 
                                     html.Label(
                                         "Subcounty",
-                                        className="fw-bold text-muted mb-2",
+                                        className="fw-bold text-muted mb-2"
                                     ),
 
                                     dcc.Dropdown(
@@ -122,7 +96,7 @@ layout = dbc.Container(
 
                                 ],
 
-                                lg=4,
+                                lg=8,
 
                             ),
 
@@ -132,7 +106,7 @@ layout = dbc.Container(
 
                                     html.Label(
                                         "Year",
-                                        className="fw-bold text-muted mb-2",
+                                        className="fw-bold text-muted mb-2"
                                     ),
 
                                     dcc.Dropdown(
@@ -152,194 +126,28 @@ layout = dbc.Container(
 
                                 ],
 
-                                lg=2,
-
-                            ),
-
-                            dbc.Col(
-
-                                [
-
-                                    html.Div(
-                                        [
-                                            html.H6(
-                                                "Dashboard Filters",
-                                                className="fw-bold mb-1",
-                                            ),
-
-                                            html.P(
-                                                "Select a subcounty and year to explore climate trends.",
-                                                className="text-muted mb-0",
-                                            ),
-                                        ],
-                                        className="pt-3",
-                                    )
-
-                                ],
-
-                                lg=6,
+                                lg=4,
 
                             ),
 
                         ],
 
-                        className="align-items-end",
-
-                    )
+                    ),
 
                 ]
 
             ),
 
             className="border-0 shadow-sm mb-4",
-            style={"borderRadius": "16px"},
+
+            style={
+                "borderRadius": "16px",
+            },
 
         ),
 
         # =====================================================
-        # KPI CARDS
-        # =====================================================
-
-        dbc.Row(
-
-            [
-
-                dbc.Col(
-
-                    dbc.Card(
-
-                        dbc.CardBody(
-
-                            [
-
-                                html.Div(
-                                    "Average Temperature",
-                                    className="text-muted",
-                                ),
-
-                                html.H3(
-                                    "-- °C",
-                                    className="fw-bold text-primary mb-0",
-                                ),
-
-                            ]
-
-                        ),
-
-                        className="border-0 shadow-sm",
-
-                    ),
-
-                    lg=3,
-                    md=6,
-                    className="mb-3",
-
-                ),
-
-                dbc.Col(
-
-                    dbc.Card(
-
-                        dbc.CardBody(
-
-                            [
-
-                                html.Div(
-                                    "Total Rainfall",
-                                    className="text-muted",
-                                ),
-
-                                html.H3(
-                                    "-- mm",
-                                    className="fw-bold text-primary mb-0",
-                                ),
-
-                            ]
-
-                        ),
-
-                        className="border-0 shadow-sm",
-
-                    ),
-
-                    lg=3,
-                    md=6,
-                    className="mb-3",
-
-                ),
-
-                dbc.Col(
-
-                    dbc.Card(
-
-                        dbc.CardBody(
-
-                            [
-
-                                html.Div(
-                                    "Mean NDVI",
-                                    className="text-muted",
-                                ),
-
-                                html.H3(
-                                    "--",
-                                    className="fw-bold text-primary mb-0",
-                                ),
-
-                            ]
-
-                        ),
-
-                        className="border-0 shadow-sm",
-
-                    ),
-
-                    lg=3,
-                    md=6,
-                    className="mb-3",
-
-                ),
-
-                dbc.Col(
-
-                    dbc.Card(
-
-                        dbc.CardBody(
-
-                            [
-
-                                html.Div(
-                                    "Mean Humidity",
-                                    className="text-muted",
-                                ),
-
-                                html.H3(
-                                    "-- %",
-                                    className="fw-bold text-primary mb-0",
-                                ),
-
-                            ]
-
-                        ),
-
-                        className="border-0 shadow-sm",
-
-                    ),
-
-                    lg=3,
-                    md=6,
-                    className="mb-3",
-
-                ),
-
-            ],
-
-            className="mb-4",
-
-        ),
-
-        # =====================================================
-        # TEMPERATURE
+        # TEMPERATURE + RAINFALL
         # =====================================================
 
         dbc.Row(
@@ -356,7 +164,13 @@ layout = dbc.Container(
 
                                 html.H5(
                                     "Average Temperature",
-                                    className="fw-bold mb-3",
+                                    className="fw-bold mb-1",
+                                ),
+
+                                html.P(
+                                    "Monthly average air temperature for the selected subcounty and year.",
+                                    className="text-muted mb-3",
+                                    style={"fontSize": "14px"},
                                 ),
 
                                 dcc.Graph(
@@ -365,7 +179,7 @@ layout = dbc.Container(
                                     config={
                                         "displayModeBar": False
                                     },
-                                    style={"height": "420px"},
+                                    style={"height": "430px"},
                                 ),
 
                             ]
@@ -390,7 +204,13 @@ layout = dbc.Container(
 
                                 html.H5(
                                     "Monthly Rainfall",
-                                    className="fw-bold mb-3",
+                                    className="fw-bold mb-1",
+                                ),
+
+                                html.P(
+                                    "Monthly accumulated precipitation for the selected subcounty and year.",
+                                    className="text-muted mb-3",
+                                    style={"fontSize": "14px"},
                                 ),
 
                                 dcc.Graph(
@@ -399,7 +219,7 @@ layout = dbc.Container(
                                     config={
                                         "displayModeBar": False
                                     },
-                                    style={"height": "420px"},
+                                    style={"height": "430px"},
                                 ),
 
                             ]
@@ -438,7 +258,13 @@ layout = dbc.Container(
 
                                 html.H5(
                                     "Vegetation Index (NDVI)",
-                                    className="fw-bold mb-3",
+                                    className="fw-bold mb-1",
+                                ),
+
+                                html.P(
+                                    "Monthly vegetation greenness conditions derived from satellite observations.",
+                                    className="text-muted mb-3",
+                                    style={"fontSize": "14px"},
                                 ),
 
                                 dcc.Graph(
@@ -447,7 +273,7 @@ layout = dbc.Container(
                                     config={
                                         "displayModeBar": False
                                     },
-                                    style={"height": "420px"},
+                                    style={"height": "430px"},
                                 ),
 
                             ]
@@ -472,7 +298,13 @@ layout = dbc.Container(
 
                                 html.H5(
                                     "Relative Humidity",
-                                    className="fw-bold mb-3",
+                                    className="fw-bold mb-1",
+                                ),
+
+                                html.P(
+                                    "Monthly average atmospheric humidity for the selected subcounty and year.",
+                                    className="text-muted mb-3",
+                                    style={"fontSize": "14px"},
                                 ),
 
                                 dcc.Graph(
@@ -481,7 +313,7 @@ layout = dbc.Container(
                                     config={
                                         "displayModeBar": False
                                     },
-                                    style={"height": "420px"},
+                                    style={"height": "430px"},
                                 ),
 
                             ]
@@ -506,7 +338,7 @@ layout = dbc.Container(
 
     style={
         "backgroundColor": "#f8fafc",
-        "padding": "25px",
+        "padding": "20px",
         "minHeight": "100vh",
     },
 
