@@ -253,18 +253,22 @@ layout = dbc.Container(
 def update_climate_charts(selected_subcounty, selected_year):
 
     if selected_year == "ALL":
-    
+
         dff = df[
             df["SubCounty"] == selected_subcounty
         ].copy()
-    
+
+        x_column = "Date"
+
     else:
-    
+
         dff = df[
             (df["SubCounty"] == selected_subcounty)
             &
             (df["Year"] == selected_year)
         ].copy()
+
+        x_column = "Month"
 
     temp_fig = px.line(
         dff,
@@ -291,6 +295,19 @@ def update_climate_charts(selected_subcounty, selected_year):
         y="Humidity",
         markers=True
     )
+
+    if selected_year == "ALL":
+
+        for fig in [
+            temp_fig,
+            rain_fig,
+            ndvi_fig,
+            humidity_fig,
+        ]:
+            fig.update_xaxes(
+                tickformat="%Y",
+                dtick="M12"
+            )
 
     return (
         temp_fig,
