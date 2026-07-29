@@ -28,6 +28,12 @@ df["Date"] = pd.to_datetime(
 # Available subcounties
 subcounties = sorted(df["SubCounty"].unique())
 
+# Selected option year vs months
+if selected_year == "ALL":
+    x_column = "Date"
+else:
+    x_column = "Month"
+
 # Figures
 def empty_figure():
 
@@ -262,26 +268,26 @@ def update_climate_charts(selected_subcounty, selected_year):
 
     temp_fig = px.line(
         dff,
-        x="Month",
+        x=x_column,
         y="Average_Temp",
         markers=True
     )
 
     rain_fig = px.bar(
         dff,
-        x="Month",
+        x=x_column,
         y="Precipitation"
     )
 
     ndvi_fig = px.area(
         dff,
-        x="Month",
+        x=x_column,
         y="Vegetation_NDVI"
     )
 
     humidity_fig = px.line(
         dff,
-        x="Month",
+        x=x_column,
         y="Humidity",
         markers=True
     )
