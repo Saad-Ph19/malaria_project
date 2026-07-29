@@ -430,6 +430,28 @@ layout = dbc.Container(
                     ),
                 ]
             ),
+                    
+                    #line breaker
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                        html.H5(
+                            "Leading Causes of Mortality (Under 5 Years)",
+                            className="fw-bold mb-3"
+                        ), 
+                        dcc.Graph(
+                            id="under5-mortality-chart",
+                            figure=mortality_fig,
+                            config={
+                                **svg_download_config,
+                                "toImageButtonOptions": {
+                                    "format": "svg",
+                                    "filename": "under5_leading_causes_of_mortality",
+                                    "height": 700,
+                                    "width": 1200,
+                                    "scale": 1,
+                                },
+                            },
+                        ),
+
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                     html.H5(
@@ -489,27 +511,7 @@ layout = dbc.Container(
                             ),
                         ]
                     ),
-                    
-                    #line breaker
-                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                        html.H5(
-                            "Leading Causes of Mortality (Under 5 Years)",
-                            className="fw-bold mb-3"
-                        ), 
-                        dcc.Graph(
-                            id="under5-mortality-chart",
-                            figure=mortality_fig,
-                            config={
-                                **svg_download_config,
-                                "toImageButtonOptions": {
-                                    "format": "svg",
-                                    "filename": "under5_leading_causes_of_mortality",
-                                    "height": 700,
-                                    "width": 1200,
-                                    "scale": 1,
-                                },
-                            },
-                        ),
+
                         #line breaker
                         html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                         html.H5(
