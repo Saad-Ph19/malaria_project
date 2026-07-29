@@ -488,7 +488,7 @@ layout = dbc.Container(
                                 style={"marginLeft": "-30px"},
                             ),
                         ]
-                    )
+                    ),
                     
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
