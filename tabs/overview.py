@@ -187,6 +187,59 @@ mortality_fig.update_yaxes(
     autorange="reversed"
 )
 
+#Over 5 year data
+over5_conditions = [
+    "Pneumonia",
+    "HIV",
+    "Hypertension",
+    "Anemia",
+    "Viral Infection",
+    "Bacteremia",
+    "Diseases of Respiratory System",
+    "Head Injury",
+    "Malaria",
+    "Congestive Heart Failure"
+]
+
+over5_values = [60, 57, 46, 32, 27, 27, 24, 21, 21, 21]
+
+over5_colors = [
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#4e79a7",
+    "#d62728",  # malaria highlight
+    "#4e79a7",
+]
+
+over5_mortality_fig = go.Figure(
+    go.Bar(
+        x=over5_values,
+        y=over5_conditions,
+        orientation="h",
+        text=over5_values,
+        textposition="outside",
+        marker_color=over5_colors,
+    )
+)
+
+over5_mortality_fig.update_layout(
+    template="plotly_white",
+    height=500,
+    margin=dict(l=20, r=40, t=20, b=20),
+    xaxis_title="Occurrence",
+    yaxis_title="",
+    showlegend=False,
+)
+
+over5_mortality_fig.update_yaxes(
+    autorange="reversed"
+)
+
 
 layout = dbc.Container(
     [
@@ -323,8 +376,8 @@ layout = dbc.Container(
                     ),
                 ]
             ),
-                    #line breaker
-                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                #line breaker
+                html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                     html.H5(
                         "Leading Causes of Mortality (Under 5 Years)",
                         className="fw-bold mb-3"
@@ -343,7 +396,23 @@ layout = dbc.Container(
                             },
                         },
                     ),
-                ]
+                    #line breaker
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                    html.H5(
+                        "Leading Causes of Mortality (Over 5 Years)",
+                        className="fw-bold mb-3"
+                    ),
+                    
+                    dcc.Graph(
+                        id="over5-mortality-chart",
+                        figure=over5_mortality_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+                    
+                ]#box border
             ),
             className="mt-4 shadow-sm",
         )
