@@ -188,19 +188,73 @@ mortality_fig.update_yaxes(
 )
 
 #Over 5 year data
-over5_conditions = [
-    "Pneumonia",
-    "HIV",
+#over 5 treemap
+over5_labels = [
+    "Confirmed Malaria",
+    "Upper Respiratory Tract Infections",
+    "Diseases of the Skin",
+    "Urinary Tract Infections",
+    "Arthritis / Joint Pains",
     "Hypertension",
-    "Anemia",
-    "Viral Infection",
-    "Bacteremia",
-    "Diseases of Respiratory System",
-    "Head Injury",
-    "Malaria",
-    "Congestive Heart Failure"
+    "Pneumonia",
+    "Diarrhoea",
+    "Lower Respiratory Tract Infections",
+    "Other Injuries",
+    "Eye Infections / Conditions",
+    "Musculoskeletal Conditions",
+    "Dental Disorders",
+    "Diabetes",
+    "Overweight (BMI >25)",
+    "Anaemia",
+    "Ear Infections / Conditions",
+    "Typhoid Fever",
+    "Asthma",
+    "Malaria in Pregnancy",
+    "All Other Diseases"
 ]
 
+over5_values = [
+    444240,
+    219918,
+    47149,
+    40178,
+    32264,
+    30589,
+    28203,
+    23719,
+    21033,
+    20862,
+    18861,
+    13558,
+    13149,
+    10775,
+    8908,
+    8407,
+    8327,
+    7283,
+    6831,
+    6731,
+    252559
+]
+
+over5_treemap_fig = px.treemap(
+    names=over5_labels,
+    parents=[""] * len(over5_labels),
+    values=over5_values,
+)
+
+over5_treemap_fig.update_traces(
+    textinfo="label+value+percent root"
+)
+
+over5_treemap_fig.update_layout(
+    template="plotly_white",
+    height=500,
+    margin=dict(l=10, r=10, t=10, b=10)
+)
+
+#Bar chart
+over5_conditions = ["Pneumonia","HIV","Hypertension","Anemia","Viral Infection","Bacteremia","Diseases of Respiratory System","Head Injury","Malaria","Congestive Heart Failure"]
 over5_values = [60, 57, 46, 32, 27, 27, 24, 21, 21, 21]
 
 over5_colors = [
@@ -376,41 +430,101 @@ layout = dbc.Container(
                     ),
                 ]
             ),
-                #line breaker
-                html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                    html.H5(
-                        "Leading Causes of Mortality (Under 5 Years)",
-                        className="fw-bold mb-3"
-                    ), 
-                    dcc.Graph(
-                        id="under5-mortality-chart",
-                        figure=mortality_fig,
-                        config={
-                            **svg_download_config,
-                            "toImageButtonOptions": {
-                                "format": "svg",
-                                "filename": "under5_leading_causes_of_mortality",
-                                "height": 700,
-                                "width": 1200,
-                                "scale": 1,
-                            },
-                        },
-                    ),
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
                     html.H5(
-                        "Leading Causes of Mortality (Over 5 Years)",
+                        "Most Common Outpatient Health Conditions (Over 5 Years)",
                         className="fw-bold mb-3"
                     ),
                     
-                    dcc.Graph(
-                        id="over5-mortality-chart",
-                        figure=over5_mortality_fig,
-                        config={
-                            "displayModeBar": False,
-                            "responsive": True,
-                        },
-                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="over5-disease-chart",
+                                    figure=over5_treemap_fig,
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+                                    style={"height": "550px"},
+                                ),
+                                width=12,
+                                lg=8,
+                            ),
+                    
+                            dbc.Col(
+                                [
+                                    html.H5(
+                                        "Context",
+                                        className="fw-bold mb-3",
+                                        style={"marginLeft": "35px"}
+                                    ),
+                    
+                                    html.Ul(
+                                        [
+                                            html.Li(
+                                                "Confirmed malaria was the leading outpatient condition among individuals over 5 years, accounting for 444,240 cases (35.2%)."
+                                            ),
+                                            html.Li(
+                                                "Upper respiratory tract infections were the second most common condition, representing 17.4% of all cases."
+                                            ),
+                                            html.Li(
+                                                "Malaria and respiratory infections together accounted for more than half of the reported disease burden."
+                                            ),
+                                            html.Li(
+                                                "The top 20 conditions represented 80% of all outpatient visits."
+                                            ),
+                                        ],
+                                        style={
+                                            "paddingLeft": "35px",
+                                            "lineHeight": "1.8",
+                                            "fontSize": "20px",
+                                        },
+                                    ),
+                                ],
+                                width=12,
+                                lg=3,
+                                style={"marginLeft": "-30px"},
+                            ),
+                        ]
+                    )
+                    
+                    #line breaker
+                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                        html.H5(
+                            "Leading Causes of Mortality (Under 5 Years)",
+                            className="fw-bold mb-3"
+                        ), 
+                        dcc.Graph(
+                            id="under5-mortality-chart",
+                            figure=mortality_fig,
+                            config={
+                                **svg_download_config,
+                                "toImageButtonOptions": {
+                                    "format": "svg",
+                                    "filename": "under5_leading_causes_of_mortality",
+                                    "height": 700,
+                                    "width": 1200,
+                                    "scale": 1,
+                                },
+                            },
+                        ),
+                        #line breaker
+                        html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
+                        html.H5(
+                            "Leading Causes of Mortality (Over 5 Years)",
+                            className="fw-bold mb-3"
+                        ),
+                        
+                        dcc.Graph(
+                            id="over5-mortality-chart",
+                            figure=over5_mortality_fig,
+                            config={
+                                "displayModeBar": False,
+                                "responsive": True,
+                            },
+                        ),
                     
                 ]#box border
             ),
