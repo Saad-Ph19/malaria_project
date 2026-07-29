@@ -29,7 +29,7 @@ df["Date"] = pd.to_datetime(
 subcounties = sorted(df["SubCounty"].unique())
 
 # Selected option year vs months
-if selected_year == "All Years":
+if selected_year == "ALL":
     x_column = "Date"
 else:
     x_column = "Month"
