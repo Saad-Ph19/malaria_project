@@ -55,30 +55,18 @@ def empty_figure():
 layout = dbc.Container(
 
     [
-
-        # =====================================================
-        # FILTER PANEL
-        # =====================================================
-
+        #Filter Panels
         dbc.Card(
-
             dbc.CardBody(
-
                 [
-
                     dbc.Row(
-
                         [
-
                             dbc.Col(
-
                                 [
-
                                     html.Label(
                                         "Subcounty",
                                         className="fw-bold text-muted mb-2"
                                     ),
-
                                     dcc.Dropdown(
                                         id="climate-subcounty-dropdown",
                                         options=[
@@ -95,118 +83,66 @@ layout = dbc.Container(
                                     ),
 
                                 ],
-
                                 lg=8,
-
                             ),
-
+                            
                             dbc.Col(
-
                                 [
-
-                                    html.Label(
-                                        "Year",
-                                        className="fw-bold text-muted mb-2"
-                                    ),
-
+                                    html.Label("Year",className="fw-bold text-muted mb-2"),
                                     dcc.Dropdown(
                                         id="climate-year-dropdown",
-                                        options=[
+                                        options=
+                                        [
+                                            {
+                                                "label": "All Years",
+                                                "value": "ALL",
+                                            }
+                                        ]
+                                        +
+                                        [
                                             {
                                                 "label": str(year),
                                                 "value": year,
                                             }
-                                            for year in sorted(
-                                                df["Year"].unique()
-                                            )
+                                            for year in sorted(df["Year"].unique())
                                         ],
-                                        value=max(df["Year"].unique()),
+                                        value="ALL",
                                         clearable=False,
                                     ),
-
                                 ],
-
                                 lg=4,
-
                             ),
-
                         ],
-
                     ),
-
                 ]
-
             ),
-
             className="border-0 shadow-sm mb-4",
-
-            style={
-                "borderRadius": "16px",
+            style={"borderRadius": "16px",
             },
 
         ),
 
-        # =====================================================
-        # TEMPERATURE + RAINFALL
-        # =====================================================
-
+        # Temperature and rainfall
         dbc.Row(
-
             [
-
                 dbc.Col(
-
                     dbc.Card(
-
                         dbc.CardBody(
-
                             [
-
-                                html.H5(
-                                    "Average Temperature",
-                                    className="fw-bold mb-1",
-                                ),
-
-                                html.P(
-                                    "Monthly average air temperature for the selected subcounty and year.",
-                                    className="text-muted mb-3",
-                                    style={"fontSize": "14px"},
-                                ),
-
-                                dcc.Graph(
-                                    id="temperature-chart",
-                                    figure=empty_figure(),
-                                    config={
-                                        "displayModeBar": False
-                                    },
-                                    style={"height": "430px"},
-                                ),
-
+                                html.H5("Average Temperature",className="fw-bold mb-1",),
+                                html.P("Monthly average air temperature for the selected subcounty and year.",className="text-muted mb-3",style={"fontSize": "14px"},),
+                                dcc.Graph(id="temperature-chart",figure=empty_figure(),config={"displayModeBar": False},style={"height": "430px"},),
                             ]
-
                         ),
-
                         className="border-0 shadow-sm h-100",
-
                     ),
-
                     lg=6,
-
                 ),
-
                 dbc.Col(
-
                     dbc.Card(
-
                         dbc.CardBody(
-
                             [
-
-                                html.H5(
-                                    "Monthly Rainfall",
-                                    className="fw-bold mb-1",
-                                ),
-
+                                html.H5("Monthly Rainfall",className="fw-bold mb-1",),
                                 html.P(
                                     "Monthly accumulated precipitation for the selected subcounty and year.",
                                     className="text-muted mb-3",
@@ -221,46 +157,24 @@ layout = dbc.Container(
                                     },
                                     style={"height": "430px"},
                                 ),
-
                             ]
-
                         ),
-
                         className="border-0 shadow-sm h-100",
-
                     ),
-
                     lg=6,
-
                 ),
-
             ],
-
             className="mb-4",
-
         ),
 
-        # =====================================================
-        # NDVI + HUMIDITY
-        # =====================================================
-
+        # NDVI and Humidity
         dbc.Row(
-
             [
-
                 dbc.Col(
-
                     dbc.Card(
-
                         dbc.CardBody(
-
                             [
-
-                                html.H5(
-                                    "Vegetation Index (NDVI)",
-                                    className="fw-bold mb-1",
-                                ),
-
+                                html.H5("Vegetation Index (NDVI)",className="fw-bold mb-1",),
                                 html.P(
                                     "Monthly vegetation greenness conditions derived from satellite observations.",
                                     className="text-muted mb-3",
@@ -275,32 +189,18 @@ layout = dbc.Container(
                                     },
                                     style={"height": "430px"},
                                 ),
-
                             ]
-
                         ),
-
                         className="border-0 shadow-sm h-100",
-
                     ),
-
                     lg=6,
-
                 ),
 
                 dbc.Col(
-
                     dbc.Card(
-
                         dbc.CardBody(
-
                             [
-
-                                html.H5(
-                                    "Relative Humidity",
-                                    className="fw-bold mb-1",
-                                ),
-
+                                html.H5("Relative Humidity",className="fw-bold mb-1",),
                                 html.P(
                                     "Monthly average atmospheric humidity for the selected subcounty and year.",
                                     className="text-muted mb-3",
@@ -315,27 +215,17 @@ layout = dbc.Container(
                                     },
                                     style={"height": "430px"},
                                 ),
-
                             ]
-
                         ),
-
                         className="border-0 shadow-sm h-100",
-
                     ),
-
                     lg=6,
-
                 ),
-
             ]
-
         ),
-
     ],
 
     fluid=True,
-
     style={
         "backgroundColor": "#f8fafc",
         "padding": "20px",
@@ -343,6 +233,8 @@ layout = dbc.Container(
     },
 
 )
+
+
 # Callback
 @callback(
     Output("temperature-chart", "figure"),
@@ -354,10 +246,19 @@ layout = dbc.Container(
 )
 def update_climate_charts(selected_subcounty, selected_year):
 
-    dff = df[
-        (df["SubCounty"] == selected_subcounty) &
-        (df["Year"] == selected_year)
-    ]
+    if selected_year == "ALL":
+    
+        dff = df[
+            df["SubCounty"] == selected_subcounty
+        ].copy()
+    
+    else:
+    
+        dff = df[
+            (df["SubCounty"] == selected_subcounty)
+            &
+            (df["Year"] == selected_year)
+        ].copy()
 
     temp_fig = px.line(
         dff,
