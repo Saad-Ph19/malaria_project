@@ -277,16 +277,6 @@ def update_climate_charts(selected_subcounty, selected_year):
                 ticktext=month_labels
             )
 
-    else:
-
-        dff = df[
-            (df["SubCounty"] == selected_subcounty)
-            &
-            (df["Year"] == selected_year)
-        ].copy()
-
-        x_column = "Month"
-
     temp_fig = px.line(
         dff,
         x=x_column,
