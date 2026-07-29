@@ -256,19 +256,7 @@ over5_treemap_fig.update_layout(
 #Bar chart
 over5_conditions = ["Pneumonia","HIV","Hypertension","Anemia","Viral Infection","Bacteremia","Diseases of Respiratory System","Head Injury","Malaria","Congestive Heart Failure"]
 over5_values = [60, 57, 46, 32, 27, 27, 24, 21, 21, 21]
-
-over5_colors = [
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#4e79a7",
-    "#d62728",  # malaria highlight
-    "#4e79a7",
-]
+over5_colors = ["#4e79a7","#4e79a7","#4e79a7","#4e79a7","#4e79a7","#4e79a7","#4e79a7","#4e79a7","#d62728","#4e79a7",]
 
 over5_mortality_fig = go.Figure(
     go.Bar(
@@ -300,13 +288,9 @@ layout = dbc.Container(
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H3(
-                        "Siaya County Population Profile, 2024/2025",
-                        className="fw-bold mb-4",
-                    ),
-
+                    html.H3("Siaya County Population Profile (2024/2025)", className="fw-bold mb-4",),
                     dbc.Row(
-    [
+        [
         # Left: Chart
         dbc.Col(
             [
@@ -346,21 +330,11 @@ layout = dbc.Container(
 
                 html.Ul(
                     [
-                        html.Li(
-                            "Children under 15 years represent the largest population group in Siaya County."
-                        ),
-                        html.Li(
-                            "The county's age structure highlights the importance of child health, malaria prevention, and surveillance programs."
-                        ),
-                        html.Li(
-                            "Population demographics can affect disease burden, healthcare utilization, and public health planning."
-                        ),
+                        html.Li("Children under 15 years represent the largest population group in Siaya County."),
+                        html.Li("The county's age structure highlights the importance of child health, malaria prevention, and surveillance programs."),
+                        html.Li("Population demographics can affect disease burden, healthcare utilization, and public health planning."),
                     ],
-                    style={
-                        "paddingLeft": "35px",
-                        "fontSize": "20px",
-                        "lineHeight": "1.8",
-                    },
+                    style={"paddingLeft": "35px","fontSize": "20px","lineHeight": "1.8",},
                 ),
             ],
             width=12,
@@ -373,70 +347,46 @@ layout = dbc.Container(
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
 
-            html.H5(
-                "Most Common Outpatient Health Conditions (Under 5 Years)",
-                className="fw-bold mb-3"
-            ),
-            
-            dbc.Row(
-                [
-                    dbc.Col(
-                        dcc.Graph(
-                            id="under5-disease-chart",
-                            figure=treemap_fig,
-                            config={
-                                "displayModeBar": False,
-                                "responsive": True,
-                            },
-                            style={"height": "550px"},
-                        ),
-                        width=12,
-                        lg=8,
-                    ),
-            
-                    dbc.Col(
+                    html.H5("Most Common Outpatient Health Conditions (Under 5 Years)",className="fw-bold mb-3"),
+                    dbc.Row(
                         [
-                            html.H5(
-                                "Context",
-                                className="fw-bold mb-3",
-                                style={"marginLeft": "35px"}
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="under5-disease-chart",
+                                    figure=treemap_fig,
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+                                    style={"height": "550px"},
+                                ),
+                                width=12,
+                                lg=8,
                             ),
-            
-                            html.Ul(
+                    
+                            dbc.Col(
                                 [
-                                    html.Li(
-                                        "Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."
-                                    ),
-                                    html.Li(
-                                        "Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."
-                                    ),
-                                    html.Li(
-                                        "Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."
-                                    ),
-                                    html.Li(
-                                        "The top 10 conditions represented 49.3% of all outpatient visits among children under 5 years."
+                                    html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
+                                    html.Ul(
+                                        [
+                                            html.Li("Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."),
+                                            html.Li("Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."),
+                                            html.Li("Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."),
+                                            html.Li("The top 10 conditions represented 49.3% of all outpatient visits among children under 5 years."),
+                                        ],
+                                        style={"paddingLeft": "35px","lineHeight": "1.8","fontSize": "20px",},
                                     ),
                                 ],
-                                style={
-                                    "paddingLeft": "35px",
-                                    "lineHeight": "1.8",
-                                    "fontSize": "20px",
-                                },
+                                width=12,
+                                lg=3,
+                                style={"marginLeft": "-30px"},
                             ),
-                        ],
-                        width=12,
-                        lg=3,
-                        style={"marginLeft": "-30px"},
+                        ]
                     ),
-                ]
-            ),
                     
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                        html.H5(
-                            "Leading Causes of Mortality (Under 5 Years)",
-                            className="fw-bold mb-3"
-                        ), 
+                        html.H5("Leading Causes of Mortality (Under 5 Years)",className="fw-bold mb-3"), 
                         dcc.Graph(
                             id="under5-mortality-chart",
                             figure=mortality_fig,
@@ -454,10 +404,7 @@ layout = dbc.Container(
 
                     #line breaker
                     html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                    html.H5(
-                        "Most Common Outpatient Health Conditions (Over 5 Years)",
-                        className="fw-bold mb-3"
-                    ),
+                    html.H5("Most Common Outpatient Health Conditions (Over 5 Years)",className="fw-bold mb-3"),
                     
                     dbc.Row(
                         [
@@ -477,32 +424,14 @@ layout = dbc.Container(
                     
                             dbc.Col(
                                 [
-                                    html.H5(
-                                        "Context",
-                                        className="fw-bold mb-3",
-                                        style={"marginLeft": "35px"}
-                                    ),
-                    
+                                    html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
                                     html.Ul(
                                         [
-                                            html.Li(
-                                                "Confirmed malaria was the leading outpatient condition among individuals over 5 years, accounting for 444,240 cases (35.2%)."
-                                            ),
-                                            html.Li(
-                                                "Upper respiratory tract infections were the second most common condition, representing 17.4% of all cases."
-                                            ),
-                                            html.Li(
-                                                "Malaria and respiratory infections together accounted for more than half of the reported disease burden."
-                                            ),
-                                            html.Li(
-                                                "The top 20 conditions represented 80% of all outpatient visits."
-                                            ),
+                                            html.Li("Confirmed malaria was the leading outpatient condition among individuals over 5 years, accounting for 444,240 cases (35.2%)."),
+                                            html.Li("Malaria and respiratory infections together accounted for more than half of the reported disease burden."),
+                                            html.Li("The top 20 conditions represented 80% of all outpatient visits."),
                                         ],
-                                        style={
-                                            "paddingLeft": "35px",
-                                            "lineHeight": "1.8",
-                                            "fontSize": "20px",
-                                        },
+                                        style={"paddingLeft": "35px","lineHeight": "1.8","fontSize": "20px",},
                                     ),
                                 ],
                                 width=12,
