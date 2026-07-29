@@ -247,74 +247,62 @@ layout = dbc.Container(
 def update_climate_charts(selected_subcounty, selected_year):
 
     if selected_year == "ALL":
-        for fig in [
-            temp_fig,
-            rain_fig,
-            ndvi_fig,
-            humidity_fig,
-        ]:
-            fig.update_xaxes(
-                title="Year",
-                tickformat="%Y",
-                dtick="M12"
-            )
+    
+        dff = (
+            df[df["SubCounty"] == selected_subcounty]
+            .groupby("Month", as_index=False)
+            .agg({
+                "Average_Temp": "mean",
+                "Precipitation": "mean",
+                "Vegetation_NDVI": "mean",
+                "Humidity": "mean",
+            })
+        )
+    
     else:
-        figs = [
-            temp_fig,
-            rain_fig,
-            ndvi_fig,
-            humidity_fig,
-        ]
-        month_labels = [
-            "Jan", "Feb", "Mar", "Apr",
-            "May", "Jun", "Jul", "Aug",
-            "Sep", "Oct", "Nov", "Dec"
-        ]
-        for fig in figs:
-            fig.update_xaxes(
-                tickmode="array",
-                tickvals=list(range(1, 13)),
-                ticktext=month_labels
-            )
+        dff = df[
+            (df["SubCounty"] == selected_subcounty)
+            &
+            (df["Year"] == selected_year)
+        ].copy()
 
     temp_fig = px.line(
         dff,
-        x=x_column,
+        x="Month",
         y="Average_Temp",
         markers=True
     )
 
     rain_fig = px.bar(
         dff,
-        x=x_column,
+        x="Month",
         y="Precipitation"
     )
 
     ndvi_fig = px.area(
         dff,
-        x=x_column,
+        x="Month",
         y="Vegetation_NDVI"
     )
 
     humidity_fig = px.line(
         dff,
-        x=x_column,
+        x="Month",
         y="Humidity",
         markers=True
     )
 
-    if selected_year == "ALL":
-
-        for fig in [
-            temp_fig,
-            rain_fig,
-            ndvi_fig,
-            humidity_fig,
-        ]:
-            fig.update_xaxes(
-                tickformat="%Y",
-                dtick="M12"
-            )
+    month_labels = [
+    "Jan","Feb","Mar","Apr","May","Jun",
+    "Jul","Aug","Sep","Oct","Nov","Dec"
+    ]
+    
+    for fig in [temp_fig, rain_fig, ndvi_fig, humidity_fig]:
+        fig.update_xaxes(
+            tickmode="array",
+            tickvals=list(range(1, 13)),
+            ticktext=month_labels
+        )
 
     return (
         temp_fig,
