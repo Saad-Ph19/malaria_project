@@ -270,70 +270,172 @@ over5_mortality_fig.update_yaxes(
 )
 
 
+# =========================================================
+# THEME
+# =========================================================
+
+CARD_STYLE = {
+    "border": "none",
+    "borderRadius": "18px",
+    "boxShadow": "0 4px 15px rgba(0,0,0,0.08)",
+}
+
+INSIGHT_STYLE = {
+    "backgroundColor": "#f8fafc",
+    "border": "1px solid #e2e8f0",
+    "borderRadius": "12px",
+}
+
+# =========================================================
+# IMPROVE FIGURE STYLING
+# =========================================================
+
+population_figure.update_traces(
+    marker=dict(
+        color="#2563eb",
+        line=dict(color="#1d4ed8", width=1)
+    )
+)
+
+for fig in [
+    population_figure,
+    treemap_fig,
+    mortality_fig,
+    over5_treemap_fig,
+    over5_mortality_fig,
+]:
+    fig.update_layout(
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        font=dict(
+            family="Segoe UI",
+            size=14
+        )
+    )
+
+# =========================================================
+# LAYOUT
+# =========================================================
+
 layout = dbc.Container(
     [
+        #KPI Cards
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div("Total Population",className="text-muted",),
+                                html.H3("1.15M",className="fw-bold text-primary mb-0",),
+                            ]
+                        ),
+                        style=CARD_STYLE,
+                    ),
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+                ),
+
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div("Population Under 15",className="text-muted",),
+                                html.H3("475K+",className="fw-bold text-primary mb-0",),
+                            ]
+                        ),
+                        style=CARD_STYLE,
+                    ),
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+                ),
+
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div("Under-5 Conditions",className="text-muted",),
+                                html.H3("550K+",className="fw-bold text-primary mb-0",),
+                            ]
+                        ),
+                        style=CARD_STYLE,
+                    ),
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+                ),
+
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div("Over-5 Conditions",className="text-muted",),
+                                html.H3("1.26M+",className="fw-bold text-primary mb-0",),
+                            ]
+                        ),
+                        style=CARD_STYLE,
+                    ),
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+                ),
+            ],
+            className="mb-4",
+        ),
+
+        # Population information and vis
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H3("Siaya County Population Profile (2024/2025)", className="fw-bold mb-4",),
+                    html.H4("Population Distribution",className="fw-bold mb-1",),
+                    html.P("Projected population distribution across major age groups.",className="text-muted mb-4",),
                     dbc.Row(
-        [
-        # Left: Chart
-        dbc.Col(
-            [
-                html.H5(
-                    "Population Distribution",
-                    className="fw-bold mb-3"
-                ),
-
-                dcc.Graph(
-                    id="population-profile-chart",
-                    figure=population_figure,
-                    config={
-                        **svg_download_config,
-                        "toImageButtonOptions": {
-                            "format": "svg",
-                            "filename": "siaya_population_distribution",
-                            "height": 700,
-                            "width": 1200,
-                            "scale": 1,
-                        },
-                    },
-                    style={"height": "540px"},
-                ),
-            ],
-            width=12,
-            lg=8,
-        ),
-        # Right: Context Box
-        dbc.Col(
-            [
-                html.H5(
-                    "Context",
-                    className="fw-bold mb-3",
-                    style={"marginLeft": "35px"}
-                ),
-
-                html.Ul(
-                    [
-                        html.Li("Children under 15 years represent the largest population group in Siaya County."),
-                        html.Li("The county's age structure highlights the importance of child health, malaria prevention, and surveillance programs."),
-                        html.Li("Population demographics can affect disease burden, healthcare utilization, and public health planning."),
-                    ],
-                    style={"paddingLeft": "35px","fontSize": "20px","lineHeight": "1.8",},
-                ),
-            ],
-            width=12,
-            lg=3,
-            style={"marginLeft": "-30px"},
-        ),
-    ],
-    className="align-items-start",
+                        [
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="population-profile-chart",
+                                    figure=population_figure,
+                                    config=svg_download_config,
+                                    style={"height": "550px"},
+                                ),
+                                lg=8,
+                            ),
+                            dbc.Col(
+                                dbc.Card(
+                                    dbc.CardBody(
+                                        [
+                                            html.H6("Key Insights",className="fw-bold text-primary",),
+                                            html.Ul(
+                                                [
+                                                    html.Li("Children under 15 years represent the largest population group."),
+                                                    html.Li("Population demographics highlight the importance of child health and malaria prevention."),
+                                                    html.Li("Age structure influences disease burden, healthcare utilization, and resource planning."),
+                                                ],
+                                                style={"fontSize": "15px","lineHeight": "1.8",},
+                                            ),
+                                        ]
+                                    ),
+                                    style=INSIGHT_STYLE,
+                                ),
+                                lg=4,
+                            ),
+                        ]
+                    ),
+                ],
+                className="p-4",
             ),
-                    #line breaker
-                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                    #html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
-                    html.H5("Most Common Outpatient Health Conditions (Under 5 Years)",className="fw-bold mb-3"),
+            className="mb-4 border-0 shadow-sm",
+        ),
+
+        # UNDER 5 total conditions
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4("Most Common Outpatient Health Conditions (Under 5 Years)",className="fw-bold mb-1",),
+                    
+                    html.P("Distribution of reported outpatient conditions among children under five years.",className="text-muted mb-4",),
                     dbc.Row(
                         [
                             dbc.Col(
@@ -346,52 +448,59 @@ layout = dbc.Container(
                                     },
                                     style={"height": "550px"},
                                 ),
-                                width=12,
                                 lg=8,
                             ),
-                    
                             dbc.Col(
-                                [
-                                    html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
-                                    html.Ul(
+                                dbc.Card(
+                                    dbc.CardBody(
                                         [
-                                            html.Li("Confirmed malaria was the leading outpatient condition among children under 5, accounting for 114,002 cases (20.7% of all reported conditions)."),
-                                            html.Li("Upper respiratory tract infections were the second most common condition, representing 17.8% of all cases."),
-                                            html.Li("Malaria and respiratory infections together accounted for nearly 40% of the total disease burden."),
-                                            html.Li("The top 10 conditions represented 49.3% of all outpatient visits among children under 5 years."),
-                                        ],
-                                        style={"paddingLeft": "35px","lineHeight": "1.5","fontSize": "20px",},
+                                            html.H6("Key Insights",className="fw-bold text-primary",),
+                                            html.Ul(
+                                                [
+                                                    html.Li("Confirmed malaria was the leading outpatient condition."),
+                                                    html.Li("Upper respiratory tract infections ranked second."),
+                                                    html.Li("Malaria and respiratory illnesses accounted for nearly 40% of disease burden."),
+                                                    html.Li("Top 10 conditions represented almost half of all visits."),
+                                                ],
+                                                style={"fontSize": "15px","lineHeight": "1.8",},
+                                            ),
+                                        ]
                                     ),
-                                ],
-                                width=12,
-                                lg=3,
-                                style={"marginLeft": "-30px"},
+                                    style=INSIGHT_STYLE,
+                                ),
+                                lg=4,
                             ),
                         ]
                     ),
-                    
-                    #line breaker
-                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                        html.H5("Leading Causes of Mortality (Under 5 Years)",className="fw-bold mb-3"), 
-                        dcc.Graph(
-                            id="under5-mortality-chart",
-                            figure=mortality_fig,
-                            config={
-                                **svg_download_config,
-                                "toImageButtonOptions": {
-                                    "format": "svg",
-                                    "filename": "under5_leading_causes_of_mortality",
-                                    "height": 700,
-                                    "width": 1200,
-                                    "scale": 1,
-                                },
-                            },
-                        ),
+                ],
+                className="p-4",
+            ),
+            className="mb-4 border-0 shadow-sm",
+        ),
 
-                    #line breaker
-                    html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                    html.H5("Most Common Outpatient Health Conditions (Over 5 Years)",className="fw-bold mb-3"),
-                    
+        # UNDER 5 Mortality rate
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4("Leading Causes of Mortality (Under 5 Years)",className="fw-bold mb-1",),
+                    html.P("Most frequently reported causes of mortality among children under five years.",className="text-muted mb-4",),
+                    dcc.Graph(
+                        id="under5-mortality-chart",
+                        figure=mortality_fig,
+                        config=svg_download_config,
+                    ),
+                ],
+                className="p-4",
+            ),
+            className="mb-4 border-0 shadow-sm",
+        ),
+
+        # OVER 5 total conditions
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4("Most Common Outpatient Health Conditions (Over 5 Years)",className="fw-bold mb-1",),
+                    html.P("Distribution of reported outpatient conditions among individuals over five years.",className="text-muted mb-4",),
                     dbc.Row(
                         [
                             dbc.Col(
@@ -404,50 +513,55 @@ layout = dbc.Container(
                                     },
                                     style={"height": "550px"},
                                 ),
-                                width=12,
                                 lg=8,
                             ),
-                    
                             dbc.Col(
-                                [
-                                    html.H5("Context",className="fw-bold mb-3",style={"marginLeft": "35px"}),
-                                    html.Ul(
+                                dbc.Card(
+                                    dbc.CardBody(
                                         [
-                                            html.Li("Confirmed malaria was the leading outpatient condition among individuals over 5 years, accounting for 444,240 cases (35.2%)."),
-                                            html.Li("Malaria and respiratory infections together accounted for more than half of the reported disease burden."),
-                                            html.Li("The top 20 conditions represented 80% of all outpatient visits."),
-                                        ],
-                                        style={"paddingLeft": "35px","lineHeight": "1.8","fontSize": "20px",},
+                                            html.H6("Key Insights",className="fw-bold text-primary",),
+                                            html.Ul(
+                                                [
+                                                    html.Li("Confirmed malaria was the leading outpatient condition."),
+                                                    html.Li("Malaria and respiratory infections contributed substantially to disease burden."),
+                                                    html.Li("The top twenty conditions represented approximately 80% of visits."),
+                                                ],
+                                                style={"fontSize": "15px","lineHeight": "1.8",},
+                                            ),
+                                        ]
                                     ),
-                                ],
-                                width=12,
-                                lg=3,
-                                style={"marginLeft": "-30px"},
+                                    style=INSIGHT_STYLE,
+                                ),
+                                lg=4,
                             ),
                         ]
                     ),
-
-                        #line breaker
-                        html.Hr(style={"height": "3px","backgroundColor": "#adb5bd","border": "none","opacity": "0.5","margin": "25px 0",}),
-                        html.H5(
-                            "Leading Causes of Mortality (Over 5 Years)",
-                            className="fw-bold mb-3"
-                        ),
-                        
-                        dcc.Graph(
-                            id="over5-mortality-chart",
-                            figure=over5_mortality_fig,
-                            config={
-                                "displayModeBar": False,
-                                "responsive": True,
-                            },
-                        ),
-                    
-                ]#box border
+                ],
+                className="p-4",
             ),
-            className="mt-4 shadow-sm",
-        )
+            className="mb-4 border-0 shadow-sm",
+        ),
+
+        # OVER 5 Mortalitiy rate
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4("Leading Causes of Mortality (Over 5 Years)",className="fw-bold mb-1",),
+                    html.P("Most frequently reported causes of mortality among individuals over five years.",className="text-muted mb-4",),
+                    dcc.Graph(
+                        id="over5-mortality-chart",
+                        figure=over5_mortality_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+                ],
+                className="p-4",
+            ),
+            className="mb-4 border-0 shadow-sm",
+        ),
     ],
     fluid=True,
-    className="px-0",
+    style={"backgroundColor": "#f8fafc","padding": "25px",},
 )
