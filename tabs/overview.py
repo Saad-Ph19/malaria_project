@@ -150,19 +150,7 @@ conditions = [
 values = [12, 12, 11, 10, 10, 10, 8, 7, 6, 5]
 
 # Highlight malaria
-colors = [
-    "#4e79a7",  
-    "#4e79a7",  
-    "#4e79a7",  
-    "#4e79a7",  
-    "#4e79a7",  
-    "#4e79a7",  
-    "#d62728",  #malaria (highlight)
-    "#4e79a7",  
-    "#4e79a7",  
-    "#4e79a7"   
-]
-
+colors = ["#4e79a7",  "#4e79a7",  "#4e79a7",  "#4e79a7",  "#4e79a7",  "#4e79a7",  "#d62728", "#4e79a7",  "#4e79a7",  "#4e79a7"   ]
 mortality_fig = go.Figure(
     go.Bar(
         x=values,
@@ -318,7 +306,7 @@ layout = dbc.Container(
             width=12,
             lg=8,
         ),
-
+            html.H3("Health Conditions Among Children Under 5 Years (2024/2025)", className="fw-bold mb-4",),
         # Right: Context Box
         dbc.Col(
             [
