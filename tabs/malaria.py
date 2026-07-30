@@ -7,16 +7,21 @@ import numpy as np
 import glob
 import pandas as pd
 
+# import data
+
 files = glob.glob("Malaria_Data/*.xlsx")
+print("Files found:")
+print(files)
 
 df = pd.concat(
     [pd.read_excel(f) for f in files],
     ignore_index=True
 )
 
-#Importing Data
-files = glob.glob("Malaria_Data/*")
-print(files)
+print("Columns:")
+print(df.columns.tolist())
+
+
 
 under5_cases = df["Cases.Fever <5"].sum()
 
