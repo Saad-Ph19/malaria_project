@@ -43,23 +43,53 @@ negative_over5 = (
 # KPI VALUES
 # ==========================================================
 
-total_fever = int(df["Fever_Cases"].sum())
-total_tests = int(df["RDT_Done"].sum())
-positive_cases = int(df["RDT_Positive"].sum())
-total_act = int(df["ACT_Given"].sum())
+total_fever = int(
+    df["Cases.Fever"].sum()
+)
+
+total_tests = int(
+    df["Cases.Fever.with.RDT.Done"].sum()
+)
+
+positive_cases = int(
+    df["Cases.Fever.with.RDT.Positive <5"].sum()
+    +
+    df["Cases.Fever.with.RDT.Positive >=5"].sum()
+)
+
+total_act = int(
+    df["Cases.Fever.with.RDT.Positive.and.ACT"].sum()
+)
 
 # ==========================================================
 # FEVER → AGE GROUP → RDT OUTCOME SANKEY
 # ==========================================================
 
-under5_cases = 18000
-over5_cases = 26000
+under5_cases = (
+    df["Cases.Fever <5"].sum()
+)
 
-positive_under5 = 9000
-negative_under5 = 9000
+over5_cases = (
+    df["Cases.Fever >=5"].sum()
+)
 
-positive_over5 = 16000
-negative_over5 = 10000
+positive_under5 = (
+    df["Cases.Fever.with.RDT.Positive <5"].sum()
+)
+
+positive_over5 = (
+    df["Cases.Fever.with.RDT.Positive >=5"].sum()
+)
+
+negative_under5 = (
+    df["Cases.Fever.with.RDT.negative <5"].sum()
+)
+
+negative_over5 = (
+    df["Cases.Fever.with.RDT.negative >=5"].sum()
+)
+
+
 
 fever_age_fig = go.Figure(
 
@@ -252,7 +282,7 @@ rdt_sankey_fig.update_layout(
 )
 
 # ==========================================================
-# STOCKS
+# STOCKS (REAL DATA)
 # ==========================================================
 
 stock_fig = go.Figure()
@@ -260,67 +290,77 @@ stock_fig = go.Figure()
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
-        y=df["Stock_RDT"],
-        name="mRDT Stock"
+        y=df["Stock mRDTs"],
+        name="mRDT Stock",
+        marker_color="#2563eb"
     )
 )
 
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
-        y=df["Stock_ACT"],
-        name="ACT Stock"
+        y=df["Stock ACTs"],
+        name="ACT Stock",
+        marker_color="#16a34a"
     )
 )
 
 stock_fig.update_layout(
     barmode="group",
     template="plotly_white",
-    height=450
+    height=450,
+    margin=dict(l=20, r=20, t=20, b=20),
+    legend_title=""
 )
 
 # ==========================================================
-# CHEW WEIGHT BAND
+# CHEW WEIGHT BAND DISTRIBUTION (REAL DATA)
 # ==========================================================
 
 weight_fig = go.Figure()
 
 weight_fig.add_trace(
     go.Bar(
-        name="<15 kg",
-        x=months,
-        y=np.random.randint(100, 300, 12)
+        name="5-<15 kg",
+        x=df["Month"],
+        y=df["CHEW Weight band 5 to <15 kg"],
+        marker_color="#60a5fa"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="15-25 kg",
-        x=months,
-        y=np.random.randint(150, 400, 12)
+        name="15-<25 kg",
+        x=df["Month"],
+        y=df["CHEW Weight band 15 to <25 kg"],
+        marker_color="#34d399"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="25-35 kg",
-        x=months,
-        y=np.random.randint(100, 350, 12)
+        name="25-<35 kg",
+        x=df["Month"],
+        y=df["CHEW Weight band 25 to <35 kg"],
+        marker_color="#f59e0b"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="35+ kg",
-        x=months,
-        y=np.random.randint(100, 300, 12)
+        name="≥35 kg",
+        x=df["Month"],
+        y=df["CHEW Weight band ≥35 kg"],
+        marker_color="#ef4444"
     )
 )
 
 weight_fig.update_layout(
     barmode="stack",
     template="plotly_white",
-    height=450
+    height=450,
+    margin=dict(l=20, r=20, t=20, b=20),
+    legend_title=""
 )
 
 # ==========================================================
