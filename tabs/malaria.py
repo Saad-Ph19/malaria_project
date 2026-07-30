@@ -46,99 +46,195 @@ positive_cases = int(df["RDT_Positive"].sum())
 total_act = int(df["ACT_Given"].sum())
 
 # ==========================================================
-# FUNNEL
+# SANKEY 1 - SURVEILLANCE CASCADE
 # ==========================================================
 
-funnel_fig = go.Figure(
-    go.Funnel(
-        y=[
-            "Fever Cases",
-            "RDT Done",
-            "RDT Positive",
-            "ACT Treatment"
-        ],
-        x=[
-            total_fever,
-            total_tests,
-            positive_cases,
-            total_act
-        ],
-        marker=dict(
+not_tested = total_fever - total_tests
+rdt_negative = total_tests - positive_cases
+not_treated = max(0, positive_cases - total_act)
+
+cascade_fig = go.Figure(
+    go.Sankey(
+        arrangement="snap",
+        node=dict(
+            pad=25,
+            thickness=25,
+            line=dict(color="rgba(0,0,0,0.2)", width=1),
+
+            label=[
+                "Fever Cases",
+                "Tested",
+                "Not Tested",
+                "RDT Positive",
+                "RDT Negative",
+                "ACT Treatment",
+                "Not Treated"
+            ],
+
             color=[
                 "#2563eb",
-                "#3b82f6",
+                "#93c5fd",
+                "#fbbf24",
                 "#f97316",
-                "#16a34a"
-            ]
-        )
+                "#fed7aa",
+                "#16a34a",
+                "#dc2626"
+            ],
+        ),
+
+        link=dict(
+            source=[0,0,1,1,3,3],
+            target=[1,2,3,4,5,6],
+            value=[
+                total_tests,
+                not_tested,
+                positive_cases,
+                rdt_negative,
+                total_act,
+                not_treated
+            ],
+            color="rgba(180,180,180,0.40)",
+        ),
     )
 )
 
-funnel_fig.update_layout(
+cascade_fig.update_layout(
+    template="plotly_white",
+    height=600,
+    margin=dict(l=20,r=20,t=20,b=20)
+)
+
+# ==========================================================
+# SANKEY 2 - AGE DISTRIBUTION
+# ==========================================================
+
+under5_cases = 18000
+over5_cases = 26000
+
+age_sankey_fig = go.Figure(
+
+    go.Sankey(
+
+        arrangement="snap",
+
+        node=dict(
+            pad=25,
+            thickness=25,
+
+            label=[
+                "Fever Cases",
+                "Children <5",
+                "Individuals ≥5"
+            ],
+
+            color=[
+                "#2563eb",
+                "#f97316",
+                "#16a34a"
+            ]
+        ),
+
+        link=dict(
+            source=[0,0],
+            target=[1,2],
+            value=[
+                under5_cases,
+                over5_cases
+            ],
+            color=[
+                "rgba(249,115,22,0.40)",
+                "rgba(22,163,74,0.40)"
+            ]
+        )
+
+    )
+
+)
+
+age_sankey_fig.update_layout(
     template="plotly_white",
     height=500,
     margin=dict(l=20,r=20,t=20,b=20)
 )
 
 # ==========================================================
-# CASE TREND
+# SANKEY 3 - RDT OUTCOMES
 # ==========================================================
 
-trend_fig = go.Figure()
+positive_under5 = 9000
+positive_over5 = 16000
 
-trend_fig.add_trace(
-    go.Scatter(
-        x=df["Month"],
-        y=df["Fever_Cases"],
-        mode="lines+markers",
-        name="Fever Cases",
-        line=dict(color="#2563eb")
+negative_under5 = 4000
+negative_over5 = 9500
+
+rdt_sankey_fig = go.Figure(
+
+    go.Sankey(
+
+        arrangement="snap",
+
+        node=dict(
+
+            pad=25,
+            thickness=25,
+
+            label=[
+                "RDT Done",
+                "RDT Positive",
+                "RDT Negative",
+                "Positive <5",
+                "Positive ≥5",
+                "Negative <5",
+                "Negative ≥5"
+            ],
+
+            color=[
+                "#2563eb",
+                "#f97316",
+                "#fbbf24",
+                "#dc2626",
+                "#ef4444",
+                "#10b981",
+                "#059669"
+            ]
+        ),
+
+        link=dict(
+
+            source=[
+                0,0,
+                1,1,
+                2,2
+            ],
+
+            target=[
+                1,2,
+                3,4,
+                5,6
+            ],
+
+            value=[
+                positive_under5 + positive_over5,
+                negative_under5 + negative_over5,
+
+                positive_under5,
+                positive_over5,
+
+                negative_under5,
+                negative_over5
+            ],
+
+            color="rgba(180,180,180,0.40)"
+        )
+
     )
+
 )
 
-trend_fig.add_trace(
-    go.Scatter(
-        x=df["Month"],
-        y=df["RDT_Positive"],
-        mode="lines+markers",
-        name="RDT Positive",
-        line=dict(color="#ef4444")
-    )
-)
-
-trend_fig.update_layout(
+rdt_sankey_fig.update_layout(
     template="plotly_white",
-    height=450
-)
-
-# ==========================================================
-# COVERAGE
-# ==========================================================
-
-coverage_fig = go.Figure()
-
-coverage_fig.add_trace(
-    go.Scatter(
-        x=df["Month"],
-        y=df["Testing_Coverage"],
-        mode="lines+markers",
-        name="Testing Coverage (%)"
-    )
-)
-
-coverage_fig.add_trace(
-    go.Scatter(
-        x=df["Month"],
-        y=df["Treatment_Coverage"],
-        mode="lines+markers",
-        name="Treatment Coverage (%)"
-    )
-)
-
-coverage_fig.update_layout(
-    template="plotly_white",
-    height=450,
-    yaxis_title="%"
+    height=500,
+    margin=dict(l=20,r=20,t=20,b=20)
 )
 
 # ==========================================================
@@ -222,131 +318,79 @@ layout = dbc.Container(
     [
 
         dbc.Row(
-
+        
             [
-
+        
                 dbc.Col(
+        
                     dbc.Card(
+        
                         dbc.CardBody([
-                            html.Div("Fever Cases", className="text-muted"),
-                            html.H3(f"{total_fever:,}",
-                                    className="fw-bold text-primary")
-                        ]),
-                        className="border-0 shadow-sm"
-                    ),
-                    lg=3
-                ),
-
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody([
-                            html.Div("RDT Done", className="text-muted"),
-                            html.H3(f"{total_tests:,}",
-                                    className="fw-bold text-success")
-                        ]),
-                        className="border-0 shadow-sm"
-                    ),
-                    lg=3
-                ),
-
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody([
-                            html.Div("RDT Positive", className="text-muted"),
-                            html.H3(f"{positive_cases:,}",
-                                    className="fw-bold text-danger")
-                        ]),
-                        className="border-0 shadow-sm"
-                    ),
-                    lg=3
-                ),
-
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody([
-                            html.Div("ACT Treatment", className="text-muted"),
-                            html.H3(f"{total_act:,}",
-                                    className="fw-bold text-success")
-                        ]),
-                        className="border-0 shadow-sm"
-                    ),
-                    lg=3
-                ),
-
-            ],
-
-            className="mb-4"
-
-        ),
-
-        dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Community Malaria Surveillance Cascade",
-                    className="fw-bold mb-1"
-                ),
-                html.P(
-                    "Progression from fever presentation through testing, diagnosis and treatment.",
-                    className="text-muted mb-4"
-                ),
-                dcc.Graph(
-                    figure=funnel_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mb-4"
-        ),
-
-        dbc.Row(
-
-            [
-
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody([
-                            html.H5("Case Trends",
-                                    className="fw-bold"),
-                            html.P(
-                                "Monthly fever and malaria-positive cases.",
-                                className="text-muted"
-                            ),
-                            dcc.Graph(
-                                figure=trend_fig,
-                                config={"displayModeBar": False}
-                            )
-                        ]),
-                        className="border-0 shadow-sm"
-                    ),
-                    lg=6
-                ),
-
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody([
+        
                             html.H5(
-                                "Testing & Treatment Coverage",
+                                "Age Distribution of Fever Cases",
                                 className="fw-bold"
                             ),
+        
                             html.P(
-                                "Monthly surveillance performance indicators.",
+                                "Distribution of reported fever cases among children under 5 years and individuals 5 years and older.",
                                 className="text-muted"
                             ),
+        
                             dcc.Graph(
-                                figure=coverage_fig,
+                                figure=age_sankey_fig,
                                 config={"displayModeBar": False}
                             )
+        
                         ]),
+        
                         className="border-0 shadow-sm"
+        
                     ),
+        
                     lg=6
+        
                 ),
-
+        
+                dbc.Col(
+        
+                    dbc.Card(
+        
+                        dbc.CardBody([
+        
+                            html.H5(
+                                "RDT Outcomes by Age Group",
+                                className="fw-bold"
+                            ),
+        
+                            html.P(
+                                "Flow of tested individuals through positive and negative malaria diagnosis by age group.",
+                                className="text-muted"
+                            ),
+        
+                            dcc.Graph(
+                                figure=rdt_sankey_fig,
+                                config={"displayModeBar": False}
+                            )
+        
+                        ]),
+        
+                        className="border-0 shadow-sm"
+        
+                    ),
+        
+                    lg=6
+        
+                ),
+        
             ],
-
+        
             className="mb-4"
+        
+        )
 
-        ),
-
+            [
+        
         dbc.Row(
 
             [
