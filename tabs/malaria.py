@@ -388,8 +388,6 @@ layout = dbc.Container(
             className="mb-4"
         
         )
-
-            [
         
         dbc.Row(
 
