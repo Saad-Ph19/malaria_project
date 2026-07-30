@@ -87,18 +87,145 @@ sankey_fig.update_layout(
 # ------------------------------------------------------------------
 
 layout = dbc.Container(
+
     [
+
+        # =====================================================
+        # KPI CARDS
+        # =====================================================
+
+        dbc.Row(
+
+            [
+
+                dbc.Col(
+
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div(
+                                    "Fever Cases",
+                                    className="text-muted"
+                                ),
+                                html.H3(
+                                    f"{fever_cases:,}",
+                                    className="fw-bold text-primary mb-0"
+                                ),
+                            ]
+                        ),
+                        className="border-0 shadow-sm",
+                    ),
+
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+
+                ),
+
+                dbc.Col(
+
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div(
+                                    "Tested",
+                                    className="text-muted"
+                                ),
+                                html.H3(
+                                    f"{tested:,}",
+                                    className="fw-bold text-success mb-0"
+                                ),
+                            ]
+                        ),
+                        className="border-0 shadow-sm",
+                    ),
+
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+
+                ),
+
+                dbc.Col(
+
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div(
+                                    "RDT Positive",
+                                    className="text-muted"
+                                ),
+                                html.H3(
+                                    f"{rdt_positive:,}",
+                                    className="fw-bold text-danger mb-0"
+                                ),
+                            ]
+                        ),
+                        className="border-0 shadow-sm",
+                    ),
+
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+
+                ),
+
+                dbc.Col(
+
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+                                html.Div(
+                                    "ACT Treated",
+                                    className="text-muted"
+                                ),
+                                html.H3(
+                                    f"{treated:,}",
+                                    className="fw-bold text-success mb-0"
+                                ),
+                            ]
+                        ),
+                        className="border-0 shadow-sm",
+                    ),
+
+                    lg=3,
+                    md=6,
+                    className="mb-3",
+
+                ),
+
+            ],
+
+            className="mb-4",
+
+        ),
+
+        # =====================================================
+        # SANKEY SECTION
+        # =====================================================
+
         dbc.Card(
+
             dbc.CardBody(
+
                 [
-                    html.H3(
-                        "Community Malaria Surveillance",
-                        className="fw-bold mb-4",
+
+                    html.H4(
+                        "Community Malaria Surveillance Cascade",
+                        className="fw-bold mb-1",
+                    ),
+
+                    html.P(
+                        "Patient flow from reported fever cases through malaria testing and treatment.",
+                        className="text-muted mb-4",
                     ),
 
                     dbc.Row(
+
                         [
+
                             dbc.Col(
+
                                 dcc.Graph(
                                     figure=sankey_fig,
                                     config={
@@ -106,47 +233,121 @@ layout = dbc.Container(
                                         "responsive": True,
                                     },
                                 ),
-                                lg=9,
+
+                                lg=8,
+
                             ),
 
                             dbc.Col(
-                                [
-                                    html.H5(
-                                        "Key Insights",
-                                        className="fw-bold mb-3",
+
+                                dbc.Card(
+
+                                    dbc.CardBody(
+
+                                        [
+
+                                            html.H6(
+                                                "Key Findings",
+                                                className="fw-bold text-primary"
+                                            ),
+
+                                            html.Ul(
+
+                                                [
+
+                                                    html.Li(
+                                                        "Most fever cases proceeded to diagnostic testing."
+                                                    ),
+
+                                                    html.Li(
+                                                        "A large proportion of tested individuals were RDT positive."
+                                                    ),
+
+                                                    html.Li(
+                                                        "Treatment coverage among confirmed cases was high."
+                                                    ),
+
+                                                    html.Li(
+                                                        "Only a small number of confirmed cases did not receive ACT treatment."
+                                                    ),
+
+                                                ],
+
+                                                style={
+                                                    "lineHeight": "1.8",
+                                                    "fontSize": "15px",
+                                                },
+
+                                            ),
+
+                                        ]
+
                                     ),
 
-                                    html.Ul(
-                                        [
-                                            html.Li(
-                                                "Most reported fever cases underwent diagnostic testing."
-                                            ),
-                                            html.Li(
-                                                "A substantial proportion of tested individuals were RDT positive."
-                                            ),
-                                            html.Li(
-                                                "Most RDT-positive cases received ACT treatment."
-                                            ),
-                                            html.Li(
-                                                "The visualization summarizes the community malaria testing and treatment pathway."
-                                            ),
-                                        ],
-                                        style={
-                                            "lineHeight": "1.8",
-                                            "fontSize": "18px",
-                                        },
-                                    ),
-                                ],
-                                lg=3,
+                                    style={
+                                        "backgroundColor": "#f8fafc",
+                                        "border": "1px solid #e2e8f0",
+                                        "borderRadius": "12px",
+                                    },
+
+                                ),
+
+                                lg=4,
+
                             ),
+
                         ]
+
                     ),
+
                 ]
+
             ),
-            className="mt-4 shadow-sm",
-        )
+
+            className="border-0 shadow-sm mb-4",
+
+        ),
+
+        # =====================================================
+        # INTERPRETATION
+        # =====================================================
+
+        dbc.Card(
+
+            dbc.CardBody(
+
+                [
+
+                    html.H5(
+                        "Interpretation",
+                        className="fw-bold mb-3"
+                    ),
+
+                    html.P(
+                        "This visualization summarizes the community malaria surveillance pathway. "
+                        "It highlights progression from fever presentation through testing, diagnosis, "
+                        "and treatment, allowing identification of potential gaps in testing coverage "
+                        "or case management.",
+                        className="text-muted mb-0",
+                    ),
+
+                ]
+
+            ),
+
+            className="border-0 shadow-sm",
+
+        ),
+
     ],
+
     fluid=True,
-    className="px-0",
+
+    style={
+        "backgroundColor": "#f8fafc",
+        "padding": "20px",
+        "minHeight": "100vh",
+    },
+
 )
 
