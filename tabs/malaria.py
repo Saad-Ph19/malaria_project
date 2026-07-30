@@ -327,6 +327,104 @@ weight_fig.update_layout(
 layout = dbc.Container(
 
     [
+
+        # =====================================================
+# FILTER PANEL (PLACEHOLDER)
+# =====================================================
+
+dbc.Card(
+
+    dbc.CardBody(
+
+        [
+
+                dbc.Row(
+        
+                        [
+        
+                            dbc.Col(
+        
+                                [
+        
+                                    html.Label(
+                                        "Subcounty",
+                                        className="fw-bold text-muted mb-2"
+                                    ),
+        
+                                    dcc.Dropdown(
+                                        id="malaria-subcounty-dropdown",
+        
+                                        options=[
+                                            {"label": "Alego Usonga", "value": "alego"},
+                                            {"label": "Bondo", "value": "bondo"},
+                                            {"label": "Rarieda", "value": "rarieda"},
+                                            {"label": "Ugunja", "value": "ugunja"},
+                                            {"label": "Ugenya", "value": "ugenya"},
+                                            {"label": "Gem", "value": "gem"},
+                                        ],
+        
+                                        value="alego",
+        
+                                        clearable=False,
+        
+                                    ),
+        
+                                ],
+        
+                                lg=8,
+        
+                            ),
+        
+                            dbc.Col(
+        
+                                [
+        
+                                    html.Label(
+                                        "Year",
+                                        className="fw-bold text-muted mb-2"
+                                    ),
+        
+                                    dcc.Dropdown(
+        
+                                        id="malaria-year-dropdown",
+        
+                                        options=[
+                                            {"label": "All Years", "value": "ALL"},
+                                            {"label": "2022", "value": 2022},
+                                            {"label": "2023", "value": 2023},
+                                            {"label": "2024", "value": 2024},
+                                            {"label": "2025", "value": 2025},
+                                            {"label": "2026", "value": 2026},
+                                        ],
+        
+                                        value="ALL",
+        
+                                        clearable=False,
+        
+                                    ),
+        
+                                ],
+        
+                                lg=4,
+        
+                            ),
+        
+                        ],
+        
+                    ),
+        
+                ]
+        
+            ),
+        
+            className="border-0 shadow-sm mb-4",
+        
+            style={
+                "borderRadius": "16px",
+            },
+        
+        ),
+        
         dbc.Card(
         
             dbc.CardBody([
