@@ -4,37 +4,40 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import glob
+import pandas as pd
 
-# ==========================================================
-# FAKE DATA
-# ==========================================================
+files = glob.glob("Malaria_Data/*.xlsx")
 
-months = [
-    "Jan","Feb","Mar","Apr","May","Jun",
-    "Jul","Aug","Sep","Oct","Nov","Dec"
-]
-
-np.random.seed(42)
-
-df = pd.DataFrame({
-    "Month": months,
-    "Fever_Cases": np.random.randint(2500, 5000, 12),
-    "RDT_Done": np.random.randint(2200, 4500, 12),
-    "RDT_Positive": np.random.randint(1000, 3000, 12),
-    "ACT_Given": np.random.randint(900, 2800, 12),
-    "Stock_RDT": np.random.randint(2000, 10000, 12),
-    "Stock_ACT": np.random.randint(2000, 10000, 12),
-    "Loss_RDT": np.random.randint(0, 100, 12),
-    "Loss_ACT": np.random.randint(0, 80, 12),
-})
-
-df["Testing_Coverage"] = (
-    df["RDT_Done"] / df["Fever_Cases"] * 100
+df = pd.concat(
+    [pd.read_excel(f) for f in files],
+    ignore_index=True
 )
 
-df["Treatment_Coverage"] = (
-    df["ACT_Given"] / df["RDT_Positive"] * 100
+#Importing Data
+files = glob.glob("Malaria_Data/*")
+print(files)
+
+under5_cases = df["Cases.Fever <5"].sum()
+
+over5_cases = df["Cases.Fever >=5"].sum()
+
+positive_under5 = (
+    df["Cases.Fever.with.RDT.Positive <5"].sum()
 )
+
+negative_under5 = (
+    df["Cases.Fever.with.RDT.Negative <5"].sum()
+)
+
+positive_over5 = (
+    df["Cases.Fever.with.RDT.Positive >=5"].sum()
+)
+
+negative_over5 = (
+    df["Cases.Fever.with.RDT.Negative >=5"].sum()
+)
+
 
 # ==========================================================
 # KPI VALUES
