@@ -46,117 +46,128 @@ positive_cases = int(df["RDT_Positive"].sum())
 total_act = int(df["ACT_Given"].sum())
 
 # ==========================================================
-# SANKEY 1 - SURVEILLANCE CASCADE
-# ==========================================================
-
-not_tested = total_fever - total_tests
-rdt_negative = total_tests - positive_cases
-not_treated = max(0, positive_cases - total_act)
-
-cascade_fig = go.Figure(
-    go.Sankey(
-        arrangement="snap",
-        node=dict(
-            pad=25,
-            thickness=25,
-            line=dict(color="rgba(0,0,0,0.2)", width=1),
-
-            label=[
-                "Fever Cases",
-                "Tested",
-                "Not Tested",
-                "RDT Positive",
-                "RDT Negative",
-                "ACT Treatment",
-                "Not Treated"
-            ],
-
-            color=[
-                "#2563eb",
-                "#93c5fd",
-                "#fbbf24",
-                "#f97316",
-                "#fed7aa",
-                "#16a34a",
-                "#dc2626"
-            ],
-        ),
-
-        link=dict(
-            source=[0,0,1,1,3,3],
-            target=[1,2,3,4,5,6],
-            value=[
-                total_tests,
-                not_tested,
-                positive_cases,
-                rdt_negative,
-                total_act,
-                not_treated
-            ],
-            color="rgba(180,180,180,0.40)",
-        ),
-    )
-)
-
-cascade_fig.update_layout(
-    template="plotly_white",
-    height=600,
-    margin=dict(l=20,r=20,t=20,b=20)
-)
-
-# ==========================================================
-# SANKEY 2 - AGE DISTRIBUTION
+# FEVER → AGE GROUP → RDT OUTCOME SANKEY
 # ==========================================================
 
 under5_cases = 18000
 over5_cases = 26000
 
-age_sankey_fig = go.Figure(
+positive_under5 = 9000
+negative_under5 = 9000
+
+positive_over5 = 16000
+negative_over5 = 10000
+
+fever_age_fig = go.Figure(
 
     go.Sankey(
 
         arrangement="snap",
 
         node=dict(
+
             pad=25,
             thickness=25,
 
+            line=dict(
+                color="rgba(0,0,0,0.2)",
+                width=1
+            ),
+
             label=[
+
                 "Fever Cases",
+
                 "Children <5",
-                "Individuals ≥5"
+                "Individuals ≥5",
+
+                "RDT Positive <5",
+                "RDT Negative <5",
+
+                "RDT Positive ≥5",
+                "RDT Negative ≥5",
+
             ],
 
             color=[
+
                 "#2563eb",
+
                 "#f97316",
-                "#16a34a"
-            ]
+                "#16a34a",
+
+                "#dc2626",
+                "#fbbf24",
+
+                "#b91c1c",
+                "#fde68a",
+
+            ],
+
         ),
 
         link=dict(
-            source=[0,0],
-            target=[1,2],
-            value=[
-                under5_cases,
-                over5_cases
+
+            source=[
+
+                # Fever → Age group
+                0, 0,
+
+                # <5
+                1, 1,
+
+                # ≥5
+                2, 2
+
             ],
+
+            target=[
+
+                1, 2,
+
+                3, 4,
+
+                5, 6
+
+            ],
+
+            value=[
+
+                under5_cases,
+                over5_cases,
+
+                positive_under5,
+                negative_under5,
+
+                positive_over5,
+                negative_over5
+
+            ],
+
             color=[
-                "rgba(249,115,22,0.40)",
-                "rgba(22,163,74,0.40)"
-            ]
-        )
+
+                "rgba(249,115,22,0.35)",
+                "rgba(22,163,74,0.35)",
+
+                "rgba(220,38,38,0.35)",
+                "rgba(251,191,36,0.35)",
+
+                "rgba(185,28,28,0.35)",
+                "rgba(253,230,138,0.35)"
+
+            ],
+
+        ),
 
     )
 
 )
 
-age_sankey_fig.update_layout(
+fever_age_fig.update_layout(
     template="plotly_white",
-    height=500,
-    margin=dict(l=20,r=20,t=20,b=20)
+    height=700,
+    margin=dict(l=20, r=20, t=20, b=20)
 )
-
 # ==========================================================
 # SANKEY 3 - RDT OUTCOMES
 # ==========================================================
@@ -316,76 +327,30 @@ weight_fig.update_layout(
 layout = dbc.Container(
 
     [
-
-        dbc.Row(
+        dbc.Card(
         
-            [
+            dbc.CardBody([
         
-                dbc.Col(
-        
-                    dbc.Card(
-        
-                        dbc.CardBody([
-        
-                            html.H5(
-                                "Age Distribution of Fever Cases",
-                                className="fw-bold"
-                            ),
-        
-                            html.P(
-                                "Distribution of reported fever cases among children under 5 years and individuals 5 years and older.",
-                                className="text-muted"
-                            ),
-        
-                            dcc.Graph(
-                                figure=age_sankey_fig,
-                                config={"displayModeBar": False}
-                            )
-        
-                        ]),
-        
-                        className="border-0 shadow-sm"
-        
-                    ),
-        
-                    lg=6
-        
+                html.H4(
+                    "Fever Cases by Age Group and RDT Outcome",
+                    className="fw-bold mb-1"
                 ),
         
-                dbc.Col(
-        
-                    dbc.Card(
-        
-                        dbc.CardBody([
-        
-                            html.H5(
-                                "RDT Outcomes by Age Group",
-                                className="fw-bold"
-                            ),
-        
-                            html.P(
-                                "Flow of tested individuals through positive and negative malaria diagnosis by age group.",
-                                className="text-muted"
-                            ),
-        
-                            dcc.Graph(
-                                figure=rdt_sankey_fig,
-                                config={"displayModeBar": False}
-                            )
-        
-                        ]),
-        
-                        className="border-0 shadow-sm"
-        
-                    ),
-        
-                    lg=6
-        
+                html.P(
+                    "Distribution of reported fever cases by age group and malaria diagnostic outcome.",
+                    className="text-muted mb-4"
                 ),
         
-            ],
+                dcc.Graph(
+                    figure=fever_age_fig,
+                    config={
+                        "displayModeBar": False
+                    }
+                )
         
-            className="mb-4"
+            ]),
+        
+            className="border-0 shadow-sm mb-4"
         
         ),
         
