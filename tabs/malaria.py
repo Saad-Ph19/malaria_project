@@ -332,7 +332,7 @@ layout = dbc.Container(
             dbc.CardBody([
         
                 html.H4(
-                    "Fever Cases by Age Group and RDT Outcome",
+                    "Fever Cases by Age Group and RDT Outcome (Fake placerholder data)",
                     className="fw-bold mb-1"
                 ),
         
