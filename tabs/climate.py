@@ -251,6 +251,7 @@ def update_climate_charts(selected_subcounty, selected_year):
         dff = df[
             df["SubCounty"] == selected_subcounty
         ].copy()
+        dff = dff.sort_values("Date")
     
         x_col = "Date"
     
