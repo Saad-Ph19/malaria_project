@@ -241,15 +241,14 @@ dbc.Card(
                                     html.Label(
                                         "Subcounty",
                                         className="fw-bold text-muted mb-2"
-                                    ),
-                                            
+                                    ),     
                                     dcc.Dropdown(
                                         id="malaria-subcounty-dropdown",
                                         options=[
-                                            {"label": "All Years", "value": "ALL"}
+                                            {"label": "All Subcounties", "value": "ALL"}
                                         ] + [
-                                            {"label": str(y), "value": str(y)}
-                                            for y in sorted(df["Year"].unique())
+                                            {"label": str(s), "value": str(s)}
+                                            for s in sorted(df["Subcounty"].dropna().unique())
                                         ],
                                         value="ALL",
                                         clearable=False,
