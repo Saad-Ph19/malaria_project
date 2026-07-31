@@ -7,17 +7,20 @@ import numpy as np
 import glob
 import os
 
+bednet_files = glob.glob("Bednet_Data/*.xlsx")
+
 bednet_df = pd.read_excel(
-    "Bednet_Data/Bednets Distribution From 2020 to 2026.xlsx",
+    bednet_files[0],
     header=1
 )
+
 bednet_df.columns = bednet_df.columns.str.strip()
+
+print("BEDNET COLUMNS:")
+print(bednet_df.columns.tolist())
+
+print("BEDNET HEAD:")
 print(bednet_df.head())
-bednet_long = bednet_df.melt(
-    id_vars=["Year"],
-    var_name="Subcounty",
-    value_name="Bed_Nets"
-)
 
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
