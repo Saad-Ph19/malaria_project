@@ -25,25 +25,7 @@ df = pd.concat(
 
 df.columns = df.columns.str.strip()
 
-# ==========================================================
-# KPI VALUES
-# ==========================================================
-
-total_fever = int(df["Cases.Fever"].sum())
-
-total_tests = int(df["Cases.Fever.with.RDT.Done"].sum())
-
-positive_cases = int(
-    df["Cases.Fever.with.RDT.Positive < 5"].sum()
-    + df["Cases.Fever.with.RDT.Positive >= 5"].sum()
-)
-
-total_act = int(
-    df["Cases.Fever.with.RDT.Positive.and.ACT"].sum()
-)
-
 # Sankey Vis
-
 under5_cases = df["Cases.Fever < 5"].sum()
 over5_cases = df["Cases.Fever >= 5"].sum()
 positive_under5 = (df["Cases.Fever.with.RDT.Positive < 5"].sum())
@@ -446,6 +428,18 @@ def update_malaria(subcounty, year):
         filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum()
     )
 
+    not_tested_under5 = (
+        under5_cases
+        - positive_under5
+        - negative_under5
+    )
+    
+    not_tested_over5 = (
+        over5_cases
+        - positive_over5
+        - negative_over5
+    )
+
     sankey_fig = go.Figure(
         go.Sankey(
             arrangement="snap",
@@ -456,38 +450,64 @@ def update_malaria(subcounty, year):
 
                 label=[
                     "Fever Cases",
+                
                     "Children <5",
                     "Individuals ≥5",
+                
                     "RDT Positive <5",
                     "RDT Negative <5",
+                    "Not Tested <5",
+                
                     "RDT Positive ≥5",
-                    "RDT Negative ≥5"
-                ],
+                    "RDT Negative ≥5",
+                    "Not Tested ≥5"
+                ]
 
                 color=[
                     "#2563eb",
+                
                     "#f97316",
                     "#16a34a",
+                
                     "#dc2626",
                     "#fbbf24",
+                    "#6b7280",
+                
                     "#b91c1c",
-                    "#fde68a"
+                    "#fde68a",
+                    "#9ca3af"
                 ]
             ),
 
             link=dict(
 
-                source=[0,0,1,1,2,2],
-
-                target=[1,2,3,4,5,6],
-
+                source=[
+                    0,0,
+                
+                    1,1,1,
+                
+                    2,2,2
+                ],
+                
+                target=[
+                    1,2,
+                
+                    3,4,5,
+                
+                    6,7,8
+                ],
+                
                 value=[
                     under5_cases,
                     over5_cases,
+                
                     positive_under5,
                     negative_under5,
+                    not_tested_under5,
+                
                     positive_over5,
-                    negative_over5
+                    negative_over5,
+                    not_tested_over5
                 ]
             )
         )
