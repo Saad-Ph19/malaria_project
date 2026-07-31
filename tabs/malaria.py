@@ -1,4 +1,5 @@
 from dash import html, dcc
+from dash import Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -10,17 +11,26 @@ import pandas as pd
 # ==========================================================
 # LOAD MALARIA DATA
 # ==========================================================
-
 files = glob.glob("Malaria_Data/*.xlsx")
 
+df_list = []
+
+for file in files:
+
+    temp = pd.read_excel(file, header=1)
+
+    year = os.path.basename(file)[:4]
+
+    temp["Year"] = year
+
+    df_list.append(temp)
+
 df = pd.concat(
-    [pd.read_excel(f, header=1) for f in files],
+    df_list,
     ignore_index=True
 )
 
 df.columns = df.columns.str.strip()
-
-print(df.columns.tolist())
 
 # ==========================================================
 # KPI VALUES
@@ -259,25 +269,18 @@ dbc.Card(
                                         "Subcounty",
                                         className="fw-bold text-muted mb-2"
                                     ),
-        
+                                            
                                     dcc.Dropdown(
                                         id="malaria-subcounty-dropdown",
-        
                                         options=[
-                                            {"label": "Alego Usonga", "value": "alego"},
-                                            {"label": "Bondo", "value": "bondo"},
-                                            {"label": "Rarieda", "value": "rarieda"},
-                                            {"label": "Ugunja", "value": "ugunja"},
-                                            {"label": "Ugenya", "value": "ugenya"},
-                                            {"label": "Gem", "value": "gem"},
+                                            {"label": "All Subcounties", "value": "ALL"}
+                                        ] + [
+                                            {"label": s, "value": s}
+                                            for s in sorted(df["Subcounty"].dropna().unique())
                                         ],
-        
-                                        value="alego",
-        
+                                        value="ALL",
                                         clearable=False,
-        
                                     ),
-        
                                 ],
         
                                 lg=8,
@@ -294,24 +297,17 @@ dbc.Card(
                                     ),
         
                                     dcc.Dropdown(
-        
                                         id="malaria-year-dropdown",
-        
                                         options=[
-                                            {"label": "All Years", "value": "ALL"},
-                                            {"label": "2022", "value": 2022},
-                                            {"label": "2023", "value": 2023},
-                                            {"label": "2024", "value": 2024},
-                                            {"label": "2025", "value": 2025},
-                                            {"label": "2026", "value": 2026},
+                                            {"label": "All Years", "value": "ALL"}
+                                        ] + [
+                                            {"label": str(y), "value": str(y)}
+                                            for y in sorted(df["Year"].unique())
                                         ],
-        
                                         value="ALL",
-        
                                         clearable=False,
-        
-                                    ),
-        
+                                    )
+                                            
                                 ],
         
                                 lg=4,
@@ -349,6 +345,7 @@ dbc.Card(
                 ),
         
                 dcc.Graph(
+                    id="malaria-sankey",
                     figure=fever_age_fig,
                     config={
                         "displayModeBar": False
@@ -377,6 +374,7 @@ dbc.Card(
                                 className="text-muted"
                             ),
                             dcc.Graph(
+                                id="malaria-stock",
                                 figure=stock_fig,
                                 config={"displayModeBar": False}
                             )
@@ -398,6 +396,7 @@ dbc.Card(
                                 className="text-muted"
                             ),
                             dcc.Graph(
+                                id="malaria-weight",
                                 figure=weight_fig,
                                 config={"displayModeBar": False}
                             )
@@ -422,3 +421,35 @@ dbc.Card(
     },
 
 )
+
+#Callback function
+@app.callback(
+    [
+        Output("malaria-sankey", "figure"),
+        Output("malaria-stock", "figure"),
+        Output("malaria-weight", "figure"),
+    ],
+    [
+        Input("malaria-subcounty-dropdown", "value"),
+        Input("malaria-year-dropdown", "value"),
+    ]
+)
+def update_malaria(subcounty, year):
+
+    filtered_df = df.copy()
+
+    if subcounty != "ALL":
+        filtered_df = filtered_df[
+            filtered_df["Subcounty"] == subcounty
+        ]
+
+    if year != "ALL":
+        filtered_df = filtered_df[
+            filtered_df["Year"] == year
+        ]
+
+    # recalculate Sankey values here
+    # rebuild stock_fig here
+    # rebuild weight_fig here
+
+    return fever_age_fig, stock_fig, weight_fig
