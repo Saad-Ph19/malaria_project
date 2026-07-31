@@ -9,21 +9,13 @@ import glob
 import pandas as pd
 import os
 
-# ==========================================================
-# LOAD MALARIA DATA
-# ==========================================================
+# Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
-
 df_list = []
-
 for file in files:
-
     temp = pd.read_excel(file, header=1)
-
     year = os.path.basename(file)[:4]
-
     temp["Year"] = year
-
     df_list.append(temp)
 
 df = pd.concat(
@@ -50,45 +42,25 @@ total_act = int(
     df["Cases.Fever.with.RDT.Positive.and.ACT"].sum()
 )
 
-# ==========================================================
-# SANKEY DATA
-# ==========================================================
+# Sankey Vis
 
 under5_cases = df["Cases.Fever < 5"].sum()
-
 over5_cases = df["Cases.Fever >= 5"].sum()
-
-positive_under5 = (
-    df["Cases.Fever.with.RDT.Positive < 5"].sum()
-)
-
-positive_over5 = (
-    df["Cases.Fever.with.RDT.Positive >= 5"].sum()
-)
-
-negative_under5 = (
-    df["Cases.Fever.with.RDT. negative < 5"].sum()
-)
-
-negative_over5 = (
-    df["Cases.Fever.with.RDT. negative >= 5"].sum()
-)
+positive_under5 = (df["Cases.Fever.with.RDT.Positive < 5"].sum())
+positive_over5 = (df["Cases.Fever.with.RDT.Positive >= 5"].sum())
+negative_under5 = (df["Cases.Fever.with.RDT. negative < 5"].sum())
+negative_over5 = (df["Cases.Fever.with.RDT. negative >= 5"].sum())
 
 # ==========================================================
 # FEVER → AGE GROUP → RDT OUTCOME SANKEY
 # ==========================================================
 
 fever_age_fig = go.Figure(
-
     go.Sankey(
-
         arrangement="snap",
-
         node=dict(
-
             pad=25,
             thickness=25,
-
             line=dict(
                 color="rgba(0,0,0,0.2)",
                 width=1
@@ -274,10 +246,10 @@ dbc.Card(
                                     dcc.Dropdown(
                                         id="malaria-subcounty-dropdown",
                                         options=[
-                                            {"label": "All Subcounties", "value": "ALL"}
+                                            {"label": "All Years", "value": "ALL"}
                                         ] + [
-                                            {"label": s, "value": s}
-                                            for s in sorted(df["Subcounty"].dropna().unique())
+                                            {"label": str(y), "value": str(y)}
+                                            for y in sorted(df["Year"].unique())
                                         ],
                                         value="ALL",
                                         clearable=False,
@@ -439,18 +411,170 @@ def update_malaria(subcounty, year):
 
     filtered_df = df.copy()
 
+    # Filter Subcounty
     if subcounty != "ALL":
         filtered_df = filtered_df[
             filtered_df["Subcounty"] == subcounty
         ]
 
+    # Filter Year
     if year != "ALL":
         filtered_df = filtered_df[
-            filtered_df["Year"] == year
+            filtered_df["Year"].astype(str) == str(year)
         ]
 
-    # recalculate Sankey values here
-    # rebuild stock_fig here
-    # rebuild weight_fig here
+    # =========================
+    # SANKEY VALUES
+    # =========================
 
-    return fever_age_fig, stock_fig, weight_fig
+    under5_cases = filtered_df["Cases.Fever < 5"].sum()
+
+    over5_cases = filtered_df["Cases.Fever >= 5"].sum()
+
+    positive_under5 = (
+        filtered_df["Cases.Fever.with.RDT.Positive < 5"].sum()
+    )
+
+    positive_over5 = (
+        filtered_df["Cases.Fever.with.RDT.Positive >= 5"].sum()
+    )
+
+    negative_under5 = (
+        filtered_df["Cases.Fever.with.RDT. negative < 5"].sum()
+    )
+
+    negative_over5 = (
+        filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum()
+    )
+
+    sankey_fig = go.Figure(
+        go.Sankey(
+            arrangement="snap",
+
+            node=dict(
+                pad=25,
+                thickness=25,
+
+                label=[
+                    "Fever Cases",
+                    "Children <5",
+                    "Individuals ≥5",
+                    "RDT Positive <5",
+                    "RDT Negative <5",
+                    "RDT Positive ≥5",
+                    "RDT Negative ≥5"
+                ],
+
+                color=[
+                    "#2563eb",
+                    "#f97316",
+                    "#16a34a",
+                    "#dc2626",
+                    "#fbbf24",
+                    "#b91c1c",
+                    "#fde68a"
+                ]
+            ),
+
+            link=dict(
+
+                source=[0,0,1,1,2,2],
+
+                target=[1,2,3,4,5,6],
+
+                value=[
+                    under5_cases,
+                    over5_cases,
+                    positive_under5,
+                    negative_under5,
+                    positive_over5,
+                    negative_over5
+                ]
+            )
+        )
+    )
+
+    sankey_fig.update_layout(
+        template="plotly_white",
+        height=700
+    )
+
+    # =========================
+    # STOCK FIGURE
+    # =========================
+
+    stock_fig = go.Figure()
+
+    stock_fig.add_trace(
+        go.Bar(
+            x=filtered_df["Month"],
+            y=filtered_df["Stock mRDTs"],
+            name="mRDT Stock",
+            marker_color="#2563eb"
+        )
+    )
+
+    stock_fig.add_trace(
+        go.Bar(
+            x=filtered_df["Month"],
+            y=filtered_df["Stock ACTs"],
+            name="ACT Stock",
+            marker_color="#16a34a"
+        )
+    )
+
+    stock_fig.update_layout(
+        barmode="group",
+        template="plotly_white",
+        height=450
+    )
+
+    # =========================
+    # WEIGHT FIGURE
+    # =========================
+
+    weight_fig = go.Figure()
+
+    weight_fig.add_trace(
+        go.Bar(
+            name="5-<15 kg",
+            x=filtered_df["Month"],
+            y=filtered_df["CHEW Weight band 5 to <15 kg  (<3 yrs)"]
+        )
+    )
+
+    weight_fig.add_trace(
+        go.Bar(
+            name="15-<25 kg",
+            x=filtered_df["Month"],
+            y=filtered_df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"]
+        )
+    )
+
+    weight_fig.add_trace(
+        go.Bar(
+            name="25-<35 kg",
+            x=filtered_df["Month"],
+            y=filtered_df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"]
+        )
+    )
+
+    weight_fig.add_trace(
+        go.Bar(
+            name="≥35 kg",
+            x=filtered_df["Month"],
+            y=filtered_df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"]
+        )
+    )
+
+    weight_fig.update_layout(
+        barmode="stack",
+        template="plotly_white",
+        height=450
+    )
+
+    return (
+        sankey_fig,
+        stock_fig,
+        weight_fig
+    )
