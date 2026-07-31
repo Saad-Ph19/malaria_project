@@ -1,5 +1,5 @@
 from dash import html, dcc
-from dash import Input, Output
+from dash import callback, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -424,7 +424,7 @@ dbc.Card(
 )
 
 #Callback function
-@app.callback(
+@callback(
     [
         Output("malaria-sankey", "figure"),
         Output("malaria-stock", "figure"),
