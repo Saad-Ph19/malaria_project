@@ -461,8 +461,7 @@ def update_malaria(subcounty, year):
                     "RDT Positive ≥5",
                     "RDT Negative ≥5",
                     "Not Tested ≥5"
-                ]
-
+                ],
                 color=[
                     "#2563eb",
                 
