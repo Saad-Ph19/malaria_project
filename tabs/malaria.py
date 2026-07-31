@@ -14,7 +14,9 @@ bednet_df = pd.concat(
     ignore_index=True
 )
 bednet_df.columns = bednet_df.columns.str.strip()
+print("Bednet columns:")
 print(bednet_df.columns.tolist())
+
 bednet_long = bednet_df.melt(
     id_vars=["Year"],
     var_name="Subcounty",
