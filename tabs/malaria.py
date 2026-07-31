@@ -7,16 +7,12 @@ import numpy as np
 import glob
 import os
 
-bednet_files = glob.glob("Bednet_Data/*.xlsx")
-
-bednet_df = pd.concat(
-    [pd.read_excel(f, header=1) for f in bednet_files],
-    ignore_index=True
+bednet_df = pd.read_excel(
+    "Bednet_Data/Bednets Distribution From 2020 to 2026.xlsx",
+    header=1
 )
 bednet_df.columns = bednet_df.columns.str.strip()
-print("Bednet columns:")
-print(bednet_df.columns.tolist())
-
+print(bednet_df.head())
 bednet_long = bednet_df.melt(
     id_vars=["Year"],
     var_name="Subcounty",
@@ -158,19 +154,20 @@ weight_fig.update_layout(
 )
 
 #bednets
-bednet_fig = px.bar(
+bednet_fig = px.line(
     bednet_long,
     x="Year",
     y="Bed_Nets",
     color="Subcounty",
-    title="ANC Bed Net Distribution by Subcounty",
-    barmode="stack"
+    markers=True,
+    title="ANC Bed Net Distribution by Subcounty"
 )
 
 bednet_fig.update_layout(
     template="plotly_white",
     height=450,
-    legend_title=""
+    legend_title="",
+    margin=dict(l=20, r=20, t=50, b=20)
 )
 
 # Layout
@@ -283,7 +280,7 @@ dbc.Card(
                 ),
         
                 html.P(
-                    "Bed nets distributed to antenatal care clients across all subcounties and years.",
+                    "Bed nets distributed to antenatal care clients from 2020 to 2026.",
                     className="text-muted"
                 ),
         
@@ -293,7 +290,7 @@ dbc.Card(
                 )
             ]),
             className="border-0 shadow-sm mt-4"
-        ),   
+        ),
     ],
     fluid=True,
     style={"backgroundColor": "#f8fafc","padding": "20px","minHeight": "100vh",},
