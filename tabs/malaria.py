@@ -1,12 +1,10 @@
-from dash import html, dcc
-from dash import callback, Input, Output
+from dash import callback, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import glob
-import pandas as pd
 import os
 
 # Malaria data
@@ -18,11 +16,7 @@ for file in files:
     temp["Year"] = year
     df_list.append(temp)
 
-df = pd.concat(
-    df_list,
-    ignore_index=True
-)
-
+df = pd.concat(df_list,ignore_index=True)
 df.columns = df.columns.str.strip()
 
 # Sankey Vis
@@ -33,10 +27,7 @@ positive_over5 = (df["Cases.Fever.with.RDT.Positive >= 5"].sum())
 negative_under5 = (df["Cases.Fever.with.RDT. negative < 5"].sum())
 negative_over5 = (df["Cases.Fever.with.RDT. negative >= 5"].sum())
 
-# ==========================================================
-# FEVER → AGE GROUP → RDT OUTCOME SANKEY
-# ==========================================================
-
+#Fever, age group, and rdt outcome
 fever_age_fig = go.Figure(
     go.Sankey(
         arrangement="snap",
@@ -48,26 +39,8 @@ fever_age_fig = go.Figure(
                 width=1
             ),
 
-            label=[
-                "Fever Cases",
-                "Children <5",
-                "Individuals ≥5",
-                "RDT Positive <5",
-                "RDT Negative <5",
-                "RDT Positive ≥5",
-                "RDT Negative ≥5",
-            ],
-
-            color=[
-                "#2563eb",
-                "#f97316",
-                "#16a34a",
-                "#dc2626",
-                "#fbbf24",
-                "#b91c1c",
-                "#fde68a",
-            ],
-
+            label=["Fever Cases","Children <5","Individuals ≥5","RDT Positive <5","RDT Negative <5","RDT Positive ≥5","RDT Negative ≥5",],
+            color=["#2563eb","#f97316","#16a34a","#dc2626","#fbbf24","#b91c1c","#fde68a",],
         ),
 
         link=dict(
@@ -84,28 +57,10 @@ fever_age_fig = go.Figure(
                 5, 6
             ],
 
-            value=[
-                under5_cases,
-                over5_cases,
-                positive_under5,
-                negative_under5,
-                positive_over5,
-                negative_over5
-            ],
-
-            color=[
-                "rgba(249,115,22,0.35)",
-                "rgba(22,163,74,0.35)",
-                "rgba(220,38,38,0.35)",
-                "rgba(251,191,36,0.35)",
-                "rgba(185,28,28,0.35)",
-                "rgba(253,230,138,0.35)"
-            ]
-
+            value=[under5_cases,over5_cases,positive_under5,negative_under5,positive_over5,negative_over5],
+            color=["rgba(249,115,22,0.35)","rgba(22,163,74,0.35)","rgba(220,38,38,0.35)","rgba(251,191,36,0.35)","rgba(185,28,28,0.35)","rgba(253,230,138,0.35)"]
         )
-
     )
-
 )
 
 fever_age_fig.update_layout(
@@ -114,12 +69,8 @@ fever_age_fig.update_layout(
     margin=dict(l=20, r=20, t=20, b=20)
 )
 
-# ==========================================================
-# STOCKS
-# ==========================================================
-
+# Stocks
 stock_fig = go.Figure()
-
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
@@ -145,12 +96,8 @@ stock_fig.update_layout(
     margin=dict(l=20, r=20, t=20, b=20)
 )
 
-# ==========================================================
-# CHEW WEIGHT BANDS
-# ==========================================================
-
+# Chew weight bands
 weight_fig = go.Figure()
-
 weight_fig.add_trace(
     go.Bar(
         name="5-<15 kg",
@@ -194,36 +141,18 @@ weight_fig.update_layout(
     margin=dict(l=20, r=20, t=20, b=20)
 )
 
-# ==========================================================
-# LAYOUT
-# ==========================================================
-
+# Layout
 layout = dbc.Container(
-
     [
 
-        # =====================================================
-# FILTER PANEL (PLACEHOLDER)
-# =====================================================
-
 dbc.Card(
-
     dbc.CardBody(
-
         [
-
                 dbc.Row(
-        
                         [
-        
                             dbc.Col(
-        
                                 [
-        
-                                    html.Label(
-                                        "Subcounty",
-                                        className="fw-bold text-muted mb-2"
-                                    ),     
+                                    html.Label("Subcounty",className="fw-bold text-muted mb-2"),     
                                     dcc.Dropdown(
                                         id="malaria-subcounty-dropdown",
                                         options=[
@@ -236,20 +165,12 @@ dbc.Card(
                                         clearable=False,
                                     ),
                                 ],
-        
                                 lg=8,
-        
                             ),
         
                             dbc.Col(
-        
                                 [
-        
-                                    html.Label(
-                                        "Year",
-                                        className="fw-bold text-muted mb-2"
-                                    ),
-        
+                                    html.Label("Year",className="fw-bold text-muted mb-2"),
                                     dcc.Dropdown(
                                         id="malaria-year-dropdown",
                                         options=[
@@ -260,73 +181,40 @@ dbc.Card(
                                         ],
                                         value="ALL",
                                         clearable=False,
-                                    )
-                                            
+                                    )         
                                 ],
-        
                                 lg=4,
-        
                             ),
-        
                         ],
-        
                     ),
-        
                 ]
-        
             ),
         
             className="border-0 shadow-sm mb-4",
-        
-            style={
-                "borderRadius": "16px",
-            },
-        
+            style={"borderRadius": "16px",},
         ),
         
         dbc.Card(
-        
             dbc.CardBody([
-        
-                html.H4(
-                    "Fever Cases by Age Group and RDT Outcome (Fake placerholder data)",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Distribution of reported fever cases by age group and malaria diagnostic outcome.",
-                    className="text-muted mb-4"
-                ),
+                html.H4("Fever Cases by Age Group and RDT Outcome",className="fw-bold mb-1"),
+                html.P("Distribution of reported fever cases by age group and malaria diagnostic outcome.",className="text-muted mb-4"),
         
                 dcc.Graph(
                     id="malaria-sankey",
                     figure=fever_age_fig,
-                    config={
-                        "displayModeBar": False
-                    }
+                    config={"displayModeBar": False}
                 )
-        
             ]),
-        
             className="border-0 shadow-sm mb-4"
-        
         ),
         
         dbc.Row(
-
             [
-
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody([
-                            html.H5(
-                                "Commodity Stock Levels",
-                                className="fw-bold"
-                            ),
-                            html.P(
-                                "Monthly mRDT and ACT stock availability.",
-                                className="text-muted"
-                            ),
+                            html.H5("Commodity Stock Levels",className="fw-bold"),
+                            html.P("Monthly mRDT and ACT stock availability.",className="text-muted"),
                             dcc.Graph(
                                 id="malaria-stock",
                                 figure=stock_fig,
@@ -341,14 +229,8 @@ dbc.Card(
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody([
-                            html.H5(
-                                "CHEW Weight-Band Distribution",
-                                className="fw-bold"
-                            ),
-                            html.P(
-                                "Monthly distribution across weight categories.",
-                                className="text-muted"
-                            ),
+                            html.H5("CHEW Weight-Band Distribution",className="fw-bold"),
+                            html.P("Monthly distribution across weight categories.",className="text-muted"),
                             dcc.Graph(
                                 id="malaria-weight",
                                 figure=weight_fig,
@@ -359,21 +241,11 @@ dbc.Card(
                     ),
                     lg=6
                 ),
-
             ]
-
         ),
-
     ],
-
     fluid=True,
-
-    style={
-        "backgroundColor": "#f8fafc",
-        "padding": "20px",
-        "minHeight": "100vh",
-    },
-
+    style={"backgroundColor": "#f8fafc","padding": "20px","minHeight": "100vh",},
 )
 
 #Callback function
@@ -388,10 +260,10 @@ dbc.Card(
         Input("malaria-year-dropdown", "value"),
     ]
 )
+
 def update_malaria(subcounty, year):
 
     filtered_df = df.copy()
-
     # Filter Subcounty
     if subcounty != "ALL":
         filtered_df = filtered_df[
@@ -404,41 +276,15 @@ def update_malaria(subcounty, year):
             filtered_df["Year"].astype(str) == str(year)
         ]
 
-    # =========================
-    # SANKEY VALUES
-    # =========================
-
+    # Sankey values
     under5_cases = filtered_df["Cases.Fever < 5"].sum()
-
     over5_cases = filtered_df["Cases.Fever >= 5"].sum()
-
-    positive_under5 = (
-        filtered_df["Cases.Fever.with.RDT.Positive < 5"].sum()
-    )
-
-    positive_over5 = (
-        filtered_df["Cases.Fever.with.RDT.Positive >= 5"].sum()
-    )
-
-    negative_under5 = (
-        filtered_df["Cases.Fever.with.RDT. negative < 5"].sum()
-    )
-
-    negative_over5 = (
-        filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum()
-    )
-
-    not_tested_under5 = (
-        under5_cases
-        - positive_under5
-        - negative_under5
-    )
-    
-    not_tested_over5 = (
-        over5_cases
-        - positive_over5
-        - negative_over5
-    )
+    positive_under5 = (filtered_df["Cases.Fever.with.RDT.Positive < 5"].sum())
+    positive_over5 = (filtered_df["Cases.Fever.with.RDT.Positive >= 5"].sum())
+    negative_under5 = (filtered_df["Cases.Fever.with.RDT. negative < 5"].sum())
+    negative_over5 = (filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum())
+    not_tested_under5 = (under5_cases - positive_under5 - negative_under5)
+    not_tested_over5 = (over5_cases - positive_over5 - negative_over5)
 
     sankey_fig = go.Figure(
         go.Sankey(
@@ -450,28 +296,22 @@ def update_malaria(subcounty, year):
 
                 label=[
                     "Fever Cases",
-                
                     "Children <5",
                     "Individuals ≥5",
-                
                     "RDT Positive <5",
                     "RDT Negative <5",
                     "Not Tested <5",
-                
                     "RDT Positive ≥5",
                     "RDT Negative ≥5",
                     "Not Tested ≥5"
                 ],
                 color=[
                     "#2563eb",
-                
                     "#f97316",
                     "#16a34a",
-                
                     "#dc2626",
                     "#fbbf24",
                     "#6b7280",
-                
                     "#b91c1c",
                     "#fde68a",
                     "#9ca3af"
@@ -479,31 +319,24 @@ def update_malaria(subcounty, year):
             ),
 
             link=dict(
-
                 source=[
                     0,0,
-                
                     1,1,1,
-                
                     2,2,2
                 ],
                 
                 target=[
                     1,2,
-                
                     3,4,5,
-                
                     6,7,8
                 ],
                 
                 value=[
                     under5_cases,
                     over5_cases,
-                
                     positive_under5,
                     negative_under5,
                     not_tested_under5,
-                
                     positive_over5,
                     negative_over5,
                     not_tested_over5
@@ -512,17 +345,10 @@ def update_malaria(subcounty, year):
         )
     )
 
-    sankey_fig.update_layout(
-        template="plotly_white",
-        height=700
-    )
+    sankey_fig.update_layout(template="plotly_white",height=700)
 
-    # =========================
-    # STOCK FIGURE
-    # =========================
-
+    # Stock figures
     stock_fig = go.Figure()
-
     stock_fig.add_trace(
         go.Bar(
             x=filtered_df["Month"],
@@ -547,12 +373,8 @@ def update_malaria(subcounty, year):
         height=450
     )
 
-    # =========================
-    # WEIGHT FIGURE
-    # =========================
-
+    # Weight figures
     weight_fig = go.Figure()
-
     weight_fig.add_trace(
         go.Bar(
             name="5-<15 kg",
