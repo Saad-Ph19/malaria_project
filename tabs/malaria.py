@@ -7,6 +7,20 @@ import numpy as np
 import glob
 import os
 
+bednet_files = glob.glob("Bednet_Data/*.xlsx")
+
+bednet_df = pd.concat(
+    [pd.read_excel(f, header=1) for f in bednet_files],
+    ignore_index=True
+)
+bednet_df.columns = bednet_df.columns.str.strip()
+print(bednet_df.columns.tolist())
+bednet_long = bednet_df.melt(
+    id_vars=["Year"],
+    var_name="Subcounty",
+    value_name="Bed_Nets"
+)
+
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
 df_list = []
@@ -141,6 +155,22 @@ weight_fig.update_layout(
     margin=dict(l=20, r=20, t=20, b=20)
 )
 
+#bednets
+bednet_fig = px.bar(
+    bednet_long,
+    x="Year",
+    y="Bed_Nets",
+    color="Subcounty",
+    title="ANC Bed Net Distribution by Subcounty",
+    barmode="stack"
+)
+
+bednet_fig.update_layout(
+    template="plotly_white",
+    height=450,
+    legend_title=""
+)
+
 # Layout
 layout = dbc.Container(
     [
@@ -243,6 +273,25 @@ dbc.Card(
                 ),
             ]
         ),
+        dbc.Card(
+            dbc.CardBody([
+                html.H5(
+                    "ANC Bed Net Distribution",
+                    className="fw-bold"
+                ),
+        
+                html.P(
+                    "Bed nets distributed to antenatal care clients across all subcounties and years.",
+                    className="text-muted"
+                ),
+        
+                dcc.Graph(
+                    figure=bednet_fig,
+                    config={"displayModeBar": False}
+                )
+            ]),
+            className="border-0 shadow-sm mt-4"
+        ),   
     ],
     fluid=True,
     style={"backgroundColor": "#f8fafc","padding": "20px","minHeight": "100vh",},
