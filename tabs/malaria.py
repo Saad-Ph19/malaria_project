@@ -7,6 +7,10 @@ import numpy as np
 import glob
 import os
 
+# ==========================================================
+# BEDNET DATA
+# ==========================================================
+
 bednet_files = glob.glob("Bednet_Data/*.xlsx")
 
 bednet_df = pd.read_excel(
@@ -16,11 +20,31 @@ bednet_df = pd.read_excel(
 
 bednet_df.columns = bednet_df.columns.str.strip()
 
-print("BEDNET COLUMNS:")
-print(bednet_df.columns.tolist())
+anc_cols = [
+    col
+    for col in bednet_df.columns
+    if "LLINs distributed to ANC clients" in col
+]
 
-print("BEDNET HEAD:")
-print(bednet_df.head())
+bednet_long = bednet_df.melt(
+    id_vars=["organisationunitname"],
+    value_vars=anc_cols,
+    var_name="Year",
+    value_name="Bed_Nets"
+)
+
+bednet_long["Year"] = (
+    bednet_long["Year"]
+    .str.extract(r"(\d{4})")
+    .astype(int)
+)
+
+bednet_long.rename(
+    columns={
+        "organisationunitname": "Subcounty"
+    },
+    inplace=True
+)
 
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
@@ -163,14 +187,19 @@ bednet_fig = px.line(
     y="Bed_Nets",
     color="Subcounty",
     markers=True,
-    title="ANC Bed Net Distribution by Subcounty"
+    title="ANC Bed Net Distribution (2020-2026)"
 )
 
 bednet_fig.update_layout(
     template="plotly_white",
     height=450,
     legend_title="",
-    margin=dict(l=20, r=20, t=50, b=20)
+    margin=dict(
+        l=20,
+        r=20,
+        t=50,
+        b=20
+    )
 )
 
 # Layout
@@ -283,7 +312,7 @@ dbc.Card(
                 ),
         
                 html.P(
-                    "Bed nets distributed to antenatal care clients from 2020 to 2026.",
+                    "Long-lasting insecticidal nets distributed to antenatal care clients.",
                     className="text-muted"
                 ),
         
