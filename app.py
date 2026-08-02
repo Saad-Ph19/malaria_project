@@ -48,6 +48,11 @@ about_tab = dbc.Tab(
     tab_id="about-tab",
 )
 
+description_tab = dbc.Tab(
+    about.layout,
+    label="Description",
+    tab_id="description-tab",
+)
 
 app.layout = dbc.Container(
     [
@@ -71,6 +76,7 @@ app.layout = dbc.Container(
                 malaria_tab,
                 prediction_tab,
                 about_tab,
+                description_tab, 
             ],
             id="main-tabs",
             active_tab="overview-tab",
