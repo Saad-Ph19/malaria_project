@@ -1,105 +1,166 @@
-from dash import callback, Input, Output, html, dcc
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
-import glob
-import os
 
 # ==========================================================
-# BEDNET DATA
+# FAKE DATA
 # ==========================================================
 
-bednet_files = glob.glob("Bednet_Data/*.xlsx")
-
-bednet_df = pd.read_excel(
-    bednet_files[0],
-    header=1
-)
-
-bednet_df.columns = bednet_df.columns.str.strip()
-
-anc_cols = [
-    col
-    for col in bednet_df.columns
-    if "LLINs distributed to ANC clients" in col
+months = [
+    "Jan","Feb","Mar","Apr","May","Jun",
+    "Jul","Aug","Sep","Oct","Nov","Dec"
 ]
 
-bednet_long = bednet_df.melt(
-    id_vars=["organisationunitname"],
-    value_vars=anc_cols,
-    var_name="Year",
-    value_name="Bed_Nets"
+np.random.seed(42)
+
+df = pd.DataFrame({
+    "Month": months,
+    "Fever_Cases": np.random.randint(2500, 5000, 12),
+    "RDT_Done": np.random.randint(2200, 4500, 12),
+    "RDT_Positive": np.random.randint(1000, 3000, 12),
+    "ACT_Given": np.random.randint(900, 2800, 12),
+    "Stock_RDT": np.random.randint(2000, 10000, 12),
+    "Stock_ACT": np.random.randint(2000, 10000, 12),
+    "Loss_RDT": np.random.randint(0, 100, 12),
+    "Loss_ACT": np.random.randint(0, 80, 12),
+})
+
+df["Testing_Coverage"] = (
+    df["RDT_Done"] / df["Fever_Cases"] * 100
 )
 
-bednet_long["Year"] = (
-    bednet_long["Year"]
-    .str.extract(r"(\d{4})")
-    .astype(int)
+df["Treatment_Coverage"] = (
+    df["ACT_Given"] / df["RDT_Positive"] * 100
 )
 
-bednet_long.rename(
-    columns={
-        "organisationunitname": "Subcounty"
-    },
-    inplace=True
-)
+# ==========================================================
+# KPI VALUES
+# ==========================================================
 
-# Malaria data
-files = glob.glob("Malaria_Data/*.xlsx")
-df_list = []
-for file in files:
-    temp = pd.read_excel(file, header=1)
-    year = os.path.basename(file)[:4]
-    temp["Year"] = year
-    df_list.append(temp)
+total_fever = int(df["Fever_Cases"].sum())
+total_tests = int(df["RDT_Done"].sum())
+positive_cases = int(df["RDT_Positive"].sum())
+total_act = int(df["ACT_Given"].sum())
 
-df = pd.concat(df_list,ignore_index=True)
-df.columns = df.columns.str.strip()
+# ==========================================================
+# FEVER → AGE GROUP → RDT OUTCOME SANKEY
+# ==========================================================
 
-# Sankey Vis
-under5_cases = df["Cases.Fever < 5"].sum()
-over5_cases = df["Cases.Fever >= 5"].sum()
-positive_under5 = (df["Cases.Fever.with.RDT.Positive < 5"].sum())
-positive_over5 = (df["Cases.Fever.with.RDT.Positive >= 5"].sum())
-negative_under5 = (df["Cases.Fever.with.RDT. negative < 5"].sum())
-negative_over5 = (df["Cases.Fever.with.RDT. negative >= 5"].sum())
+under5_cases = 18000
+over5_cases = 26000
 
-#Fever, age group, and rdt outcome
+positive_under5 = 9000
+negative_under5 = 9000
+
+positive_over5 = 16000
+negative_over5 = 10000
+
 fever_age_fig = go.Figure(
+
     go.Sankey(
+
         arrangement="snap",
+
         node=dict(
+
             pad=25,
             thickness=25,
+
             line=dict(
                 color="rgba(0,0,0,0.2)",
                 width=1
             ),
 
-            label=["Fever Cases","Children <5","Individuals ≥5","RDT Positive <5","RDT Negative <5","RDT Positive ≥5","RDT Negative ≥5",],
-            color=["#2563eb","#f97316","#16a34a","#dc2626","#fbbf24","#b91c1c","#fde68a",],
+            label=[
+
+                "Fever Cases",
+
+                "Children <5",
+                "Individuals ≥5",
+
+                "RDT Positive <5",
+                "RDT Negative <5",
+
+                "RDT Positive ≥5",
+                "RDT Negative ≥5",
+
+            ],
+
+            color=[
+
+                "#2563eb",
+
+                "#f97316",
+                "#16a34a",
+
+                "#dc2626",
+                "#fbbf24",
+
+                "#b91c1c",
+                "#fde68a",
+
+            ],
+
         ),
 
         link=dict(
 
             source=[
+
+                # Fever → Age group
                 0, 0,
+
+                # <5
                 1, 1,
+
+                # ≥5
                 2, 2
+
             ],
 
             target=[
+
                 1, 2,
+
                 3, 4,
+
                 5, 6
+
             ],
 
-            value=[under5_cases,over5_cases,positive_under5,negative_under5,positive_over5,negative_over5],
-            color=["rgba(249,115,22,0.35)","rgba(22,163,74,0.35)","rgba(220,38,38,0.35)","rgba(251,191,36,0.35)","rgba(185,28,28,0.35)","rgba(253,230,138,0.35)"]
-        )
+            value=[
+
+                under5_cases,
+                over5_cases,
+
+                positive_under5,
+                negative_under5,
+
+                positive_over5,
+                negative_over5
+
+            ],
+
+            color=[
+
+                "rgba(249,115,22,0.35)",
+                "rgba(22,163,74,0.35)",
+
+                "rgba(220,38,38,0.35)",
+                "rgba(251,191,36,0.35)",
+
+                "rgba(185,28,28,0.35)",
+                "rgba(253,230,138,0.35)"
+
+            ],
+
+        ),
+
     )
+
 )
 
 fever_age_fig.update_layout(
@@ -107,177 +168,208 @@ fever_age_fig.update_layout(
     height=700,
     margin=dict(l=20, r=20, t=20, b=20)
 )
+# ==========================================================
+# SANKEY 3 - RDT OUTCOMES
+# ==========================================================
 
-# Stocks
+positive_under5 = 9000
+positive_over5 = 16000
+
+negative_under5 = 4000
+negative_over5 = 9500
+
+rdt_sankey_fig = go.Figure(
+
+    go.Sankey(
+
+        arrangement="snap",
+
+        node=dict(
+
+            pad=25,
+            thickness=25,
+
+            label=[
+                "RDT Done",
+                "RDT Positive",
+                "RDT Negative",
+                "Positive <5",
+                "Positive ≥5",
+                "Negative <5",
+                "Negative ≥5"
+            ],
+
+            color=[
+                "#2563eb",
+                "#f97316",
+                "#fbbf24",
+                "#dc2626",
+                "#ef4444",
+                "#10b981",
+                "#059669"
+            ]
+        ),
+
+        link=dict(
+
+            source=[
+                0,0,
+                1,1,
+                2,2
+            ],
+
+            target=[
+                1,2,
+                3,4,
+                5,6
+            ],
+
+            value=[
+                positive_under5 + positive_over5,
+                negative_under5 + negative_over5,
+
+                positive_under5,
+                positive_over5,
+
+                negative_under5,
+                negative_over5
+            ],
+
+            color="rgba(180,180,180,0.40)"
+        )
+
+    )
+
+)
+
+rdt_sankey_fig.update_layout(
+    template="plotly_white",
+    height=500,
+    margin=dict(l=20,r=20,t=20,b=20)
+)
+
+# ==========================================================
+# STOCKS
+# ==========================================================
+
 stock_fig = go.Figure()
+
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
-        y=df["Stock mRDTs"],
-        name="mRDT Stock",
-        marker_color="#2563eb"
+        y=df["Stock_RDT"],
+        name="mRDT Stock"
     )
 )
 
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
-        y=df["Stock ACTs"],
-        name="ACT Stock",
-        marker_color="#16a34a"
+        y=df["Stock_ACT"],
+        name="ACT Stock"
     )
 )
 
 stock_fig.update_layout(
     barmode="group",
     template="plotly_white",
-    height=450,
-    margin=dict(l=20, r=20, t=20, b=20)
+    height=450
 )
 
-# Chew weight bands
+# ==========================================================
+# CHEW WEIGHT BAND
+# ==========================================================
+
 weight_fig = go.Figure()
+
 weight_fig.add_trace(
     go.Bar(
-        name="5-<15 kg",
-        x=df["Month"],
-        y=df["CHEW Weight band 5 to <15 kg  (<3 yrs)"],
-        marker_color="#60a5fa"
+        name="<15 kg",
+        x=months,
+        y=np.random.randint(100, 300, 12)
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="15-<25 kg",
-        x=df["Month"],
-        y=df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"],
-        marker_color="#34d399"
+        name="15-25 kg",
+        x=months,
+        y=np.random.randint(150, 400, 12)
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="25-<35 kg",
-        x=df["Month"],
-        y=df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"],
-        marker_color="#f59e0b"
+        name="25-35 kg",
+        x=months,
+        y=np.random.randint(100, 350, 12)
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="≥35 kg",
-        x=df["Month"],
-        y=df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"],
-        marker_color="#ef4444"
+        name="35+ kg",
+        x=months,
+        y=np.random.randint(100, 300, 12)
     )
 )
 
 weight_fig.update_layout(
     barmode="stack",
     template="plotly_white",
-    height=450,
-    margin=dict(l=20, r=20, t=20, b=20)
+    height=450
 )
 
-#bednets
-bednet_fig = px.line(
-    bednet_long,
-    x="Year",
-    y="Bed_Nets",
-    color="Subcounty",
-    markers=True,
-    title="ANC Bed Net Distribution (2020-2026)"
-)
+# ==========================================================
+# LAYOUT
+# ==========================================================
 
-bednet_fig.update_layout(
-    template="plotly_white",
-    height=450,
-    legend_title="",
-    margin=dict(
-        l=20,
-        r=20,
-        t=50,
-        b=20
-    )
-)
-
-# Layout
 layout = dbc.Container(
-    [
 
-dbc.Card(
-    dbc.CardBody(
-        [
-                dbc.Row(
-                        [
-                            dbc.Col(
-                                [
-                                    html.Label("Subcounty",className="fw-bold text-muted mb-2"),     
-                                    dcc.Dropdown(
-                                        id="malaria-subcounty-dropdown",
-                                        options=[
-                                            {"label": "All Subcounties", "value": "ALL"}
-                                        ] + [
-                                            {"label": str(s), "value": str(s)}
-                                            for s in sorted(df["Subcounty"].dropna().unique())
-                                        ],
-                                        value="ALL",
-                                        clearable=False,
-                                    ),
-                                ],
-                                lg=8,
-                            ),
-        
-                            dbc.Col(
-                                [
-                                    html.Label("Year",className="fw-bold text-muted mb-2"),
-                                    dcc.Dropdown(
-                                        id="malaria-year-dropdown",
-                                        options=[
-                                            {"label": "All Years", "value": "ALL"}
-                                        ] + [
-                                            {"label": str(y), "value": str(y)}
-                                            for y in sorted(df["Year"].unique())
-                                        ],
-                                        value="ALL",
-                                        clearable=False,
-                                    )         
-                                ],
-                                lg=4,
-                            ),
-                        ],
-                    ),
-                ]
-            ),
-        
-            className="border-0 shadow-sm mb-4",
-            style={"borderRadius": "16px",},
-        ),
-        
+    [
         dbc.Card(
+        
             dbc.CardBody([
-                html.H4("Fever Cases by Age Group and RDT Outcome",className="fw-bold mb-1"),
-                html.P("Distribution of reported fever cases by age group and malaria diagnostic outcome.",className="text-muted mb-4"),
+        
+                html.H4(
+                    "Fever Cases by Age Group and RDT Outcome (Fake placerholder data)",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Distribution of reported fever cases by age group and malaria diagnostic outcome.",
+                    className="text-muted mb-4"
+                ),
         
                 dcc.Graph(
-                    id="malaria-sankey",
                     figure=fever_age_fig,
-                    config={"displayModeBar": False}
+                    config={
+                        "displayModeBar": False
+                    }
                 )
+        
             ]),
+        
             className="border-0 shadow-sm mb-4"
+        
         ),
         
         dbc.Row(
+
             [
+
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody([
-                            html.H5("Commodity Stock Levels",className="fw-bold"),
-                            html.P("Monthly mRDT and ACT stock availability.",className="text-muted"),
+                            html.H5(
+                                "Commodity Stock Levels",
+                                className="fw-bold"
+                            ),
+                            html.P(
+                                "Monthly mRDT and ACT stock availability.",
+                                className="text-muted"
+                            ),
                             dcc.Graph(
-                                id="malaria-stock",
                                 figure=stock_fig,
                                 config={"displayModeBar": False}
                             )
@@ -290,10 +382,15 @@ dbc.Card(
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody([
-                            html.H5("CHEW Weight-Band Distribution",className="fw-bold"),
-                            html.P("Monthly distribution across weight categories.",className="text-muted"),
+                            html.H5(
+                                "CHEW Weight-Band Distribution",
+                                className="fw-bold"
+                            ),
+                            html.P(
+                                "Monthly distribution across weight categories.",
+                                className="text-muted"
+                            ),
                             dcc.Graph(
-                                id="malaria-weight",
                                 figure=weight_fig,
                                 config={"displayModeBar": False}
                             )
@@ -302,199 +399,19 @@ dbc.Card(
                     ),
                     lg=6
                 ),
+
             ]
+
         ),
-        dbc.Card(
-            dbc.CardBody([
-                html.H5(
-                    "ANC Bed Net Distribution",
-                    className="fw-bold"
-                ),
-        
-                html.P(
-                    "Long-lasting insecticidal nets distributed to antenatal care clients.",
-                    className="text-muted"
-                ),
-        
-                dcc.Graph(
-                    figure=bednet_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mt-4"
-        ),
+
     ],
+
     fluid=True,
-    style={"backgroundColor": "#f8fafc","padding": "20px","minHeight": "100vh",},
+
+    style={
+        "backgroundColor": "#f8fafc",
+        "padding": "20px",
+        "minHeight": "100vh",
+    },
+
 )
-
-#Callback function
-@callback(
-    [
-        Output("malaria-sankey", "figure"),
-        Output("malaria-stock", "figure"),
-        Output("malaria-weight", "figure"),
-    ],
-    [
-        Input("malaria-subcounty-dropdown", "value"),
-        Input("malaria-year-dropdown", "value"),
-    ]
-)
-
-def update_malaria(subcounty, year):
-
-    filtered_df = df.copy()
-    # Filter Subcounty
-    if subcounty != "ALL":
-        filtered_df = filtered_df[
-            filtered_df["Subcounty"] == subcounty
-        ]
-
-    # Filter Year
-    if year != "ALL":
-        filtered_df = filtered_df[
-            filtered_df["Year"].astype(str) == str(year)
-        ]
-
-    # Sankey values
-    under5_cases = filtered_df["Cases.Fever < 5"].sum()
-    over5_cases = filtered_df["Cases.Fever >= 5"].sum()
-    positive_under5 = (filtered_df["Cases.Fever.with.RDT.Positive < 5"].sum())
-    positive_over5 = (filtered_df["Cases.Fever.with.RDT.Positive >= 5"].sum())
-    negative_under5 = (filtered_df["Cases.Fever.with.RDT. negative < 5"].sum())
-    negative_over5 = (filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum())
-    not_tested_under5 = (under5_cases - positive_under5 - negative_under5)
-    not_tested_over5 = (over5_cases - positive_over5 - negative_over5)
-
-    sankey_fig = go.Figure(
-        go.Sankey(
-            arrangement="snap",
-
-            node=dict(
-                pad=25,
-                thickness=25,
-
-                label=[
-                    "Fever Cases",
-                    "Children <5",
-                    "Individuals ≥5",
-                    "RDT Positive <5",
-                    "RDT Negative <5",
-                    "Not Tested <5",
-                    "RDT Positive ≥5",
-                    "RDT Negative ≥5",
-                    "Not Tested ≥5"
-                ],
-                color=[
-                    "#2563eb",
-                    "#f97316",
-                    "#16a34a",
-                    "#dc2626",
-                    "#fbbf24",
-                    "#6b7280",
-                    "#b91c1c",
-                    "#fde68a",
-                    "#9ca3af"
-                ]
-            ),
-
-            link=dict(
-                source=[
-                    0,0,
-                    1,1,1,
-                    2,2,2
-                ],
-                
-                target=[
-                    1,2,
-                    3,4,5,
-                    6,7,8
-                ],
-                
-                value=[
-                    under5_cases,
-                    over5_cases,
-                    positive_under5,
-                    negative_under5,
-                    not_tested_under5,
-                    positive_over5,
-                    negative_over5,
-                    not_tested_over5
-                ]
-            )
-        )
-    )
-
-    sankey_fig.update_layout(template="plotly_white",height=700)
-
-    # Stock figures
-    stock_fig = go.Figure()
-    stock_fig.add_trace(
-        go.Bar(
-            x=filtered_df["Month"],
-            y=filtered_df["Stock mRDTs"],
-            name="mRDT Stock",
-            marker_color="#2563eb"
-        )
-    )
-
-    stock_fig.add_trace(
-        go.Bar(
-            x=filtered_df["Month"],
-            y=filtered_df["Stock ACTs"],
-            name="ACT Stock",
-            marker_color="#16a34a"
-        )
-    )
-
-    stock_fig.update_layout(
-        barmode="group",
-        template="plotly_white",
-        height=450
-    )
-
-    # Weight figures
-    weight_fig = go.Figure()
-    weight_fig.add_trace(
-        go.Bar(
-            name="5-<15 kg",
-            x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 5 to <15 kg  (<3 yrs)"]
-        )
-    )
-
-    weight_fig.add_trace(
-        go.Bar(
-            name="15-<25 kg",
-            x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"]
-        )
-    )
-
-    weight_fig.add_trace(
-        go.Bar(
-            name="25-<35 kg",
-            x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"]
-        )
-    )
-
-    weight_fig.add_trace(
-        go.Bar(
-            name="≥35 kg",
-            x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"]
-        )
-    )
-
-    weight_fig.update_layout(
-        barmode="stack",
-        template="plotly_white",
-        height=450
-    )
-
-    return (
-        sankey_fig,
-        stock_fig,
-        weight_fig
-    )
