@@ -6,6 +6,7 @@ from tabs import climate
 from tabs import malaria
 from tabs import prediction
 from tabs import about
+from tabs import description
 
 
 app = Dash(
