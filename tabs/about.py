@@ -7,11 +7,23 @@ layout = dbc.Container(
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H4("About the Project"),
-                    html.P(
-                        "Project description, collaborators, data sources, and limitations will appear here.",
-                        className="text-muted",
-                    ),
+                    html.H3("Project Contributors",className="fw-bold text-primary mb-3"),
+                    html.P("This work is conducted through a collaborative partnership involving: ",className="text-muted",style={"fontSize": "18px", "lineHeight": "1.8"}),
+                    html.Ul([
+                        html.Li("Principal Investigators: Felix Pabon-Rodriguez (IUSM) and George Ayodo (JOOUST)"),
+                        html.Li("Co-Investigator: Yan Zhuang (IUI)"),
+                        html.Li("Indiana University Research Assistants: Saad Pharis, Mridul Banik, Nathaniel Maxey, and Taliyah Griffin"),
+                        html.Li("Siaya County Public Health Officer: Moses Ombuoro"),
+                        html.Li("App Developer: Saad Pharis"),
+                    ], className="text-muted"),
+                    
+                    html.P("The project integrates data from:",className="text-muted"),
+                    html.Ul([
+                        html.Li("Kenya Health Information System (KHIS)"),
+                        html.Li("Google Earth spatial datasets"),
+                        html.Li("Climate and environmental information supporting geospatial disease surveillance"),
+                    ], className="text-muted"),
+                    html.P("In case of questions and/or requests, please contact PI Felix Pabon-Rodriguez via email at fpabonr@iu.edu.",className="text-muted"),
                 ]
             ),
             className="mt-4 shadow-sm",
