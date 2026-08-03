@@ -32,8 +32,7 @@ layout = dbc.Container(
             ),
             className="mt-4 shadow-sm",
         ),
-
     ],
     fluid=True,
-    className="px-0",,
+    className="px-0",
 )
