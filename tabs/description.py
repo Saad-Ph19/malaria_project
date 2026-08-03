@@ -26,6 +26,16 @@ layout = dbc.Container(
                         "This project is a collaboration between Indiana University School of Medicine (IUSM), Indiana University Indianapolis (IUI), Jaramogi Oginga Odinga University of Science and Technology (JOOUST), and the Siaya County Public Health Department.",
                         className="text-muted"
                     ),
+
+                    html.H5("Key Features", className="mt-4"),
+
+                    html.Ul([
+                        html.Li("Malaria surveillance and disease burden monitoring"),
+                        html.Li("Climate and environmental data integration"),
+                        html.Li("Commodity stock monitoring (RDTs, ACTs, ITNs)"),
+                        html.Li("Interactive visualizations and forecasting tools"),
+                        html.Li("Decision-support for public health planning"),
+                    ], className="text-muted"),
                 ]
             ),
             className="shadow-sm border-0 mt-4",
