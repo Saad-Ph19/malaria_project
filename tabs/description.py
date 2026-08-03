@@ -20,14 +20,14 @@ layout = dbc.Container(
                         className="text-muted", style={"fontSize": "20px", "lineHeight": "1.8"}
                     ),
 
-                    html.H5("Key Features: ", className="mt-4"),
+                    html.H4("Key Features: ", className="mt-4"),
                     html.Ul([
                         html.Li("Malaria surveillance and disease burden monitoring"),
                         html.Li("Climate and environmental data integration"),
                         html.Li("Commodity stock monitoring (RDTs, ACTs, ITNs)"),
                         html.Li("Interactive visualizations and forecasting tools"),
                         html.Li("Decision-support for public health planning"),
-                    ], className="text-muted", style={"fontSize": "18px", "lineHeight": "1.8"}),
+                    ], className="text-muted", style={"fontSize": "20px", "lineHeight": "1.8"}),
                 ]
             ),
             className="mt-4 shadow-sm",
