@@ -45,7 +45,7 @@ prediction_tab = dbc.Tab(
 
 about_tab = dbc.Tab(
     about.layout,
-    label="About",
+    label="Project Contributors",
     tab_id="about-tab",
 )
 
