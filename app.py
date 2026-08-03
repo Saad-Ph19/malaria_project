@@ -51,7 +51,7 @@ about_tab = dbc.Tab(
 
 description_tab = dbc.Tab(
     description.layout,
-    label="Description",
+    label="Project Description",
     tab_id="description-tab",
 )
 
