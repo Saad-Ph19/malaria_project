@@ -3,7 +3,6 @@ import dash_bootstrap_components as dbc
 
 layout = dbc.Container(
     [
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -31,9 +30,10 @@ layout = dbc.Container(
                     ], className="text-muted"),
                 ]
             ),
-            className="shadow-sm border-0 mt-4",
+            className="mt-4 shadow-sm",
         ),
 
     ],
     fluid=True,
+    className="px-0",,
 )
