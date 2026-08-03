@@ -1,25 +1,41 @@
 from dash import html
 import dash_bootstrap_components as dbc
 
-
 layout = dbc.Container(
     [
+
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H4("Project Description"),
+                    html.H3(
+                        "Project Description",
+                        className="fw-bold text-primary mb-3"
+                    ),
+
                     html.P(
                         "The Siaya County Disease and Climate Monitoring Dashboard is an interactive geospatial surveillance platform that integrates malaria epidemiology, climate, and health system data to support infectious disease research and public health decision-making in western Kenya.",
-                        "Beyond tracking malaria incidence, the dashboard visualizes the distribution and availability of key malaria control resources, including rapid diagnostic tests (RDTs), artemisinin-based combination therapies (ACTs), and insecticide-treated bed nets (ITNs), allowing users to evaluate disease burden alongside healthcare resource allocation and intervention coverage.",
-                        "This integrated approach supports investigations into malaria and other febrile illnesses by identifying transmission hotspots, assessing preparedness, and exploring the environmental and operational factors influencing disease dynamics. The inclusion of commodity stock monitoring aligns with WHO recommendations for integrated malaria surveillance systems that combine epidemiologic, environmental, and supply chain data.",
-                        "This project is in collaboration between researchers from Indiana University School of Medicine [IUSM] and Indiana University Indianapolis [IUI] (Indianapolis, Indiana, USA), Jaramogi Oginga Odinga University of Science and Technology [JOOUST] (Bondo, Kenya), and Siaya County Public Health Department. See the Project Contributors tab for more information. ",
-                        className="text-muted",
+                        className="text-muted"
+                    ),
+
+                    html.P(
+                        "Beyond tracking malaria incidence, the dashboard visualizes the distribution and availability of key malaria control resources, including Rapid Diagnostic Tests (RDTs), Artemisinin-based Combination Therapies (ACTs), and Insecticide-Treated Bed Nets (ITNs). These indicators allow users to evaluate disease burden alongside healthcare resource allocation and intervention coverage.",
+                        className="text-muted"
+                    ),
+
+                    html.P(
+                        "The platform supports investigations into malaria and other febrile illnesses by identifying transmission hotspots, assessing preparedness, and exploring environmental and operational factors that influence disease dynamics.",
+                        className="text-muted"
+                    ),
+
+                    html.P(
+                        "This project is a collaboration between Indiana University School of Medicine (IUSM), Indiana University Indianapolis (IUI), Jaramogi Oginga Odinga University of Science and Technology (JOOUST), and the Siaya County Public Health Department.",
+                        className="text-muted"
                     ),
                 ]
             ),
-            className="mt-4 shadow-sm",
-        )
+            className="shadow-sm border-0 mt-4",
+        ),
+
     ],
     fluid=True,
-    className="px-0",
 )
