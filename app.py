@@ -19,6 +19,31 @@ app = Dash(
 server = app.server
 
 
+# ==========================================================
+# TAB STYLING
+# ==========================================================
+
+TAB_STYLE = {
+    "padding": "16px",
+    "fontSize": "1.1rem",
+    "fontWeight": "600",
+    "textAlign": "center",
+}
+
+ACTIVE_TAB_STYLE = {
+    "padding": "16px",
+    "fontSize": "1.1rem",
+    "fontWeight": "700",
+    "backgroundColor": "#0d6efd",
+    "color": "white",
+    "borderColor": "#0d6efd",
+}
+
+
+# ==========================================================
+# TABS
+# ==========================================================
+
 overview_tab = dbc.Tab(
     overview.layout,
     label="Overview",
@@ -43,55 +68,112 @@ prediction_tab = dbc.Tab(
     tab_id="prediction-tab",
 )
 
-about_tab = dbc.Tab(
-    about.layout,
-    label="Project Contributors",
-    tab_id="about-tab",
-)
-
 description_tab = dbc.Tab(
     description.layout,
     label="Project Description",
     tab_id="description-tab",
 )
 
+about_tab = dbc.Tab(
+    about.layout,
+    label="Project Contributors",
+    tab_id="about-tab",
+)
+
+
+# ==========================================================
+# APP LAYOUT
+# ==========================================================
+
 app.layout = dbc.Container(
+
     [
+
+        # --------------------------------------------------
+        # NAVBAR
+        # --------------------------------------------------
+
         dbc.Navbar(
+
             dbc.Container(
-                html.H3(
-                    "Siaya County Disease and Climate Monitoring Dashboard",
-                    className="mb-0 text-white fw-bold",
-                ),
+
+                [
+
+                    html.H2(
+                        "Siaya County Disease & Climate Monitoring Dashboard",
+                        className="mb-0 text-white fw-bold"
+                    ),
+
+                ],
+
                 fluid=True,
+
             ),
+
             color="primary",
             dark=True,
-            className="mb-4 px-3 py-3",
+            className="shadow-sm mb-3 py-3",
+
         ),
 
-        dbc.Tabs(
-            [
-                overview_tab,
-                climate_tab,
-                malaria_tab,
-                prediction_tab,
-                description_tab,
-                about_tab,
-            ],
-            id="main-tabs",
-            active_tab="overview-tab",
-            className="mt-3",
+        # --------------------------------------------------
+        # TABS
+        # --------------------------------------------------
+
+        dbc.Card(
+
+            dbc.CardBody(
+
+                dbc.Tabs(
+
+                    [
+                        overview_tab,
+                        climate_tab,
+                        malaria_tab,
+                        prediction_tab,
+                        description_tab,
+                        about_tab,
+                    ],
+
+                    id="main-tabs",
+
+                    active_tab="overview-tab",
+
+                    tab_style=TAB_STYLE,
+
+                    active_tab_style=ACTIVE_TAB_STYLE,
+
+                    class_name="w-100",
+
+                )
+
+            ),
+
+            className="border-0 shadow-sm mb-4"
+
         ),
 
-        html.Hr(className="mt-5"),
+        # --------------------------------------------------
+        # FOOTER
+        # --------------------------------------------------
+
+        html.Hr(className="mt-4"),
 
         html.P(
-            "Siaya County Disease and Climate Monitoring Dashboard",
-            className="text-muted small text-center mb-3",
+            "Department of Biomedical Engineering & Informatics | Indiana University",
+            className="text-muted text-center small py-2"
         ),
+
     ],
+
     fluid=True,
+
+    style={
+        "backgroundColor": "#f8fafc",
+        "minHeight": "100vh",
+        "padding": "0",
+    },
+
 )
 
 
