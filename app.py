@@ -8,7 +8,6 @@ from tabs import prediction
 from tabs import about
 from tabs import description
 
-
 app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
@@ -18,28 +17,6 @@ app = Dash(
 
 server = app.server
 
-
-# ==========================================================
-# TAB STYLING
-# ==========================================================
-
-TAB_STYLE = {
-    "padding": "16px",
-    "fontSize": "1.1rem",
-    "fontWeight": "600",
-    "textAlign": "center",
-}
-
-ACTIVE_TAB_STYLE = {
-    "padding": "16px",
-    "fontSize": "1.1rem",
-    "fontWeight": "700",
-    "backgroundColor": "#0d6efd",
-    "color": "white",
-    "borderColor": "#0d6efd",
-}
-
-
 # ==========================================================
 # TABS
 # ==========================================================
@@ -48,38 +25,43 @@ overview_tab = dbc.Tab(
     overview.layout,
     label="Overview",
     tab_id="overview-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
 
 climate_tab = dbc.Tab(
     climate.layout,
     label="Climate",
     tab_id="climate-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
 
 malaria_tab = dbc.Tab(
     malaria.layout,
     label="Malaria",
     tab_id="malaria-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
 
 prediction_tab = dbc.Tab(
     prediction.layout,
     label="Prediction Model",
     tab_id="prediction-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
 
 description_tab = dbc.Tab(
     description.layout,
     label="Project Description",
     tab_id="description-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
 
 about_tab = dbc.Tab(
     about.layout,
     label="Project Contributors",
     tab_id="about-tab",
+    label_style={"fontSize": "1.15rem", "fontWeight": "600"},
 )
-
 
 # ==========================================================
 # APP LAYOUT
@@ -117,7 +99,7 @@ app.layout = dbc.Container(
         ),
 
         # --------------------------------------------------
-        # TABS
+        # TABS CONTAINER
         # --------------------------------------------------
 
         dbc.Card(
@@ -139,11 +121,12 @@ app.layout = dbc.Container(
 
                     active_tab="overview-tab",
 
-                    tab_style=TAB_STYLE,
-
-                    active_tab_style=ACTIVE_TAB_STYLE,
-
                     class_name="w-100",
+
+                    style={
+                        "fontSize": "1.15rem",
+                        "fontWeight": "600",
+                    },
 
                 )
 
@@ -175,7 +158,6 @@ app.layout = dbc.Container(
     },
 
 )
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
