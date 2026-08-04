@@ -69,7 +69,7 @@ description_tab = dbc.Tab(
     tab_id="description-tab",
     style={
     "width": "100%"
-}
+},
 )
 
 app.layout = dbc.Container(
@@ -113,11 +113,6 @@ app.layout = dbc.Container(
                 "color": "white",
                 "fontWeight": "700",
                 "borderColor": "#0d6efd",
-            },
-        
-            tab_style={
-                "padding": "14px",
-                "fontSize": "1.05rem",
             },
         ),
 
