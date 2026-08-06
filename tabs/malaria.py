@@ -56,49 +56,32 @@ for file in files:
 df = pd.concat(df_list,ignore_index=True)
 df.columns = df.columns.str.strip()
 
-# MALARIA PREVALENCE DATA
-prev_under5 = (
-    df.groupby(["Year", "Month"])
-    .agg(
-        Fever=("Cases.Fever < 5", "sum"),
-        Positive=("Cases.Fever.with.RDT.Positive < 5", "sum")
-    )
-    .reset_index()
+
+# NON-MALARIAL FEVER
+# Data processing below
+nmf = df.copy()
+
+nmf["Negative_Cases"] = (
+    nmf["Cases.Fever.with.RDT. negative < 5"] +
+    nmf["Cases.Fever.with.RDT. negative >= 5"]
 )
 
-prev_under5["Prevalence"] = (
-    prev_under5["Positive"] /
-    prev_under5["Fever"].replace(0, np.nan)
+nmf["Total_Fever"] = (
+    nmf["Cases.Fever < 5"] +
+    nmf["Cases.Fever >= 5"]
 )
 
-prev_under5["Age_Group"] = "<5"
+nmf["Non_Malarial_Fever_Pct"] = (
+    nmf["Negative_Cases"] /
+    nmf["Total_Fever"].replace(0, np.nan)
+) * 100
 
-
-prev_over5 = (
-    df.groupby(["Year", "Month"])
-    .agg(
-        Fever=("Cases.Fever >= 5", "sum"),
-        Positive=("Cases.Fever.with.RDT.Positive >= 5", "sum")
-    )
-    .reset_index()
+nmf["Date"] = pd.to_datetime(
+    nmf["Year"].astype(str)
+    + "-"
+    + nmf["Month"].astype(str)
+    + "-01"
 )
-
-prev_over5["Prevalence"] = (
-    prev_over5["Positive"] /
-    prev_over5["Fever"].replace(0, np.nan)
-)
-
-prev_over5["Age_Group"] = "5+"
-
-
-prevalence_df = pd.concat(
-    [prev_under5, prev_over5],
-    ignore_index=True
-)
-
-prevalence_df["Year"] = prevalence_df["Year"].astype(str)
-
-
 
 # Sankey Vis
 under5_cases = df["Cases.Fever < 5"].sum()
@@ -152,30 +135,61 @@ fever_age_fig.update_layout(
 
 
 # MALARIA PREVALENCE FIGURE
-prevalence_fig = px.line(
-    prevalence_df,
-    x="Month",
-    y="Prevalence",
-    color="Age_Group",
-    facet_col="Year",
-    markers=True,
+nmf_fig = px.line(
 
-    color_discrete_map={
-        "<5": "#ef6c63",
-        "5+": "#14b8a6"
-    }
+    nmf,
+
+    x="Date",
+    y="Non_Malarial_Fever_Pct",
+
+    color="Subcounty",
+
+    facet_col="Subcounty",
+    facet_col_wrap=3,
+
+    line_shape="linear",
+
+    color_discrete_sequence=[
+        "#f87171",
+        "#b59b00",
+        "#10b981",
+        "#14b8a6",
+        "#60a5fa",
+        "#e879f9"
+    ]
 )
 
-prevalence_fig.update_layout(
+nmf_fig.update_traces(
+    line=dict(width=3)
+)
+
+nmf_fig.update_layout(
+
     template="plotly_white",
-    height=500,
-    title="Estimated Malaria Positivity Rate by Age Group and Year",
-    legend_title="Age Group",
-    margin=dict(l=20, r=20, t=60, b=20)
+
+    title="Proportion of Non-Malarial Fever Cases",
+
+    height=700,
+
+    legend_title="Subcounty",
+
+    margin=dict(
+        l=20,
+        r=20,
+        t=60,
+        b=20
+    )
+
 )
 
-prevalence_fig.for_each_annotation(
-    lambda a: a.update(text=a.text.split("=")[-1])
+nmf_fig.update_yaxes(
+    title="% Non-Malarial Fever"
+)
+
+nmf_fig.for_each_annotation(
+    lambda a: a.update(
+        text=a.text.replace("Subcounty=", "")
+    )
 )
 
 
@@ -277,7 +291,7 @@ bednet_fig.update_layout(
 layout = dbc.Container(
     [
 
-dbc.Card(
+    dbc.Card(
     dbc.CardBody(
         [
                 dbc.Row(
@@ -328,26 +342,24 @@ dbc.Card(
 
         dbc.Card(
             dbc.CardBody([
-        
                 html.H4(
-                    "Malaria Positivity Trends",
+                    "Proportion of Non-Malarial Fever Cases",
                     className="fw-bold mb-1"
                 ),
         
                 html.P(
-                    "Monthly malaria positivity rate among reported fever cases by age group.",
+                    "Monthly percentage of fever cases testing negative for malaria by subcounty.",
                     className="text-muted mb-4"
                 ),
         
                 dcc.Graph(
-                    figure=prevalence_fig,
+                    figure=nmf_fig,
                     config={"displayModeBar": False}
                 )
-        
             ]),
             className="border-0 shadow-sm mb-4"
         ),
-        
+
         dbc.Card(
             dbc.CardBody([
                 html.H4("Fever Cases by Age Group and RDT Outcome",className="fw-bold mb-1"),
