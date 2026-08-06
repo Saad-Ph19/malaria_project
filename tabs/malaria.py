@@ -8,7 +8,7 @@ import glob
 import os
 
 # Bednet data
-bednet_files = glob.glob("Bednet_Data/*.xls")
+bednet_files = glob.glob("Bednet_Data/*.xlsx")
 
 bednet_df = pd.read_excel(
     bednet_files[0],
@@ -45,7 +45,7 @@ bednet_long.rename(
 
 
 # Malaria data
-files = glob.glob("Malaria_Data/*.xls")
+files = glob.glob("Malaria_Data/*.xlsx")
 df_list = []
 for file in files:
     temp = pd.read_excel(file, header=1)
