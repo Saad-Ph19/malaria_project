@@ -56,6 +56,50 @@ for file in files:
 df = pd.concat(df_list,ignore_index=True)
 df.columns = df.columns.str.strip()
 
+# MALARIA PREVALENCE DATA
+prev_under5 = (
+    df.groupby(["Year", "Month"])
+    .agg(
+        Fever=("Cases.Fever < 5", "sum"),
+        Positive=("Cases.Fever.with.RDT.Positive < 5", "sum")
+    )
+    .reset_index()
+)
+
+prev_under5["Prevalence"] = (
+    prev_under5["Positive"] /
+    prev_under5["Fever"].replace(0, np.nan)
+)
+
+prev_under5["Age_Group"] = "<5"
+
+
+prev_over5 = (
+    df.groupby(["Year", "Month"])
+    .agg(
+        Fever=("Cases.Fever >= 5", "sum"),
+        Positive=("Cases.Fever.with.RDT.Positive >= 5", "sum")
+    )
+    .reset_index()
+)
+
+prev_over5["Prevalence"] = (
+    prev_over5["Positive"] /
+    prev_over5["Fever"].replace(0, np.nan)
+)
+
+prev_over5["Age_Group"] = "5+"
+
+
+prevalence_df = pd.concat(
+    [prev_under5, prev_over5],
+    ignore_index=True
+)
+
+prevalence_df["Year"] = prevalence_df["Year"].astype(str)
+
+
+
 # Sankey Vis
 under5_cases = df["Cases.Fever < 5"].sum()
 over5_cases = df["Cases.Fever >= 5"].sum()
@@ -105,6 +149,35 @@ fever_age_fig.update_layout(
     height=700,
     margin=dict(l=20, r=20, t=20, b=20)
 )
+
+
+# MALARIA PREVALENCE FIGURE
+prevalence_fig = px.line(
+    prevalence_df,
+    x="Month",
+    y="Prevalence",
+    color="Age_Group",
+    facet_col="Year",
+    markers=True,
+
+    color_discrete_map={
+        "<5": "#ef6c63",
+        "5+": "#14b8a6"
+    }
+)
+
+prevalence_fig.update_layout(
+    template="plotly_white",
+    height=500,
+    title="Estimated Malaria Positivity Rate by Age Group and Year",
+    legend_title="Age Group",
+    margin=dict(l=20, r=20, t=60, b=20)
+)
+
+prevalence_fig.for_each_annotation(
+    lambda a: a.update(text=a.text.split("=")[-1])
+)
+
 
 # Stocks
 stock_fig = go.Figure()
@@ -251,6 +324,28 @@ dbc.Card(
         
             className="border-0 shadow-sm mb-4",
             style={"borderRadius": "16px",},
+        ),
+
+        dbc.Card(
+            dbc.CardBody([
+        
+                html.H4(
+                    "Malaria Positivity Trends",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Monthly malaria positivity rate among reported fever cases by age group.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    figure=prevalence_fig,
+                    config={"displayModeBar": False}
+                )
+        
+            ]),
+            className="border-0 shadow-sm mb-4"
         ),
         
         dbc.Card(
