@@ -43,6 +43,7 @@ bednet_long.rename(
     inplace=True
 )
 
+
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
 df_list = []
