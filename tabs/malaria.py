@@ -242,10 +242,28 @@ bednet_fig.update_layout(
 # Proportion of Non-Malarial Fever Cases
 # Always displays ALL subcounties and ALL years
 
-non_malaria_data = df.sort_values(
-    ["Subcounty", "Date"]
-).copy()
+# ---------------------------------------------------------
+# Proportion of Non-Malarial Fever Cases
+# Always displays ALL subcounties and ALL years
+# ---------------------------------------------------------
 
+non_malaria_data = df.copy()
+
+# Shorten the Subcounty names ONLY for this visualization
+# Example: "Alego Usonga Sub County" -> "Alego Usonga"
+non_malaria_data["Subcounty"] = (
+    non_malaria_data["Subcounty"]
+    .astype(str)
+    .str.replace(" Sub County", "", regex=False)
+    .str.strip()
+)
+
+# Sort data by Subcounty and date
+non_malaria_data = non_malaria_data.sort_values(
+    ["Subcounty", "Date"]
+)
+
+# Create small-multiple line chart
 non_malaria_fig = px.line(
     non_malaria_data,
     x="Date",
@@ -265,14 +283,13 @@ non_malaria_fig = px.line(
     }
 )
 
-# Remove "Subcounty=" from facet titles
+# Remove "Subcounty=" from titles
 non_malaria_fig.for_each_annotation(
     lambda a: a.update(
         text=a.text.replace("Subcounty=", "")
     )
 )
 
-# Make lines similar to your example
 non_malaria_fig.update_traces(
     line=dict(width=3),
     hovertemplate=(
@@ -282,7 +299,6 @@ non_malaria_fig.update_traces(
     )
 )
 
-# Y axes
 non_malaria_fig.update_yaxes(
     ticksuffix="%",
     rangemode="tozero",
@@ -291,7 +307,6 @@ non_malaria_fig.update_yaxes(
     title=None
 )
 
-# X axes
 non_malaria_fig.update_xaxes(
     title=None,
     showgrid=True,
@@ -302,7 +317,6 @@ non_malaria_fig.update_xaxes(
 
 non_malaria_fig.update_layout(
     template="plotly_white",
-
     height=650,
 
     margin=dict(
@@ -346,7 +360,6 @@ non_malaria_fig.add_annotation(
     showarrow=False,
     font=dict(size=14)
 )
-
 
 
 # Layout
