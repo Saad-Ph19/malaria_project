@@ -881,7 +881,6 @@ prevalence_fig.update_xaxes(
     gridcolor="rgba(0,0,0,0.08)"
 )
 
-
 # Y axis
 prevalence_fig.update_yaxes(
     title=None,
@@ -954,6 +953,256 @@ prevalence_fig.add_annotation(
     font=dict(size=15)
 )
 
+
+# ---------------------------------------------------------#
+# Proportion of Non-Malarial Fever
+# by Year, Subcounty, and Age Group
+
+non_malaria_age = df.copy()
+
+# Clean subcounty names for visualization
+non_malaria_age["Subcounty"] = (
+    non_malaria_age["Subcounty"]
+    .astype(str)
+    .str.replace(" Sub County", "", regex=False)
+    .str.strip()
+)
+
+# Make sure values are numeric
+numeric_cols = [
+    "Cases.Fever < 5",
+    "Cases.Fever >= 5",
+    "Cases.Fever.with.RDT. negative < 5",
+    "Cases.Fever.with.RDT. negative >= 5",
+]
+
+for col in numeric_cols:
+    non_malaria_age[col] = pd.to_numeric(
+        non_malaria_age[col],
+        errors="coerce"
+    ).fillna(0)
+
+non_malaria_age["Year"] = pd.to_numeric(
+    non_malaria_age["Year"],
+    errors="coerce"
+)
+
+non_malaria_age_summary = (
+    non_malaria_age
+    .groupby(
+        ["Year", "Subcounty"],
+        as_index=False
+    )
+    .agg(
+        Fever_U5=(
+            "Cases.Fever < 5",
+            "sum"
+        ),
+
+        Fever_5plus=(
+            "Cases.Fever >= 5",
+            "sum"
+        ),
+
+        Negative_U5=(
+            "Cases.Fever.with.RDT. negative < 5",
+            "sum"
+        ),
+
+        Negative_5plus=(
+            "Cases.Fever.with.RDT. negative >= 5",
+            "sum"
+        )
+    )
+)
+
+non_malaria_age_summary["Percent_U5"] = np.where(
+    non_malaria_age_summary["Fever_U5"] > 0,
+
+    (
+        non_malaria_age_summary["Negative_U5"]
+        / non_malaria_age_summary["Fever_U5"]
+    ) * 100,
+
+    np.nan
+)
+
+non_malaria_age_summary["Percent_5plus"] = np.where(
+    non_malaria_age_summary["Fever_5plus"] > 0,
+
+    (
+        non_malaria_age_summary["Negative_5plus"]
+        / non_malaria_age_summary["Fever_5plus"]
+    ) * 100,
+
+    np.nan
+)
+
+u5_df = non_malaria_age_summary[
+    ["Year", "Subcounty", "Percent_U5"]
+].copy()
+
+u5_df["Age_Group"] = "<5"
+
+u5_df.rename(
+    columns={
+        "Percent_U5": "Non_Malarial_Percent"
+    },
+    inplace=True
+)
+
+
+plus5_df = non_malaria_age_summary[
+    ["Year", "Subcounty", "Percent_5plus"]
+].copy()
+
+plus5_df["Age_Group"] = "5+"
+
+plus5_df.rename(
+    columns={
+        "Percent_5plus": "Non_Malarial_Percent"
+    },
+    inplace=True
+)
+
+
+non_malaria_age_long = pd.concat(
+    [u5_df, plus5_df],
+    ignore_index=True
+)
+
+# ----
+# Visualization
+non_malaria_age_fig = px.bar(
+    non_malaria_age_long,
+
+    x="Year",
+    y="Non_Malarial_Percent",
+
+    color="Subcounty",
+
+    facet_col="Age_Group",
+
+    barmode="group",
+
+    category_orders={
+        "Age_Group": ["<5", "5+"],
+
+        "Subcounty": [
+            "Alego Usonga",
+            "Bondo",
+            "Gem",
+            "Rarieda",
+            "Ugenya",
+            "Ugunja"
+        ]
+    },
+
+    labels={
+        "Year": "Year",
+        "Non_Malarial_Percent": "% Non-Malarial Fever",
+        "Subcounty": "SubCounty"
+    }
+)
+
+# Formatting
+# Clean facet titles
+non_malaria_age_fig.for_each_annotation(
+    lambda a: a.update(
+        text=a.text.replace("Age_Group=", "")
+    )
+)
+
+
+non_malaria_age_fig.update_traces(
+    hovertemplate=(
+        "Year: %{x}<br>"
+        "Non-Malarial Fever: %{y:.1f}%"
+        "<extra></extra>"
+    )
+)
+
+
+non_malaria_age_fig.update_yaxes(
+    ticksuffix="%",
+    rangemode="tozero",
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)",
+
+    title=None
+)
+
+non_malaria_age_fig.update_xaxes(
+    title=None,
+
+    tickmode="linear",
+    dtick=1,
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)"
+)
+
+non_malaria_age_fig.update_layout(
+    template="plotly_white",
+
+    height=600,
+
+    margin=dict(
+        l=80,
+        r=140,
+        t=60,
+        b=80
+    ),
+
+    legend_title_text="SubCounty",
+
+    legend=dict(
+        orientation="v",
+        x=1.02,
+        y=0.5,
+        yanchor="middle"
+    ),
+
+    bargap=0.20,
+    bargroupgap=0.03
+)
+
+# Shared X-axis title
+non_malaria_age_fig.add_annotation(
+    text="Year",
+
+    x=0.5,
+    y=-0.11,
+
+    xref="paper",
+    yref="paper",
+
+    showarrow=False,
+
+    font=dict(
+        size=16
+    )
+)
+
+# Shared Y-axis title
+non_malaria_age_fig.add_annotation(
+    text="% Non-Malarial Fever",
+
+    x=-0.06,
+    y=0.5,
+
+    xref="paper",
+    yref="paper",
+
+    textangle=-90,
+
+    showarrow=False,
+
+    font=dict(
+        size=16
+    )
+)
 
 
 # Layout
@@ -1062,6 +1311,30 @@ layout = dbc.Container(
                     config={"displayModeBar": False}
                 )
             ]),
+            className="border-0 shadow-sm mb-4"
+        ),
+
+        dbc.Card(
+            dbc.CardBody([
+                html.H4(
+                    "Proportion of Non-Malarial Fever by Year, Subcounty, and Age Group",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Annual proportion of reported fever cases that tested negative for malaria by age group and subcounty.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    id="non-malaria-age-group",
+                    figure=non_malaria_age_fig,
+                    config={
+                        "displayModeBar": False
+                    }
+                )
+            ]),
+        
             className="border-0 shadow-sm mb-4"
         ),
 
