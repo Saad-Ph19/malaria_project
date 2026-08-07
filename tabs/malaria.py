@@ -56,6 +56,45 @@ for file in files:
 df = pd.concat(df_list,ignore_index=True)
 df.columns = df.columns.str.strip()
 
+
+# Prepare Non-Malarial Fever data
+###
+df["Month"] = pd.to_numeric(df["Month"], errors="coerce")
+df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
+
+# Create Month-Year date
+df["Date"] = pd.to_datetime(
+    dict(
+        year=df["Year"],
+        month=df["Month"],
+        day=1
+    ),
+    errors="coerce"
+)
+
+# Total fever cases
+df["Total_Fever_Cases"] = (
+    df["Cases.Fever < 5"].fillna(0)
+    + df["Cases.Fever >= 5"].fillna(0)
+)
+
+# Fever cases that tested negative for malaria
+df["Non_Malarial_Fever"] = (
+    df["Cases.Fever.with.RDT. negative < 5"].fillna(0)
+    + df["Cases.Fever.with.RDT. negative >= 5"].fillna(0)
+)
+
+# Percentage
+df["Non_Malarial_Fever_Percent"] = np.where(
+    df["Total_Fever_Cases"] > 0,
+    (
+        df["Non_Malarial_Fever"]
+        / df["Total_Fever_Cases"]
+    ) * 100,
+    np.nan
+)
+
+
 # Sankey Vis
 under5_cases = df["Cases.Fever < 5"].sum()
 over5_cases = df["Cases.Fever >= 5"].sum()
@@ -200,6 +239,116 @@ bednet_fig.update_layout(
     )
 )
 
+# Proportion of Non-Malarial Fever Cases
+# Always displays ALL subcounties and ALL years
+
+non_malaria_data = df.sort_values(
+    ["Subcounty", "Date"]
+).copy()
+
+non_malaria_fig = px.line(
+    non_malaria_data,
+    x="Date",
+    y="Non_Malarial_Fever_Percent",
+    color="Subcounty",
+    facet_col="Subcounty",
+    facet_col_wrap=3,
+    category_orders={
+        "Subcounty": [
+            "Alego Usonga",
+            "Bondo",
+            "Gem",
+            "Rarieda",
+            "Ugenya",
+            "Ugunja"
+        ]
+    }
+)
+
+# Remove "Subcounty=" from facet titles
+non_malaria_fig.for_each_annotation(
+    lambda a: a.update(
+        text=a.text.replace("Subcounty=", "")
+    )
+)
+
+# Make lines similar to your example
+non_malaria_fig.update_traces(
+    line=dict(width=3),
+    hovertemplate=(
+        "<b>%{x|%B %Y}</b><br>"
+        "Non-Malarial Fever: %{y:.1f}%"
+        "<extra></extra>"
+    )
+)
+
+# Y axes
+non_malaria_fig.update_yaxes(
+    ticksuffix="%",
+    rangemode="tozero",
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)",
+    title=None
+)
+
+# X axes
+non_malaria_fig.update_xaxes(
+    title=None,
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)",
+    tickformat="%Y",
+    dtick="M12"
+)
+
+non_malaria_fig.update_layout(
+    template="plotly_white",
+
+    height=650,
+
+    margin=dict(
+        l=70,
+        r=130,
+        t=40,
+        b=70
+    ),
+
+    legend_title_text="SubCounty",
+
+    legend=dict(
+        orientation="v",
+        x=1.01,
+        y=0.5,
+        yanchor="middle"
+    ),
+
+    hovermode="closest"
+)
+
+# Shared X-axis title
+non_malaria_fig.add_annotation(
+    text="Month–Year",
+    x=0.5,
+    y=-0.10,
+    xref="paper",
+    yref="paper",
+    showarrow=False,
+    font=dict(size=14)
+)
+
+# Shared Y-axis title
+non_malaria_fig.add_annotation(
+    text="% Non-Malarial Fever",
+    x=-0.06,
+    y=0.5,
+    xref="paper",
+    yref="paper",
+    textangle=-90,
+    showarrow=False,
+    font=dict(size=14)
+)
+
+
+
 # Layout
 layout = dbc.Container(
     [
@@ -261,6 +410,27 @@ layout = dbc.Container(
                 dcc.Graph(
                     id="malaria-sankey",
                     figure=fever_age_fig,
+                    config={"displayModeBar": False}
+                )
+            ]),
+            className="border-0 shadow-sm mb-4"
+        ),
+
+        dbc.Card(
+            dbc.CardBody([
+                html.H4(
+                    "Proportion of Non-Malarial Fever Cases",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Monthly proportion of reported fever cases that tested negative for malaria across all subcounties.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    id="non-malaria-fever",
+                    figure=non_malaria_fig,
                     config={"displayModeBar": False}
                 )
             ]),
