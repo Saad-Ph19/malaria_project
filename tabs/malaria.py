@@ -242,15 +242,9 @@ bednet_fig.update_layout(
 # Proportion of Non-Malarial Fever Cases
 # Always displays ALL subcounties and ALL years
 
-# ---------------------------------------------------------
-# Proportion of Non-Malarial Fever Cases
-# Always displays ALL subcounties and ALL years
-# ---------------------------------------------------------
-
 non_malaria_data = df.copy()
 
 # Shorten the Subcounty names ONLY for this visualization
-# Example: "Alego Usonga Sub County" -> "Alego Usonga"
 non_malaria_data["Subcounty"] = (
     non_malaria_data["Subcounty"]
     .astype(str)
@@ -284,11 +278,11 @@ non_malaria_fig = px.line(
 )
 
 # Remove "Subcounty=" from titles
-non_malaria_fig.for_each_annotation(
-    lambda a: a.update(
-        text=a.text.replace("Subcounty=", "")
-    )
-)
+#non_malaria_fig.for_each_annotation(
+    #lambda a: a.update(
+        #text=a.text.replace("Subcounty=", "")
+   #)
+#)
 
 non_malaria_fig.update_traces(
     line=dict(width=3),
