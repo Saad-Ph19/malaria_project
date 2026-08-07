@@ -185,6 +185,137 @@ year_age_summary = (
 )
 
 
+####
+# Malaria Estimated Prevalence by Age Group and Year
+prevalence_data = df.copy()
+
+# Make sure numeric columns are actually numeric
+numeric_columns = [
+    "Cases.Fever.with.RDT.Positive < 5",
+    "Cases.Fever.with.RDT.Positive >= 5",
+    "Cases.Fever.with.RDT. negative < 5",
+    "Cases.Fever.with.RDT. negative >= 5",
+]
+
+for col in numeric_columns:
+    prevalence_data[col] = pd.to_numeric(
+        prevalence_data[col],
+        errors="coerce"
+    ).fillna(0)
+
+prevalence_data["Year"] = pd.to_numeric(
+    prevalence_data["Year"],
+    errors="coerce"
+)
+
+prevalence_data["Month"] = pd.to_numeric(
+    prevalence_data["Month"],
+    errors="coerce"
+)
+
+# Aggregate ALL subcounties by Year and Month
+monthly_prevalence = (
+    prevalence_data
+    .groupby(["Year", "Month"], as_index=False)
+    .agg(
+        Positive_U5=(
+            "Cases.Fever.with.RDT.Positive < 5",
+            "sum"
+        ),
+        Negative_U5=(
+            "Cases.Fever.with.RDT. negative < 5",
+            "sum"
+        ),
+        Positive_5plus=(
+            "Cases.Fever.with.RDT.Positive >= 5",
+            "sum"
+        ),
+        Negative_5plus=(
+            "Cases.Fever.with.RDT. negative >= 5",
+            "sum"
+        )
+    )
+)
+
+prevalence_rows = []
+
+for _, row in monthly_prevalence.iterrows():
+
+    # -----------------------------
+    # Under 5
+    # -----------------------------
+    tested_u5 = (
+        row["Positive_U5"]
+        + row["Negative_U5"]
+    )
+
+    if tested_u5 > 0:
+
+        prevalence_u5 = (
+            row["Positive_U5"]
+            / tested_u5
+        )
+
+        # 95% CI
+        se_u5 = np.sqrt(
+            prevalence_u5
+            * (1 - prevalence_u5)
+            / tested_u5
+        )
+
+        ci_u5 = 1.96 * se_u5
+
+        prevalence_rows.append(
+            {
+                "Year": int(row["Year"]),
+                "Month": int(row["Month"]),
+                "Age_Group": "<5",
+                "Prevalence": prevalence_u5,
+                "CI": ci_u5
+            }
+        )
+
+    tested_5plus = (
+        row["Positive_5plus"]
+        + row["Negative_5plus"]
+    )
+
+    if tested_5plus > 0:
+
+        prevalence_5plus = (
+            row["Positive_5plus"]
+            / tested_5plus
+        )
+
+        # 95% CI
+        se_5plus = np.sqrt(
+            prevalence_5plus
+            * (1 - prevalence_5plus)
+            / tested_5plus
+        )
+
+        ci_5plus = 1.96 * se_5plus
+
+        prevalence_rows.append(
+            {
+                "Year": int(row["Year"]),
+                "Month": int(row["Month"]),
+                "Age_Group": "5+",
+                "Prevalence": prevalence_5plus,
+                "CI": ci_5plus
+            }
+        )
+
+
+prevalence_long = pd.DataFrame(
+    prevalence_rows
+)
+
+prevalence_long = prevalence_long.sort_values(
+    ["Age_Group", "Year", "Month"]
+)
+
+
 # Sankey Vis
 under5_cases = df["Cases.Fever < 5"].sum()
 over5_cases = df["Cases.Fever >= 5"].sum()
@@ -680,6 +811,150 @@ age_group_fig.update_yaxes(
     col=2
 )
 
+# --------------------------------------------------------- #
+# Prevalence Visualization
+prevalence_fig = px.line(
+    prevalence_long,
+
+    x="Month",
+    y="Prevalence",
+
+    color="Age_Group",
+
+    facet_col="Year",
+    facet_row="Age_Group",
+
+    error_y="CI",
+
+    markers=True,
+
+    category_orders={
+        "Age_Group": ["<5", "5+"],
+        "Year": sorted(
+            prevalence_long["Year"]
+            .dropna()
+            .unique()
+        )
+    },
+
+    color_discrete_map={
+        "<5": "#F8766D",
+        "5+": "#00BFC4"
+    }
+)
+
+
+# Formatting
+prevalence_fig.update_traces(
+    line=dict(
+        width=2.5
+    ),
+
+    marker=dict(
+        size=6
+    ),
+
+    error_y=dict(
+        thickness=1.5,
+        width=4
+    ),
+
+    hovertemplate=(
+        "Month: %{x}<br>"
+        "Prevalence: %{y:.3f}"
+        "<extra></extra>"
+    )
+)
+
+
+# X axis
+prevalence_fig.update_xaxes(
+    title=None,
+
+    tickmode="linear",
+    tick0=1,
+    dtick=1,
+
+    range=[0.5, 12.5],
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)"
+)
+
+
+# Y axis
+prevalence_fig.update_yaxes(
+    title=None,
+
+    range=[0, 1],
+
+    tickformat=".1f",
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)"
+)
+
+
+# Clean facet labels
+prevalence_fig.for_each_annotation(
+    lambda a: a.update(
+        text=(
+            a.text
+            .replace("Year=", "")
+            .replace("Age_Group=", "")
+        )
+    )
+)
+
+
+prevalence_fig.update_layout(
+    template="plotly_white",
+
+    height=700,
+
+    margin=dict(
+        l=80,
+        r=100,
+        t=60,
+        b=80
+    ),
+
+    legend=dict(
+        title="Age Group",
+        orientation="v",
+        x=1.01,
+        y=0.5,
+        yanchor="middle"
+    ),
+
+    hovermode="closest"
+)
+
+# Shared X-axis label
+prevalence_fig.add_annotation(
+    text="Month",
+    x=0.5,
+    y=-0.10,
+    xref="paper",
+    yref="paper",
+    showarrow=False,
+    font=dict(size=15)
+)
+
+
+# Shared Y-axis label
+prevalence_fig.add_annotation(
+    text="Prevalence",
+    x=-0.06,
+    y=0.5,
+    xref="paper",
+    yref="paper",
+    textangle=-90,
+    showarrow=False,
+    font=dict(size=15)
+)
+
+
 
 # Layout
 layout = dbc.Container(
@@ -785,6 +1060,29 @@ layout = dbc.Container(
                     id="malaria-age-summary",
                     figure=age_group_fig,
                     config={"displayModeBar": False}
+                )
+            ]),
+            className="border-0 shadow-sm mb-4"
+        ),
+
+        dbc.Card(
+            dbc.CardBody([
+                html.H4(
+                    "Malaria Estimated Prevalence by Age Group and Year",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Monthly estimated malaria prevalence among RDT-tested fever cases by age group across all subcounties.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    id="malaria-prevalence-age-year",
+                    figure=prevalence_fig,
+                    config={
+                        "displayModeBar": False
+                    }
                 )
             ]),
             className="border-0 shadow-sm mb-4"
