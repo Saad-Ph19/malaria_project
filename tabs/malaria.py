@@ -1,5 +1,6 @@
 from dash import callback, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
+from plotly.subplots import make_subplots
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -42,7 +43,6 @@ bednet_long.rename(
     },
     inplace=True
 )
-
 
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
@@ -92,6 +92,96 @@ df["Non_Malarial_Fever_Percent"] = np.where(
         / df["Total_Fever_Cases"]
     ) * 100,
     np.nan
+)
+
+
+# Fever / RDT / ACT Summary by Age Group and Year
+# Always displays ALL subcounties and ALL years
+
+age_summary = df.copy()
+
+# Make sure Year is numeric
+age_summary["Year"] = pd.to_numeric(
+    age_summary["Year"],
+    errors="coerce"
+)
+
+
+# Create required measures
+# Fever cases
+age_summary["Fever_U5"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever < 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+age_summary["Fever_5plus"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever >= 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+# RDT Positive
+age_summary["RDT_Pos_U5"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever.with.RDT.Positive < 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+age_summary["RDT_Pos_5plus"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever.with.RDT.Positive >= 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+
+# RDT Negative
+age_summary["RDT_Neg_U5"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever.with.RDT. negative < 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+age_summary["RDT_Neg_5plus"] = (
+    pd.to_numeric(
+        age_summary["Cases.Fever.with.RDT. negative >= 5"],
+        errors="coerce"
+    ).fillna(0)
+)
+
+
+# Total RDT tested = positive + negative
+age_summary["RDT_Tested_U5"] = (
+    age_summary["RDT_Pos_U5"]
+    + age_summary["RDT_Neg_U5"]
+)
+
+age_summary["RDT_Tested_5plus"] = (
+    age_summary["RDT_Pos_5plus"]
+    + age_summary["RDT_Neg_5plus"]
+)
+
+
+# Aggregate across all subcounties by year
+year_age_summary = (
+    age_summary
+    .groupby("Year", as_index=False)
+    .agg(
+        Fever_U5=("Fever_U5", "sum"),
+        Fever_5plus=("Fever_5plus", "sum"),
+
+        RDT_Tested_U5=("RDT_Tested_U5", "sum"),
+        RDT_Tested_5plus=("RDT_Tested_5plus", "sum"),
+
+        RDT_Pos_U5=("RDT_Pos_U5", "sum"),
+        RDT_Pos_5plus=("RDT_Pos_5plus", "sum"),
+    )
+    .sort_values("Year")
 )
 
 
@@ -278,11 +368,11 @@ non_malaria_fig = px.line(
 )
 
 # Remove "Subcounty=" from titles
-#non_malaria_fig.for_each_annotation(
-    #lambda a: a.update(
-        #text=a.text.replace("Subcounty=", "")
-   #)
-#)
+non_malaria_fig.for_each_annotation(
+    lambda a: a.update(
+        text=a.text.replace("Subcounty=", "")
+   )
+)
 
 non_malaria_fig.update_traces(
     line=dict(width=3),
@@ -353,6 +443,241 @@ non_malaria_fig.add_annotation(
     textangle=-90,
     showarrow=False,
     font=dict(size=14)
+)
+
+###
+# Create 2 x 2 visualization
+age_group_fig = make_subplots(
+    rows=2,
+    cols=2,
+
+    subplot_titles=[
+        "# Subjects with Fever",
+        "# Subjects RDT Tested",
+        "# Subjects with RDT+",
+        "# Subjects with RDT+ and ACT"
+    ],
+
+    vertical_spacing=0.18,
+    horizontal_spacing=0.10
+)
+
+years = year_age_summary["Year"].astype(int).astype(str)
+
+# Colors similar to the example
+under5_color = "#F8766D"
+over5_color = "#00BFC4"
+
+
+# 1. Subjects with Fever
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["Fever_U5"],
+        name="<5",
+        legendgroup="<5",
+        marker_color=under5_color,
+        offsetgroup="u5",
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: <5<br>"
+            "Fever Cases: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=1,
+    col=1
+)
+
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["Fever_5plus"],
+        name="5+",
+        legendgroup="5+",
+        marker_color=over5_color,
+        offsetgroup="5plus",
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: 5+<br>"
+            "Fever Cases: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=1,
+    col=1
+)
+
+# 2. Subjects RDT Tested
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["RDT_Tested_U5"],
+        name="<5",
+        legendgroup="<5",
+        marker_color=under5_color,
+        offsetgroup="u5",
+        showlegend=False,
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: <5<br>"
+            "RDT Tested: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=1,
+    col=2
+)
+
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["RDT_Tested_5plus"],
+        name="5+",
+        legendgroup="5+",
+        marker_color=over5_color,
+        offsetgroup="5plus",
+        showlegend=False,
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: 5+<br>"
+            "RDT Tested: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=1,
+    col=2
+)
+
+# 3. Subjects with RDT+
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["RDT_Pos_U5"],
+        name="<5",
+        legendgroup="<5",
+        marker_color=under5_color,
+        offsetgroup="u5",
+        showlegend=False,
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: <5<br>"
+            "RDT Positive: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=2,
+    col=1
+)
+
+age_group_fig.add_trace(
+    go.Bar(
+        x=years,
+        y=year_age_summary["RDT_Pos_5plus"],
+        name="5+",
+        legendgroup="5+",
+        marker_color=over5_color,
+        offsetgroup="5plus",
+        showlegend=False,
+
+        hovertemplate=(
+            "Year: %{x}<br>"
+            "Age Group: 5+<br>"
+            "RDT Positive: %{y:,.0f}"
+            "<extra></extra>"
+        )
+    ),
+    row=2,
+    col=1
+)
+
+# Figure formatting
+age_group_fig.update_layout(
+    template="plotly_white",
+
+    barmode="group",
+
+    height=750,
+
+    margin=dict(
+        l=60,
+        r=30,
+        t=100,
+        b=60
+    ),
+
+    legend=dict(
+        title="Age Group",
+        orientation="h",
+        x=0.5,
+        xanchor="center",
+        y=1.12,
+        yanchor="bottom"
+    ),
+
+    bargap=0.25,
+    bargroupgap=0.05
+)
+
+
+# X axis titles
+age_group_fig.update_xaxes(
+    title_text="Year",
+    row=1,
+    col=1
+)
+
+age_group_fig.update_xaxes(
+    title_text="Year",
+    row=1,
+    col=2
+)
+
+age_group_fig.update_xaxes(
+    title_text="Year",
+    row=2,
+    col=1
+)
+
+age_group_fig.update_xaxes(
+    title_text="Year",
+    row=2,
+    col=2
+)
+
+
+# Y axis titles
+age_group_fig.update_yaxes(
+    title_text="Count",
+    rangemode="tozero",
+    row=1,
+    col=1
+)
+
+age_group_fig.update_yaxes(
+    title_text="Count",
+    rangemode="tozero",
+    row=1,
+    col=2
+)
+
+age_group_fig.update_yaxes(
+    title_text="Count",
+    rangemode="tozero",
+    row=2,
+    col=1
+)
+
+age_group_fig.update_yaxes(
+    title_text="Count",
+    rangemode="tozero",
+    row=2,
+    col=2
 )
 
 
@@ -438,6 +763,27 @@ layout = dbc.Container(
                 dcc.Graph(
                     id="non-malaria-fever",
                     figure=non_malaria_fig,
+                    config={"displayModeBar": False}
+                )
+            ]),
+            className="border-0 shadow-sm mb-4"
+        ),
+
+        dbc.Card(
+            dbc.CardBody([
+                html.H4(
+                    "Fever Testing and Treatment by Age Group",
+                    className="fw-bold mb-1"
+                ),
+        
+                html.P(
+                    "Annual fever cases, malaria testing, positive RDT results, and treatment by age group across all subcounties.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    id="malaria-age-summary",
+                    figure=age_group_fig,
                     config={"displayModeBar": False}
                 )
             ]),
