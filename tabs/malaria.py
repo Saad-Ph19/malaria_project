@@ -1204,6 +1204,188 @@ non_malaria_age_fig.add_annotation(
     )
 )
 
+# ---------------------------------------------------------#
+# Distribution of Non-Malarial Fever
+# by Subcounty and Age Group
+
+box_data = df.copy()
+
+# Clean subcounty names for display
+box_data["Subcounty"] = (
+    box_data["Subcounty"]
+    .astype(str)
+    .str.replace(" Sub County", "", regex=False)
+    .str.strip()
+)
+
+# Make sure needed columns are numeric
+numeric_cols = [
+    "Cases.Fever < 5",
+    "Cases.Fever >= 5",
+    "Cases.Fever.with.RDT. negative < 5",
+    "Cases.Fever.with.RDT. negative >= 5",
+]
+
+for col in numeric_cols:
+    box_data[col] = pd.to_numeric(
+        box_data[col],
+        errors="coerce"
+    )
+
+
+box_data["Percent_U5"] = np.where(
+    box_data["Cases.Fever < 5"] > 0,
+    (
+        box_data["Cases.Fever.with.RDT. negative < 5"]
+        / box_data["Cases.Fever < 5"]
+    ) * 100,
+    np.nan
+)
+
+box_data["Percent_5plus"] = np.where(
+    box_data["Cases.Fever >= 5"] > 0,
+    (
+        box_data["Cases.Fever.with.RDT. negative >= 5"]
+        / box_data["Cases.Fever >= 5"]
+    ) * 100,
+    np.nan
+)
+
+# Long format for Plotly
+box_u5 = box_data[
+    ["Subcounty", "Year", "Month", "Percent_U5"]
+].copy()
+
+box_u5["Age_Group"] = "<5"
+
+box_u5.rename(
+    columns={
+        "Percent_U5": "Non_Malarial_Percent"
+    },
+    inplace=True
+)
+
+
+box_5plus = box_data[
+    ["Subcounty", "Year", "Month", "Percent_5plus"]
+].copy()
+
+box_5plus["Age_Group"] = "5+"
+
+box_5plus.rename(
+    columns={
+        "Percent_5plus": "Non_Malarial_Percent"
+    },
+    inplace=True
+)
+
+
+box_long = pd.concat(
+    [box_u5, box_5plus],
+    ignore_index=True
+)
+
+# Remove missing percentages
+box_long = box_long.dropna(
+    subset=["Non_Malarial_Percent"]
+)
+
+# ---
+# Boxplot visualization
+non_malaria_box_fig = px.box(
+    box_long,
+
+    x="Subcounty",
+    y="Non_Malarial_Percent",
+
+    color="Age_Group",
+
+    category_orders={
+        "Subcounty": [
+            "Alego Usonga",
+            "Bondo",
+            "Gem",
+            "Rarieda",
+            "Ugenya",
+            "Ugunja"
+        ],
+        "Age_Group": ["<5", "5+"]
+    },
+
+    color_discrete_map={
+        "<5": "#F8766D",
+        "5+": "#00BFC4"
+    },
+
+    labels={
+        "Subcounty": "Subcounty",
+        "Non_Malarial_Percent": "% Non-Malarial Fever",
+        "Age_Group": "AgeGroup"
+    }
+)
+
+# Formatting
+non_malaria_box_fig.update_traces(
+    boxpoints="outliers",
+    jitter=0,
+    pointpos=0,
+
+    line=dict(
+        width=1.5
+    ),
+
+    marker=dict(
+        size=6
+    ),
+
+    hovertemplate=(
+        "Subcounty: %{x}<br>"
+        "Non-Malarial Fever: %{y:.1f}%"
+        "<extra></extra>"
+    )
+)
+
+non_malaria_box_fig.update_yaxes(
+    ticksuffix="%",
+    rangemode="tozero",
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)",
+
+    title_text="% Non-Malarial Fever"
+)
+
+non_malaria_box_fig.update_xaxes(
+    title_text="Subcounty",
+
+    showgrid=True,
+    gridcolor="rgba(0,0,0,0.08)"
+)
+
+non_malaria_box_fig.update_layout(
+    template="plotly_white",
+
+    height=600,
+
+    margin=dict(
+        l=70,
+        r=130,
+        t=30,
+        b=70
+    ),
+
+    boxmode="group",
+
+    legend_title_text="AgeGroup",
+
+    legend=dict(
+        orientation="v",
+        x=1.02,
+        y=0.5,
+        yanchor="middle"
+    )
+)
+
 
 # Layout
 layout = dbc.Container(
@@ -1360,7 +1542,32 @@ layout = dbc.Container(
             ]),
             className="border-0 shadow-sm mb-4"
         ),
+
+        dbc.Card(
+            dbc.CardBody([
+                html.H4(
+                    "Distribution of Non-Malarial Fever by Subcounty and Age Group",
+                    className="fw-bold mb-1"
+                ),
         
+                html.P(
+                    "Distribution of monthly non-malarial fever percentages across all years by subcounty and age group.",
+                    className="text-muted mb-4"
+                ),
+        
+                dcc.Graph(
+                    id="non-malaria-boxplot",
+                    figure=non_malaria_box_fig,
+                    config={
+                        "displayModeBar": False
+                    }
+                )
+            ]),
+        
+            className="border-0 shadow-sm mb-4"
+        ),
+        
+                
         dbc.Row(
             [
                 dbc.Col(
