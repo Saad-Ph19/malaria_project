@@ -19,79 +19,122 @@ app = Dash(
 server = app.server
 
 
+# -------------------------------------------------
+# Tabs
+# -------------------------------------------------
+
 overview_tab = dbc.Tab(
     overview.layout,
     label="Overview",
     tab_id="overview-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
 )
 
 climate_tab = dbc.Tab(
     climate.layout,
     label="Climate",
     tab_id="climate-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
 )
 
 malaria_tab = dbc.Tab(
     malaria.layout,
     label="Malaria",
     tab_id="malaria-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
 )
 
 prediction_tab = dbc.Tab(
     prediction.layout,
     label="Prediction Model",
     tab_id="prediction-tab",
-)
-
-about_tab = dbc.Tab(
-    about.layout,
-    label="Project Contributors",
-    tab_id="about-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
 )
 
 description_tab = dbc.Tab(
     description.layout,
     label="Project Description",
     tab_id="description-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
 )
 
-app.layout = dbc.Container(
+about_tab = dbc.Tab(
+    about.layout,
+    label="Project Contributors",
+    tab_id="about-tab",
+    tab_class_name="dashboard-tab",
+    active_tab_class_name="dashboard-tab-active",
+)
+
+
+# -------------------------------------------------
+# App Layout
+# -------------------------------------------------
+
+app.layout = html.Div(
     [
-        dbc.Navbar(
+
+        # Header
+        html.Div(
+            [
+                dbc.Container(
+                    [
+                        html.H2(
+                            "Siaya County Disease and Climate Monitoring Dashboard",
+                            className="dashboard-title",
+                        ),
+                        html.P(
+                            "Monitoring malaria, climate conditions, and disease trends across Siaya County",
+                            className="dashboard-subtitle",
+                        ),
+                    ],
+                    fluid=True,
+                )
+            ],
+            className="dashboard-header",
+        ),
+
+        # Full-width tab navigation
+        html.Div(
             dbc.Container(
-                html.H3(
-                    "Siaya County Disease and Climate Monitoring Dashboard",
-                    className="mb-0 text-white fw-bold",
+                dbc.Tabs(
+                    [
+                        overview_tab,
+                        climate_tab,
+                        malaria_tab,
+                        prediction_tab,
+                        description_tab,
+                        about_tab,
+                    ],
+                    id="main-tabs",
+                    active_tab="overview-tab",
+                    className="dashboard-tabs",
                 ),
                 fluid=True,
+                className="px-0",
             ),
-            color="primary",
-            dark=True,
-            className="mb-4 px-3 py-3",
+            className="tabs-wrapper",
         ),
 
-        dbc.Tabs(
+        # Footer
+        html.Div(
             [
-                overview_tab,
-                climate_tab,
-                malaria_tab,
-                prediction_tab,
-                description_tab,
-                about_tab,
+                html.Hr(className="mb-3"),
+                html.P(
+                    "Siaya County Disease and Climate Monitoring Dashboard",
+                    className="text-muted small text-center mb-3",
+                ),
             ],
-            id="main-tabs",
-            active_tab="overview-tab",
-            className="mt-3",
+            className="footer-container",
         ),
 
-        html.Hr(className="mt-5"),
-
-        html.P(
-            "Siaya County Disease and Climate Monitoring Dashboard",
-            className="text-muted small text-center mb-3",
-        ),
     ],
-    fluid=True,
+    className="dashboard-page",
 )
 
 
