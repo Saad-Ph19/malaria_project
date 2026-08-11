@@ -9,6 +9,10 @@ from tabs import about
 from tabs import description
 
 
+# --------------------------------------------------
+# App
+# --------------------------------------------------
+
 app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
@@ -23,11 +27,10 @@ server = app.server
 # Colors
 # --------------------------------------------------
 
-HEADER_COLOR = "#1F4E78"       # Dark professional blue
-TAB_COLOR = "#EAF2F8"          # Light blue-gray
-ACTIVE_TAB_COLOR = "#2E75B6"   # Medium blue
-TAB_TEXT_COLOR = "#2F3E4E"     # Dark gray-blue
-ACTIVE_TEXT_COLOR = "#FFFFFF"  # White
+HEADER_COLOR = "#24557A"       # Muted professional blue
+ACTIVE_COLOR = "#2C7DA0"       # Selected tab color
+TEXT_COLOR = "#495057"         # Unselected tab text
+PAGE_COLOR = "#F8F9FA"         # Light page background
 
 
 # --------------------------------------------------
@@ -37,21 +40,34 @@ ACTIVE_TEXT_COLOR = "#FFFFFF"  # White
 tab_style = {
     "flex": "1",
     "textAlign": "center",
-    "fontWeight": "600",
-    "fontSize": "17px",
-    "padding": "17px 8px",
-    "backgroundColor": TAB_COLOR,
-    "color": TAB_TEXT_COLOR,
-    "border": "1px solid #D5E1EA",
+    "fontWeight": "500",
+    "fontSize": "18px",
+    "padding": "18px 8px",
+
+    # Clean white navigation
+    "backgroundColor": "white",
+    "color": TEXT_COLOR,
+
+    # Remove box appearance
+    "border": "none",
+
+    # Transparent line keeps tab height consistent
+    "borderBottom": "4px solid transparent",
 }
 
 
 active_tab_style = {
     "fontWeight": "700",
-    "fontSize": "17px",
-    "backgroundColor": ACTIVE_TAB_COLOR,
-    "color": ACTIVE_TEXT_COLOR,
-    "border": "1px solid #2E75B6",
+    "fontSize": "18px",
+
+    "backgroundColor": "white",
+    "color": ACTIVE_COLOR,
+
+    # Remove borders around selected tab
+    "border": "none",
+
+    # Selected tab indicator
+    "borderBottom": f"4px solid {ACTIVE_COLOR}",
 }
 
 
@@ -67,6 +83,7 @@ overview_tab = dbc.Tab(
     active_tab_style=active_tab_style,
 )
 
+
 climate_tab = dbc.Tab(
     climate.layout,
     label="Climate",
@@ -74,6 +91,7 @@ climate_tab = dbc.Tab(
     tab_style=tab_style,
     active_tab_style=active_tab_style,
 )
+
 
 malaria_tab = dbc.Tab(
     malaria.layout,
@@ -83,6 +101,7 @@ malaria_tab = dbc.Tab(
     active_tab_style=active_tab_style,
 )
 
+
 prediction_tab = dbc.Tab(
     prediction.layout,
     label="Prediction Model",
@@ -91,6 +110,7 @@ prediction_tab = dbc.Tab(
     active_tab_style=active_tab_style,
 )
 
+
 description_tab = dbc.Tab(
     description.layout,
     label="Project Description",
@@ -98,6 +118,7 @@ description_tab = dbc.Tab(
     tab_style=tab_style,
     active_tab_style=active_tab_style,
 )
+
 
 about_tab = dbc.Tab(
     about.layout,
@@ -109,21 +130,23 @@ about_tab = dbc.Tab(
 
 
 # --------------------------------------------------
-# App Layout
+# Main Layout
 # --------------------------------------------------
 
 app.layout = html.Div(
     [
 
-        # --------------------------------------------------
-        # Header
-        # --------------------------------------------------
+        # ==================================================
+        # HEADER
+        # ==================================================
 
         dbc.Navbar(
             dbc.Container(
                 [
                     html.Div(
                         [
+
+                            # Dashboard title
                             html.H2(
                                 "Siaya County Disease and Climate Monitoring Dashboard",
                                 className="mb-1 fw-bold",
@@ -133,17 +156,20 @@ app.layout = html.Div(
                                 },
                             ),
 
+                            # Dashboard subtitle
                             html.P(
                                 "Monitoring malaria, climate, and disease trends across Siaya County",
                                 className="mb-0",
                                 style={
-                                    "color": "#D9E7F2",
+                                    "color": "rgba(255,255,255,0.80)",
                                     "fontSize": "16px",
                                 },
                             ),
+
                         ]
                     )
                 ],
+
                 fluid=True,
             ),
 
@@ -152,13 +178,14 @@ app.layout = html.Div(
             },
 
             dark=True,
-            className="py-4 px-4 shadow-sm",
+
+            className="py-4 px-4",
         ),
 
 
-        # --------------------------------------------------
-        # Full-width Navigation Tabs
-        # --------------------------------------------------
+        # ==================================================
+        # FULL-WIDTH NAVIGATION BAR
+        # ==================================================
 
         html.Div(
             dbc.Tabs(
@@ -172,6 +199,7 @@ app.layout = html.Div(
                 ],
 
                 id="main-tabs",
+
                 active_tab="overview-tab",
 
                 className="w-100",
@@ -179,25 +207,34 @@ app.layout = html.Div(
                 style={
                     "display": "flex",
                     "width": "100%",
+                    "backgroundColor": "white",
+                    "margin": "0",
                 },
             ),
 
             style={
                 "width": "100%",
-                "backgroundColor": TAB_COLOR,
-            },
+                "backgroundColor": "white",
+                "borderBottom": "1px solid #DEE2E6",
 
-            className="shadow-sm",
+                # Very subtle separation from page content
+                "boxShadow": "0 2px 5px rgba(0,0,0,0.06)",
+            },
         ),
 
 
-        # --------------------------------------------------
-        # Footer
-        # --------------------------------------------------
+        # ==================================================
+        # FOOTER
+        # ==================================================
 
         dbc.Container(
             [
-                html.Hr(className="mt-5"),
+                html.Hr(
+                    className="mt-5",
+                    style={
+                        "borderColor": "#DEE2E6",
+                    },
+                ),
 
                 html.P(
                     "Siaya County Disease and Climate Monitoring Dashboard",
@@ -206,11 +243,16 @@ app.layout = html.Div(
             ],
 
             fluid=True,
+
             className="px-4",
         ),
+
     ],
 
-    className="bg-light min-vh-100",
+    style={
+        "backgroundColor": PAGE_COLOR,
+        "minHeight": "100vh",
+    },
 )
 
 
@@ -219,4 +261,7 @@ app.layout = html.Div(
 # --------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+    app.run(
+        debug=True,
+        port=8050,
+    )
