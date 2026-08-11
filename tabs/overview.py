@@ -1213,7 +1213,7 @@ layout = dbc.Container(
                     className="text-muted mb-1",
 
                     style={
-                        "fontSize": "30px",
+                        "fontSize": "20px",
                     },
                 ),
 
