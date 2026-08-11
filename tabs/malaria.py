@@ -97,7 +97,6 @@ df["Non_Malarial_Fever_Percent"] = np.where(
 
 # Fever / RDT / ACT Summary by Age Group and Year
 # Always displays ALL subcounties and ALL years
-
 age_summary = df.copy()
 
 # Make sure Year is numeric
@@ -240,10 +239,6 @@ monthly_prevalence = (
 prevalence_rows = []
 
 for _, row in monthly_prevalence.iterrows():
-
-    # -----------------------------
-    # Under 5
-    # -----------------------------
     tested_u5 = (
         row["Positive_U5"]
         + row["Negative_U5"]
@@ -316,55 +311,227 @@ prevalence_long = prevalence_long.sort_values(
 )
 
 
+# ---------------------------------------------------------#
+# Helper function for Sankey labels
+def format_sankey_value(value):
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.2f}M"
+
+    elif value >= 1_000:
+        return f"{value / 1_000:.0f}k"
+
+    else:
+        return f"{value:,.0f}"
+
+
+def format_sankey_label(name, value, total):
+    percent = (
+        (value / total) * 100
+        if total > 0
+        else 0
+    )
+
+    return (
+        f"{name}<br>"
+        f"{format_sankey_value(value)} ({percent:.0f}%)"
+    )
+
+
 # Sankey Vis
+# ---------------------------------------------------------
+# SANKEY VISUALIZATION
+# ---------------------------------------------------------
+
 under5_cases = df["Cases.Fever < 5"].sum()
 over5_cases = df["Cases.Fever >= 5"].sum()
-positive_under5 = (df["Cases.Fever.with.RDT.Positive < 5"].sum())
-positive_over5 = (df["Cases.Fever.with.RDT.Positive >= 5"].sum())
-negative_under5 = (df["Cases.Fever.with.RDT. negative < 5"].sum())
-negative_over5 = (df["Cases.Fever.with.RDT. negative >= 5"].sum())
 
-#Fever, age group, and rdt outcome
+positive_under5 = (
+    df["Cases.Fever.with.RDT.Positive < 5"].sum()
+)
+
+positive_over5 = (
+    df["Cases.Fever.with.RDT.Positive >= 5"].sum()
+)
+
+negative_under5 = (
+    df["Cases.Fever.with.RDT. negative < 5"].sum()
+)
+
+negative_over5 = (
+    df["Cases.Fever.with.RDT. negative >= 5"].sum()
+)
+
+
+# Fever cases not tested
+not_tested_under5 = (
+    under5_cases
+    - positive_under5
+    - negative_under5
+)
+
+not_tested_over5 = (
+    over5_cases
+    - positive_over5
+    - negative_over5
+)
+
+
+# Total fever cases
+total_fever_cases = (
+    under5_cases
+    + over5_cases
+)
+
+
+# ---------------------------------------------------------#
+# Sankey labels with counts and proportions
+sankey_labels = [
+
+    # Total
+    format_sankey_label(
+        "Fever Cases",
+        total_fever_cases,
+        total_fever_cases
+    ),
+
+    # Age groups
+    format_sankey_label(
+        "Children <5",
+        under5_cases,
+        total_fever_cases
+    ),
+
+    format_sankey_label(
+        "Individuals ≥5",
+        over5_cases,
+        total_fever_cases
+    ),
+
+    # Under 5 outcomes
+    format_sankey_label(
+        "RDT Positive <5",
+        positive_under5,
+        under5_cases
+    ),
+
+    format_sankey_label(
+        "RDT Negative <5",
+        negative_under5,
+        under5_cases
+    ),
+
+    format_sankey_label(
+        "Not Tested <5",
+        not_tested_under5,
+        under5_cases
+    ),
+
+    # 5+ outcomes
+    format_sankey_label(
+        "RDT Positive ≥5",
+        positive_over5,
+        over5_cases
+    ),
+
+    format_sankey_label(
+        "RDT Negative ≥5",
+        negative_over5,
+        over5_cases
+    ),
+
+    format_sankey_label(
+        "Not Tested ≥5",
+        not_tested_over5,
+        over5_cases
+    ),
+]
+
+
 fever_age_fig = go.Figure(
     go.Sankey(
+
         arrangement="snap",
+
         node=dict(
             pad=25,
             thickness=25,
+
             line=dict(
                 color="rgba(0,0,0,0.2)",
                 width=1
             ),
 
-            label=["Fever Cases","Children <5","Individuals ≥5","RDT Positive <5","RDT Negative <5","RDT Positive ≥5","RDT Negative ≥5",],
-            color=["#2563eb","#f97316","#16a34a","#dc2626","#fbbf24","#b91c1c","#fde68a",],
+            label=sankey_labels,
+
+            color=[
+                "#2563eb",
+                "#f97316",
+                "#16a34a",
+                "#dc2626",
+                "#fbbf24",
+                "#6b7280",
+                "#b91c1c",
+                "#fde68a",
+                "#9ca3af"
+            ],
         ),
 
         link=dict(
 
             source=[
                 0, 0,
-                1, 1,
-                2, 2
+                1, 1, 1,
+                2, 2, 2
             ],
 
             target=[
                 1, 2,
-                3, 4,
-                5, 6
+                3, 4, 5,
+                6, 7, 8
             ],
 
-            value=[under5_cases,over5_cases,positive_under5,negative_under5,positive_over5,negative_over5],
-            color=["rgba(249,115,22,0.35)","rgba(22,163,74,0.35)","rgba(220,38,38,0.35)","rgba(251,191,36,0.35)","rgba(185,28,28,0.35)","rgba(253,230,138,0.35)"]
+            value=[
+                under5_cases,
+                over5_cases,
+
+                positive_under5,
+                negative_under5,
+                not_tested_under5,
+
+                positive_over5,
+                negative_over5,
+                not_tested_over5
+            ],
+
+            color=[
+                "rgba(249,115,22,0.35)",
+                "rgba(22,163,74,0.35)",
+
+                "rgba(220,38,38,0.35)",
+                "rgba(251,191,36,0.35)",
+                "rgba(107,114,128,0.35)",
+
+                "rgba(185,28,28,0.35)",
+                "rgba(253,230,138,0.35)",
+                "rgba(156,163,175,0.35)"
+            ]
         )
     )
 )
 
+
 fever_age_fig.update_layout(
     template="plotly_white",
     height=700,
-    margin=dict(l=20, r=20, t=20, b=20)
+
+    margin=dict(
+        l=20,
+        r=20,
+        t=20,
+        b=20
+    )
 )
+
 
 # Stocks
 stock_fig = go.Figure()
