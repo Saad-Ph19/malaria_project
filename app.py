@@ -19,122 +19,147 @@ app = Dash(
 server = app.server
 
 
-# -------------------------------------------------
+# --------------------------------------------------
+# Shared tab style
+# --------------------------------------------------
+
+tab_style = {
+    "flex": "1",
+    "textAlign": "center",
+    "fontWeight": "500",
+    "padding": "14px 8px",
+}
+
+active_tab_style = {
+    "fontWeight": "700",
+}
+
+
+# --------------------------------------------------
 # Tabs
-# -------------------------------------------------
+# --------------------------------------------------
 
 overview_tab = dbc.Tab(
     overview.layout,
     label="Overview",
     tab_id="overview-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 climate_tab = dbc.Tab(
     climate.layout,
     label="Climate",
     tab_id="climate-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 malaria_tab = dbc.Tab(
     malaria.layout,
     label="Malaria",
     tab_id="malaria-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 prediction_tab = dbc.Tab(
     prediction.layout,
     label="Prediction Model",
     tab_id="prediction-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 description_tab = dbc.Tab(
     description.layout,
     label="Project Description",
     tab_id="description-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 about_tab = dbc.Tab(
     about.layout,
     label="Project Contributors",
     tab_id="about-tab",
-    tab_class_name="dashboard-tab",
-    active_tab_class_name="dashboard-tab-active",
+    tab_style=tab_style,
+    active_tab_style=active_tab_style,
 )
 
 
-# -------------------------------------------------
+# --------------------------------------------------
 # App Layout
-# -------------------------------------------------
+# --------------------------------------------------
 
 app.layout = html.Div(
     [
 
         # Header
-        html.Div(
-            [
-                dbc.Container(
-                    [
-                        html.H2(
-                            "Siaya County Disease and Climate Monitoring Dashboard",
-                            className="dashboard-title",
-                        ),
-                        html.P(
-                            "Monitoring malaria, climate conditions, and disease trends across Siaya County",
-                            className="dashboard-subtitle",
-                        ),
-                    ],
-                    fluid=True,
-                )
-            ],
-            className="dashboard-header",
+        dbc.Navbar(
+            dbc.Container(
+                [
+                    html.Div(
+                        [
+                            html.H2(
+                                "Siaya County Disease and Climate Monitoring Dashboard",
+                                className="mb-1 text-white fw-bold",
+                            ),
+
+                            html.P(
+                                "Monitoring malaria, climate, and disease trends across Siaya County",
+                                className="mb-0 text-white-50",
+                            ),
+                        ]
+                    )
+                ],
+                fluid=True,
+            ),
+            color="primary",
+            dark=True,
+            className="py-4 px-4 shadow-sm",
         ),
 
-        # Full-width tab navigation
+
+        # Full-width navigation tabs
         html.Div(
-            dbc.Container(
-                dbc.Tabs(
-                    [
-                        overview_tab,
-                        climate_tab,
-                        malaria_tab,
-                        prediction_tab,
-                        description_tab,
-                        about_tab,
-                    ],
-                    id="main-tabs",
-                    active_tab="overview-tab",
-                    className="dashboard-tabs",
-                ),
-                fluid=True,
-                className="px-0",
+            dbc.Tabs(
+                [
+                    overview_tab,
+                    climate_tab,
+                    malaria_tab,
+                    prediction_tab,
+                    description_tab,
+                    about_tab,
+                ],
+                id="main-tabs",
+                active_tab="overview-tab",
+                className="w-100",
+                style={
+                    "display": "flex",
+                    "width": "100%",
+                    "backgroundColor": "white",
+                },
             ),
-            className="tabs-wrapper",
+            className="bg-white shadow-sm",
         ),
+
 
         # Footer
-        html.Div(
+        dbc.Container(
             [
-                html.Hr(className="mb-3"),
+                html.Hr(className="mt-5"),
+
                 html.P(
                     "Siaya County Disease and Climate Monitoring Dashboard",
-                    className="text-muted small text-center mb-3",
+                    className="text-muted small text-center mb-4",
                 ),
             ],
-            className="footer-container",
+            fluid=True,
+            className="px-4",
         ),
-
     ],
-    className="dashboard-page",
+    className="bg-light min-vh-100",
 )
 
 
