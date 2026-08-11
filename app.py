@@ -20,18 +20,38 @@ server = app.server
 
 
 # --------------------------------------------------
-# Shared tab style
+# Colors
+# --------------------------------------------------
+
+HEADER_COLOR = "#1F4E78"       # Dark professional blue
+TAB_COLOR = "#EAF2F8"          # Light blue-gray
+ACTIVE_TAB_COLOR = "#2E75B6"   # Medium blue
+TAB_TEXT_COLOR = "#2F3E4E"     # Dark gray-blue
+ACTIVE_TEXT_COLOR = "#FFFFFF"  # White
+
+
+# --------------------------------------------------
+# Shared Tab Styles
 # --------------------------------------------------
 
 tab_style = {
     "flex": "1",
     "textAlign": "center",
-    "fontWeight": "500",
-    "padding": "14px 8px",
+    "fontWeight": "600",
+    "fontSize": "17px",
+    "padding": "17px 8px",
+    "backgroundColor": TAB_COLOR,
+    "color": TAB_TEXT_COLOR,
+    "border": "1px solid #D5E1EA",
 }
+
 
 active_tab_style = {
     "fontWeight": "700",
+    "fontSize": "17px",
+    "backgroundColor": ACTIVE_TAB_COLOR,
+    "color": ACTIVE_TEXT_COLOR,
+    "border": "1px solid #2E75B6",
 }
 
 
@@ -95,7 +115,10 @@ about_tab = dbc.Tab(
 app.layout = html.Div(
     [
 
+        # --------------------------------------------------
         # Header
+        # --------------------------------------------------
+
         dbc.Navbar(
             dbc.Container(
                 [
@@ -103,25 +126,40 @@ app.layout = html.Div(
                         [
                             html.H2(
                                 "Siaya County Disease and Climate Monitoring Dashboard",
-                                className="mb-1 text-white fw-bold",
+                                className="mb-1 fw-bold",
+                                style={
+                                    "color": "white",
+                                    "fontSize": "30px",
+                                },
                             ),
 
                             html.P(
                                 "Monitoring malaria, climate, and disease trends across Siaya County",
-                                className="mb-0 text-white-50",
+                                className="mb-0",
+                                style={
+                                    "color": "#D9E7F2",
+                                    "fontSize": "16px",
+                                },
                             ),
                         ]
                     )
                 ],
                 fluid=True,
             ),
-            color="primary",
+
+            style={
+                "backgroundColor": HEADER_COLOR,
+            },
+
             dark=True,
             className="py-4 px-4 shadow-sm",
         ),
 
 
-        # Full-width navigation tabs
+        # --------------------------------------------------
+        # Full-width Navigation Tabs
+        # --------------------------------------------------
+
         html.Div(
             dbc.Tabs(
                 [
@@ -132,20 +170,31 @@ app.layout = html.Div(
                     description_tab,
                     about_tab,
                 ],
+
                 id="main-tabs",
                 active_tab="overview-tab",
+
                 className="w-100",
+
                 style={
                     "display": "flex",
                     "width": "100%",
-                    "backgroundColor": "white",
                 },
             ),
-            className="bg-white shadow-sm",
+
+            style={
+                "width": "100%",
+                "backgroundColor": TAB_COLOR,
+            },
+
+            className="shadow-sm",
         ),
 
 
+        # --------------------------------------------------
         # Footer
+        # --------------------------------------------------
+
         dbc.Container(
             [
                 html.Hr(className="mt-5"),
@@ -155,13 +204,19 @@ app.layout = html.Div(
                     className="text-muted small text-center mb-4",
                 ),
             ],
+
             fluid=True,
             className="px-4",
         ),
     ],
+
     className="bg-light min-vh-100",
 )
 
+
+# --------------------------------------------------
+# Run App
+# --------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
