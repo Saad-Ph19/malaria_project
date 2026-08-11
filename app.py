@@ -16,7 +16,7 @@ app = Dash(
 )
 server = app.server
 
-# Colors
+#Colors
 HEADER_COLOR = "#24557A"       # Muted professional blue
 ACTIVE_COLOR = "#2C7DA0"       # Selected tab color
 TEXT_COLOR = "#495057"         # Unselected tab text
