@@ -4,11 +4,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
 
-
-# =========================================================
-# SVG DOWNLOAD CONFIG
-# =========================================================
-
+#Download 
 svg_download_config = {
     "displayModeBar": True,
     "displaylogo": False,
@@ -32,11 +28,7 @@ svg_download_config = {
     },
 }
 
-
-# =========================================================
-# POPULATION DATA
-# =========================================================
-
+#population data
 population_categories = [
     "Children under 1",
     "Children under 5",
@@ -101,14 +93,9 @@ population_figure.update_xaxes(
     gridcolor="#e9ecef",
 )
 
-
-# =========================================================
 # SIAYA SUB-COUNTY MAP
-# =========================================================
-
 # Approximate geographic centers used only to position
 # sub-county information on the overview map.
-
 subcounty_data = pd.DataFrame(
     {
         "Subcounty": [
@@ -245,11 +232,7 @@ siaya_map.update_layout(
     showlegend=False,
 )
 
-
-# =========================================================
 # UNDER 5 TREEMAP
-# =========================================================
-
 disease_labels = [
     "Confirmed malaria",
     "Upper Respiratory Tract Infections",
@@ -310,11 +293,7 @@ treemap_fig.update_layout(
     )
 )
 
-
-# =========================================================
 # UNDER 5 MORTALITY
-# =========================================================
-
 conditions = [
     "Pneumonia",
     "LBW",
@@ -398,11 +377,7 @@ mortality_fig.update_yaxes(
     autorange="reversed"
 )
 
-
-# =========================================================
 # OVER 5 TREEMAP
-# =========================================================
-
 over5_labels = [
     "Confirmed Malaria",
     "Upper Respiratory Tract Infections",
@@ -484,11 +459,7 @@ over5_treemap_fig.update_layout(
     )
 )
 
-
-# =========================================================
 # OVER 5 MORTALITY
-# =========================================================
-
 over5_conditions = [
     "Pneumonia",
     "HIV",
@@ -571,11 +542,7 @@ over5_mortality_fig.update_yaxes(
     autorange="reversed"
 )
 
-
-# =========================================================
 # THEME
-# =========================================================
-
 CARD_STYLE = {
     "border": "none",
     "borderRadius": "18px",
@@ -589,11 +556,7 @@ INSIGHT_STYLE = {
     "borderRadius": "12px",
 }
 
-
-# =========================================================
 # IMPROVE FIGURE STYLING
-# =========================================================
-
 population_figure.update_traces(
     marker=dict(
         color="#2563eb",
@@ -623,17 +586,113 @@ for fig in [
     )
 
 
-# =========================================================
 # LAYOUT
-# =========================================================
-
 layout = dbc.Container(
     [
+        # =================================================
+        # SIAYA COUNTY MAP
+        # =================================================
+        dbc.Card(
+            dbc.CardBody(
+                [
 
+                    html.H4(
+                        "Siaya County Geographic Overview",
+                        className="fw-bold mb-1",
+                    ),
+
+                    html.P(
+                        "Explore the six sub-counties of Siaya County. "
+                        "Hover over each location for a brief summary of "
+                        "agriculture, economic activity, geography, and topography.",
+                        className="text-muted mb-4",
+                    ),
+
+
+                    dbc.Row(
+                        [
+
+                            # Map
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="siaya-overview-map",
+                                    figure=siaya_map,
+
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+
+                                    style={
+                                        "height": "560px",
+                                    },
+                                ),
+
+                                lg=8,
+                            ),
+
+
+                            # Map information panel
+                            dbc.Col(
+                                dbc.Card(
+                                    dbc.CardBody(
+                                        [
+
+                                            html.H6(
+                                                "County Context",
+                                                className="fw-bold text-primary mb-3",
+                                            ),
+
+                                            html.P(
+                                                "Siaya County consists of six "
+                                                "sub-counties: Alego Usonga, Bondo, "
+                                                "Gem, Rarieda, Ugenya, and Ugunja.",
+                                                className="mb-3",
+                                            ),
+
+                                            html.P(
+                                                "Agriculture is an important part "
+                                                "of the county economy, while "
+                                                "communities near Lake Victoria, "
+                                                "particularly Bondo and Rarieda, "
+                                                "also have strong links to fisheries "
+                                                "and the blue economy.",
+                                                className="mb-3",
+                                            ),
+
+                                            html.P(
+                                                "Hover over a sub-county marker on "
+                                                "the map to view additional geographic "
+                                                "and economic information.",
+                                                className="text-muted mb-0",
+                                            ),
+
+                                        ]
+                                    ),
+
+                                    style=INSIGHT_STYLE,
+                                ),
+
+                                lg=4,
+                            ),
+
+                        ],
+
+                        className="align-items-center",
+                    ),
+
+                ],
+
+                className="p-4",
+            ),
+
+            className="mb-4 border-0 shadow-sm",
+        ),
+
+        
         # =================================================
         # KPI CARDS
         # =================================================
-
         dbc.Row(
             [
 
@@ -763,108 +822,6 @@ layout = dbc.Container(
 
 
         # =================================================
-        # SIAYA COUNTY MAP
-        # =================================================
-
-        dbc.Card(
-            dbc.CardBody(
-                [
-
-                    html.H4(
-                        "Siaya County Geographic Overview",
-                        className="fw-bold mb-1",
-                    ),
-
-                    html.P(
-                        "Explore the six sub-counties of Siaya County. "
-                        "Hover over each location for a brief summary of "
-                        "agriculture, economic activity, geography, and topography.",
-                        className="text-muted mb-4",
-                    ),
-
-
-                    dbc.Row(
-                        [
-
-                            # Map
-                            dbc.Col(
-                                dcc.Graph(
-                                    id="siaya-overview-map",
-                                    figure=siaya_map,
-
-                                    config={
-                                        "displayModeBar": False,
-                                        "responsive": True,
-                                    },
-
-                                    style={
-                                        "height": "560px",
-                                    },
-                                ),
-
-                                lg=8,
-                            ),
-
-
-                            # Map information panel
-                            dbc.Col(
-                                dbc.Card(
-                                    dbc.CardBody(
-                                        [
-
-                                            html.H6(
-                                                "County Context",
-                                                className="fw-bold text-primary mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Siaya County consists of six "
-                                                "sub-counties: Alego Usonga, Bondo, "
-                                                "Gem, Rarieda, Ugenya, and Ugunja.",
-                                                className="mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Agriculture is an important part "
-                                                "of the county economy, while "
-                                                "communities near Lake Victoria, "
-                                                "particularly Bondo and Rarieda, "
-                                                "also have strong links to fisheries "
-                                                "and the blue economy.",
-                                                className="mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Hover over a sub-county marker on "
-                                                "the map to view additional geographic "
-                                                "and economic information.",
-                                                className="text-muted mb-0",
-                                            ),
-
-                                        ]
-                                    ),
-
-                                    style=INSIGHT_STYLE,
-                                ),
-
-                                lg=4,
-                            ),
-
-                        ],
-
-                        className="align-items-center",
-                    ),
-
-                ],
-
-                className="p-4",
-            ),
-
-            className="mb-4 border-0 shadow-sm",
-        ),
-
-
-        # =================================================
         # POPULATION INFORMATION
         # =================================================
 
@@ -963,7 +920,6 @@ layout = dbc.Container(
         # =================================================
         # UNDER 5 TOTAL CONDITIONS
         # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1069,7 +1025,6 @@ layout = dbc.Container(
         # =================================================
         # UNDER 5 MORTALITY
         # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1103,7 +1058,6 @@ layout = dbc.Container(
         # =================================================
         # OVER 5 TOTAL CONDITIONS
         # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1204,7 +1158,6 @@ layout = dbc.Container(
         # =================================================
         # OVER 5 MORTALITY
         # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1242,7 +1195,6 @@ layout = dbc.Container(
         # =================================================
         # DATA SOURCE
         # =================================================
-
         html.Div(
             [
 
@@ -1255,13 +1207,13 @@ layout = dbc.Container(
                 html.P(
                     [
                         html.Strong("Data source: "),
-                        "Rarieda Sub-County Health",
+                        "Rarieda Sub-County Health Promotion Officer and Community Health Services within Siaya County",
                     ],
 
                     className="text-muted mb-1",
 
                     style={
-                        "fontSize": "14px",
+                        "fontSize": "30px",
                     },
                 ),
 
