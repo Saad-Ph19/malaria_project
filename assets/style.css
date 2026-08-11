@@ -1,0 +1,122 @@
+/* -------------------------------------------------
+   Entire Dashboard
+------------------------------------------------- */
+
+body {
+    margin: 0;
+    background-color: #f5f7f9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dashboard-page {
+    min-height: 100vh;
+}
+
+
+/* -------------------------------------------------
+   Header
+------------------------------------------------- */
+
+.dashboard-header {
+    background-color: #2c78b8;
+    padding: 25px 30px 22px 30px;
+    border-bottom: 1px solid #dce3e8;
+}
+
+.dashboard-title {
+    color: white;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.dashboard-subtitle {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 15px;
+    margin-bottom: 0;
+}
+
+
+/* -------------------------------------------------
+   Tabs Navigation
+------------------------------------------------- */
+
+.tabs-wrapper {
+    background-color: white;
+    border-bottom: 1px solid #d9dee3;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-tabs {
+    width: 100%;
+    margin: 0;
+}
+
+
+/* Make all tabs share the width equally */
+.dashboard-tabs .nav {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+.dashboard-tabs .nav-item {
+    flex: 1;
+    text-align: center;
+}
+
+
+/* Normal tab */
+.dashboard-tab {
+    width: 100%;
+    color: #44515c !important;
+    background-color: white !important;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    padding: 16px 10px !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+
+    transition: background-color 0.2s ease;
+}
+
+
+/* Hover */
+.dashboard-tab:hover {
+    background-color: #f0f5f9 !important;
+    color: #2c78b8 !important;
+}
+
+
+/* Active tab */
+.dashboard-tab-active {
+    color: #2c78b8 !important;
+    background-color: white !important;
+
+    font-weight: 700;
+
+    border-bottom: 4px solid #2c78b8 !important;
+}
+
+
+/* -------------------------------------------------
+   Tab Content
+------------------------------------------------- */
+
+.tab-content {
+    background-color: #f5f7f9;
+}
+
+
+/* -------------------------------------------------
+   Footer
+------------------------------------------------- */
+
+.footer-container {
+    margin-top: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
