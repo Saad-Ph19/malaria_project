@@ -1344,30 +1344,24 @@ layout = dbc.Container(
 # =========================================================
 
 @callback(
-    Output(
-        "subcounty-information-panel",
-        "children"
-    ),
-
-    Input(
-        "overview-subcounty-dropdown",
-        "value"
-    )
+    Output("subcounty-information-panel", "children"),
+    Output("siaya-overview-map", "figure"),
+    Input("overview-subcounty-dropdown", "value")
 )
-
 def update_subcounty_information(selected_subcounty):
 
-    info = subcounty_information[
-        selected_subcounty
-    ]
+    # =====================================================
+    # INFORMATION PANEL
+    # =====================================================
 
-    return [
+    info = subcounty_information[selected_subcounty]
+
+    information_panel = [
 
         html.H4(
             selected_subcounty,
             className="fw-bold text-primary mb-4",
         ),
-
 
         html.Div(
             [
@@ -1383,7 +1377,6 @@ def update_subcounty_information(selected_subcounty):
             ]
         ),
 
-
         html.Div(
             [
                 html.H6(
@@ -1397,7 +1390,6 @@ def update_subcounty_information(selected_subcounty):
                 ),
             ]
         ),
-
 
         html.Div(
             [
@@ -1413,7 +1405,6 @@ def update_subcounty_information(selected_subcounty):
             ]
         ),
 
-
         html.Div(
             [
                 html.H6(
@@ -1427,5 +1418,137 @@ def update_subcounty_information(selected_subcounty):
                 ),
             ]
         ),
-
     ]
+
+
+    # =====================================================
+    # CREATE BASE MAP
+    # =====================================================
+
+    updated_map = px.choropleth_map(
+        subcounty_gdf,
+
+        geojson=subcounty_gdf.geometry.__geo_interface__,
+
+        locations=subcounty_gdf.index,
+
+        color="Display_Name",
+
+        hover_name="Display_Name",
+
+        hover_data={
+            "Display_Name": False,
+            "Agriculture": False,
+            "Economy": False,
+            "Geography": False,
+            "Topography": False,
+        },
+
+        map_style="open-street-map",
+
+        center={
+            "lat": 0.03,
+            "lon": 34.30,
+        },
+
+        zoom=8.3,
+
+        opacity=0.55,
+    )
+
+
+    # Normal boundary styling
+    updated_map.update_traces(
+        marker_line_width=1.5,
+        marker_line_color="white",
+    )
+
+
+    # =====================================================
+    # SELECTED SUBCOUNTY
+    # =====================================================
+
+    selected_gdf = subcounty_gdf[
+        subcounty_gdf["Display_Name"] == selected_subcounty
+    ]
+
+
+    # Add selected polygon again on top of the map
+    # with transparent fill and thicker outline
+    updated_map.add_trace(
+        go.Choroplethmap(
+            geojson=selected_gdf.geometry.__geo_interface__,
+
+            locations=selected_gdf.index,
+
+            z=[1] * len(selected_gdf),
+
+            colorscale=[
+                [0, "rgba(0,0,0,0)"],
+                [1, "rgba(0,0,0,0)"],
+            ],
+
+            showscale=False,
+
+            marker=dict(
+                line=dict(
+                    color="#0F4C75",
+                    width=5,
+                )
+            ),
+
+            opacity=1,
+
+            hoverinfo="skip",
+
+            showlegend=False,
+        )
+    )
+
+
+    # =====================================================
+    # ADD SUBCOUNTY NAMES
+    # =====================================================
+
+    updated_map.add_trace(
+        go.Scattermap(
+            lat=label_df["Latitude"],
+            lon=label_df["Longitude"],
+
+            mode="text",
+
+            text=label_df["Subcounty"],
+
+            textfont=dict(
+                size=14,
+                color="#1f2937",
+            ),
+
+            hoverinfo="skip",
+
+            showlegend=False,
+        )
+    )
+
+
+    # =====================================================
+    # MAP LAYOUT
+    # =====================================================
+
+    updated_map.update_layout(
+        height=560,
+
+        margin=dict(
+            l=0,
+            r=0,
+            t=0,
+            b=0,
+        ),
+
+        paper_bgcolor="white",
+
+        showlegend=False,
+    )
+
+
+    return information_panel, updated_map
