@@ -94,191 +94,138 @@ population_figure.update_xaxes(
     gridcolor="#e9ecef",
 )
 
-import json
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-
-
 # =========================================================
-# LOAD SIAYA SUBCOUNTY BOUNDARIES
+# SIAYA SUBCOUNTY BOUNDARY MAP
 # =========================================================
 
-with open(
-    "Boundary_Data/ke_subcounty.geojson",
-    "r",
-    encoding="utf-8"
-) as f:
-    subcounty_geojson = json.load(f)
+# Load the same shapefile that was already working
+subcounty_gdf = gpd.read_file(
+    "Boundary_Data/ke_subcounty.shp"
+)
 
 
 # Keep only the six Siaya subcounties
-siaya_names = {
+siaya_subcounties = [
     "Alego Usonga Sub County",
     "Bondo Sub County",
     "Gem Sub County",
     "Rarieda Sub County",
     "Ugenya Sub County",
     "Ugunja Sub County",
-}
-
-
-subcounty_geojson["features"] = [
-    feature
-    for feature in subcounty_geojson["features"]
-    if feature["properties"]["subcounty"] in siaya_names
 ]
+
+
+subcounty_gdf = subcounty_gdf[
+    subcounty_gdf["subcounty"].isin(siaya_subcounties)
+].copy()
+
+
+# Make sure map coordinates are longitude / latitude
+subcounty_gdf = subcounty_gdf.to_crs(epsg=4326)
+
+
+# Shorter names for display
+subcounty_gdf["Display_Name"] = (
+    subcounty_gdf["subcounty"]
+    .str.replace(
+        " Sub County",
+        "",
+        regex=False
+    )
+    .str.strip()
+)
 
 
 # =========================================================
 # SUBCOUNTY INFORMATION
 # =========================================================
 
-subcounty_data = pd.DataFrame(
-    {
-        "subcounty": [
-            "Alego Usonga Sub County",
-            "Bondo Sub County",
-            "Gem Sub County",
-            "Rarieda Sub County",
-            "Ugenya Sub County",
-            "Ugunja Sub County",
-        ],
+subcounty_information = {
 
-        "Display_Name": [
-            "Alego Usonga",
-            "Bondo",
-            "Gem",
-            "Rarieda",
-            "Ugenya",
-            "Ugunja",
-        ],
+    "Alego Usonga": {
+        "Agriculture": "Mixed crop and livestock farming",
+        "Economy": "Agriculture, trade, and services centered around Siaya town",
+        "Geography": "Central Siaya County and home to Siaya town",
+        "Topography": "Predominantly gently undulating inland terrain",
+    },
 
-        "Agriculture": [
-            "Mixed crop and livestock farming",
-            "Crop production, livestock, and fisheries",
-            "Mixed farming and crop production",
-            "Crop production, livestock, and fisheries",
-            "Mixed farming and crop production",
-            "Mixed farming and crop production",
-        ],
+    "Bondo": {
+        "Agriculture": "Crop production, livestock, and fisheries",
+        "Economy": "Agriculture, fishing, trade, and Lake Victoria-related economic activity",
+        "Geography": "Southwestern Siaya County along Lake Victoria",
+        "Topography": "Low-lying and gently rolling terrain toward Lake Victoria",
+    },
 
-        "Economy": [
-            "Agriculture, trade, and services centered around Siaya town",
-            "Agriculture, fishing, trade, and Lake Victoria-related economic activity",
-            "Agriculture, small-scale trade, and local services",
-            "Agriculture, fishing, livestock, and lake-related economic activity",
-            "Agriculture, trade, and small businesses",
-            "Agriculture, commerce, transport, and small businesses",
-        ],
+    "Gem": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, small-scale trade, and local services",
+        "Geography": "Eastern part of Siaya County",
+        "Topography": "Undulating inland landscape with agricultural areas",
+    },
 
-        "Geography": [
-            "Central Siaya County and home to Siaya town",
-            "Southwestern Siaya County along Lake Victoria",
-            "Eastern part of Siaya County",
-            "Southern Siaya County along Lake Victoria",
-            "Northwestern Siaya County",
-            "Northern-central Siaya County",
-        ],
+    "Rarieda": {
+        "Agriculture": "Crop production, livestock, and fisheries",
+        "Economy": "Agriculture, fishing, livestock, and lake-related economic activity",
+        "Geography": "Southern Siaya County along Lake Victoria",
+        "Topography": "Rolling terrain descending toward the Lake Victoria shoreline",
+    },
 
-        "Topography": [
-            "Predominantly gently undulating inland terrain",
-            "Low-lying and gently rolling terrain toward Lake Victoria",
-            "Undulating inland landscape with agricultural areas",
-            "Rolling terrain descending toward the Lake Victoria shoreline",
-            "Gently rolling inland terrain",
-            "Gently undulating inland terrain",
-        ],
-    }
+    "Ugenya": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, trade, and small businesses",
+        "Geography": "Northwestern Siaya County",
+        "Topography": "Gently rolling inland terrain",
+    },
+
+    "Ugunja": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, commerce, transport, and small businesses",
+        "Geography": "Northern-central Siaya County",
+        "Topography": "Gently undulating inland terrain",
+    },
+}
+
+
+# Add information to GeoDataFrame
+subcounty_gdf["Agriculture"] = (
+    subcounty_gdf["Display_Name"]
+    .map(
+        lambda x: subcounty_information[x]["Agriculture"]
+    )
+)
+
+subcounty_gdf["Economy"] = (
+    subcounty_gdf["Display_Name"]
+    .map(
+        lambda x: subcounty_information[x]["Economy"]
+    )
+)
+
+subcounty_gdf["Geography"] = (
+    subcounty_gdf["Display_Name"]
+    .map(
+        lambda x: subcounty_information[x]["Geography"]
+    )
+)
+
+subcounty_gdf["Topography"] = (
+    subcounty_gdf["Display_Name"]
+    .map(
+        lambda x: subcounty_information[x]["Topography"]
+    )
 )
 
 
 # =========================================================
-# FIND LABEL POSITION FOR EACH POLYGON
-# =========================================================
-
-def polygon_label_position(feature):
-
-    geometry = feature["geometry"]
-
-    if geometry["type"] == "Polygon":
-
-        coordinates = geometry["coordinates"][0]
-
-    elif geometry["type"] == "MultiPolygon":
-
-        polygons = geometry["coordinates"]
-
-        # Use the largest polygon
-        coordinates = max(
-            polygons,
-            key=lambda polygon: len(polygon[0])
-        )[0]
-
-    else:
-
-        return None, None
-
-
-    longitudes = [
-        point[0]
-        for point in coordinates
-    ]
-
-    latitudes = [
-        point[1]
-        for point in coordinates
-    ]
-
-
-    longitude = sum(longitudes) / len(longitudes)
-
-    latitude = sum(latitudes) / len(latitudes)
-
-
-    return longitude, latitude
-
-
-# =========================================================
-# CREATE LABEL DATA
-# =========================================================
-
-label_data = []
-
-
-for feature in subcounty_geojson["features"]:
-
-    lon, lat = polygon_label_position(feature)
-
-    name = (
-        feature["properties"]["subcounty"]
-        .replace(" Sub County", "")
-    )
-
-    label_data.append(
-        {
-            "Subcounty": name,
-            "Longitude": lon,
-            "Latitude": lat,
-        }
-    )
-
-
-label_df = pd.DataFrame(label_data)
-
-
-# =========================================================
-# CREATE SIAYA SUBCOUNTY MAP
+# CREATE POLYGON MAP
 # =========================================================
 
 siaya_map = px.choropleth_map(
-    subcounty_data,
+    subcounty_gdf,
 
-    geojson=subcounty_geojson,
+    geojson=subcounty_gdf.geometry.__geo_interface__,
 
-    locations="subcounty",
-
-    featureidkey="properties.subcounty",
+    locations=subcounty_gdf.index,
 
     color="Display_Name",
 
@@ -286,7 +233,6 @@ siaya_map = px.choropleth_map(
 
     hover_data={
         "Display_Name": False,
-        "subcounty": False,
         "Agriculture": True,
         "Economy": True,
         "Geography": True,
@@ -306,10 +252,7 @@ siaya_map = px.choropleth_map(
 )
 
 
-# =========================================================
-# POLYGON BORDER STYLE
-# =========================================================
-
+# Boundary styling
 siaya_map.update_traces(
     marker_line_width=2,
     marker_line_color="white",
@@ -317,7 +260,25 @@ siaya_map.update_traces(
 
 
 # =========================================================
-# ADD SUBCOUNTY NAMES INSIDE THE MAP
+# CREATE LABEL LOCATIONS INSIDE EACH SUBCOUNTY
+# =========================================================
+
+# representative_point() places the point inside the polygon,
+# making it better for labels than a simple centroid.
+label_points = subcounty_gdf.geometry.representative_point()
+
+
+label_df = pd.DataFrame(
+    {
+        "Subcounty": subcounty_gdf["Display_Name"].values,
+        "Longitude": label_points.x.values,
+        "Latitude": label_points.y.values,
+    }
+)
+
+
+# =========================================================
+# ADD SUBCOUNTY NAMES DIRECTLY ON THE MAP
 # =========================================================
 
 siaya_map.add_trace(
@@ -357,7 +318,7 @@ siaya_map.update_layout(
 
     paper_bgcolor="white",
 
-    # Remove legend because names are on the map
+    # No external legend because names are inside map
     showlegend=False,
 )
 
