@@ -763,7 +763,7 @@ layout = dbc.Container(
                                     },
         
                                     style={
-                                        "height": "560px",
+                                        "height": "700px",
                                     },
                                 ),
         
@@ -1495,7 +1495,7 @@ def update_subcounty_information(selected_subcounty):
             "lon": 34.30,
         },
 
-        zoom=8.3,
+        zoom=10,
 
         opacity=0.55,
     )
@@ -1541,7 +1541,7 @@ def update_subcounty_information(selected_subcounty):
             mode="lines",
 
             line=dict(
-                width=6,
+                width=4.5,
                 color="#0F4C75",
             ),
 
