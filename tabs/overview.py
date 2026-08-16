@@ -1339,8 +1339,46 @@ layout = dbc.Container(
     },
 )
 
+
+
 # =========================================================
-# SUBCOUNTY INFORMATION CALLBACK
+# GET BOUNDARY COORDINATES FOR SELECTED SUBCOUNTY
+# =========================================================
+
+def get_boundary_coordinates(geometry):
+
+    lons = []
+    lats = []
+
+    # Normal Polygon
+    if geometry.geom_type == "Polygon":
+
+        x, y = geometry.exterior.coords.xy
+
+        lons.extend(list(x))
+        lats.extend(list(y))
+
+
+    # MultiPolygon
+    elif geometry.geom_type == "MultiPolygon":
+
+        for polygon in geometry.geoms:
+
+            x, y = polygon.exterior.coords.xy
+
+            lons.extend(list(x))
+            lats.extend(list(y))
+
+            # Add None to separate individual polygons
+            lons.append(None)
+            lats.append(None)
+
+
+    return lons, lats
+
+
+# =========================================================
+# SUBCOUNTY INFORMATION + MAP HIGHLIGHT CALLBACK
 # =========================================================
 
 @callback(
@@ -1356,12 +1394,14 @@ def update_subcounty_information(selected_subcounty):
 
     info = subcounty_information[selected_subcounty]
 
+
     information_panel = [
 
         html.H4(
             selected_subcounty,
             className="fw-bold text-primary mb-4",
         ),
+
 
         html.Div(
             [
@@ -1377,6 +1417,7 @@ def update_subcounty_information(selected_subcounty):
             ]
         ),
 
+
         html.Div(
             [
                 html.H6(
@@ -1390,6 +1431,7 @@ def update_subcounty_information(selected_subcounty):
                 ),
             ]
         ),
+
 
         html.Div(
             [
@@ -1405,6 +1447,7 @@ def update_subcounty_information(selected_subcounty):
             ]
         ),
 
+
         html.Div(
             [
                 html.H6(
@@ -1418,6 +1461,7 @@ def update_subcounty_information(selected_subcounty):
                 ),
             ]
         ),
+
     ]
 
 
@@ -1457,7 +1501,10 @@ def update_subcounty_information(selected_subcounty):
     )
 
 
-    # Normal boundary styling
+    # =====================================================
+    # NORMAL SUBCOUNTY BOUNDARIES
+    # =====================================================
+
     updated_map.update_traces(
         marker_line_width=1.5,
         marker_line_color="white",
@@ -1465,39 +1512,38 @@ def update_subcounty_information(selected_subcounty):
 
 
     # =====================================================
-    # SELECTED SUBCOUNTY
+    # GET SELECTED SUBCOUNTY
     # =====================================================
 
-    selected_gdf = subcounty_gdf[
+    selected_row = subcounty_gdf[
         subcounty_gdf["Display_Name"] == selected_subcounty
-    ]
+    ].iloc[0]
 
 
-    # Add selected polygon again on top of the map
-    # with transparent fill and thicker outline
+    selected_geometry = selected_row.geometry
+
+
+    # Get boundary longitude / latitude
+    boundary_lon, boundary_lat = get_boundary_coordinates(
+        selected_geometry
+    )
+
+
+    # =====================================================
+    # HIGHLIGHT SELECTED BOUNDARY
+    # =====================================================
+
     updated_map.add_trace(
-        go.Choroplethmap(
-            geojson=selected_gdf.geometry.__geo_interface__,
+        go.Scattermap(
+            lon=boundary_lon,
+            lat=boundary_lat,
 
-            locations=selected_gdf.index,
+            mode="lines",
 
-            z=[1] * len(selected_gdf),
-
-            colorscale=[
-                [0, "rgba(0,0,0,0)"],
-                [1, "rgba(0,0,0,0)"],
-            ],
-
-            showscale=False,
-
-            marker=dict(
-                line=dict(
-                    color="#0F4C75",
-                    width=5,
-                )
+            line=dict(
+                width=6,
+                color="#0F4C75",
             ),
-
-            opacity=1,
 
             hoverinfo="skip",
 
@@ -1507,7 +1553,7 @@ def update_subcounty_information(selected_subcounty):
 
 
     # =====================================================
-    # ADD SUBCOUNTY NAMES
+    # ADD SUBCOUNTY NAMES BACK TO MAP
     # =====================================================
 
     updated_map.add_trace(
