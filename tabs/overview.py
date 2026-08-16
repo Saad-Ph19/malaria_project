@@ -1,4 +1,4 @@
-from dash import dcc, html
+from dash import dcc, html, callback, Input, Output
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import pandas as pd
@@ -219,7 +219,6 @@ subcounty_gdf["Topography"] = (
 # =========================================================
 # CREATE POLYGON MAP
 # =========================================================
-
 siaya_map = px.choropleth_map(
     subcounty_gdf,
 
@@ -231,12 +230,13 @@ siaya_map = px.choropleth_map(
 
     hover_name="Display_Name",
 
+    # Only show the name on hover
     hover_data={
         "Display_Name": False,
-        "Agriculture": True,
-        "Economy": True,
-        "Geography": True,
-        "Topography": True,
+        "Agriculture": False,
+        "Economy": False,
+        "Geography": False,
+        "Topography": False,
     },
 
     map_style="open-street-map",
@@ -249,6 +249,9 @@ siaya_map = px.choropleth_map(
     zoom=8.3,
 
     opacity=0.55,
+
+    # Important for retrieving the clicked subcounty
+    custom_data=["Display_Name"],
 )
 
 
@@ -679,107 +682,121 @@ for fig in [
 # LAYOUT
 layout = dbc.Container(
     [
-        # =================================================
-        # SIAYA COUNTY MAP
-        # =================================================
+        # =========================================================
+        # SUBCOUNTY FILTER
+        # =========================================================
+        
         dbc.Card(
             dbc.CardBody(
                 [
-
+                    html.Label(
+                        "Subcounty",
+                        className="fw-bold text-muted mb-2"
+                    ),
+        
+                    dcc.Dropdown(
+                        id="overview-subcounty-dropdown",
+        
+                        options=[
+                            {
+                                "label": name,
+                                "value": name
+                            }
+                            for name in [
+                                "Alego Usonga",
+                                "Bondo",
+                                "Gem",
+                                "Rarieda",
+                                "Ugenya",
+                                "Ugunja",
+                            ]
+                        ],
+        
+                        value="Alego Usonga",
+        
+                        clearable=False,
+                    ),
+                ]
+            ),
+        
+            className="border-0 shadow-sm mb-4",
+        
+            style={
+                "borderRadius": "16px"
+            },
+        ),
+        
+        
+        # =========================================================
+        # SIAYA COUNTY MAP
+        # =========================================================
+        
+        dbc.Card(
+            dbc.CardBody(
+                [
+        
                     html.H4(
                         "Siaya County Geographic Overview",
                         className="fw-bold mb-1",
                     ),
-
+        
                     html.P(
                         "Explore the six sub-counties of Siaya County. "
-                        "Hover over each location for a brief summary of "
+                        "Select a subcounty above to view information on "
                         "agriculture, economic activity, geography, and topography.",
                         className="text-muted mb-4",
                     ),
-
-
+        
                     dbc.Row(
                         [
-
+        
                             # Map
                             dbc.Col(
                                 dcc.Graph(
                                     id="siaya-overview-map",
+        
                                     figure=siaya_map,
-
+        
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-
+        
                                     style={
                                         "height": "560px",
                                     },
                                 ),
-
+        
                                 lg=8,
                             ),
-
-
-                            # Map information panel
+        
+        
+                            # Information panel
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
-                                        [
-
-                                            html.H6(
-                                                "County Context",
-                                                className="fw-bold text-primary mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Siaya County consists of six "
-                                                "sub-counties: Alego Usonga, Bondo, "
-                                                "Gem, Rarieda, Ugenya, and Ugunja.",
-                                                className="mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Agriculture is an important part "
-                                                "of the county economy, while "
-                                                "communities near Lake Victoria, "
-                                                "particularly Bondo and Rarieda, "
-                                                "also have strong links to fisheries "
-                                                "and the blue economy.",
-                                                className="mb-3",
-                                            ),
-
-                                            html.P(
-                                                "Hover over a sub-county marker on "
-                                                "the map to view additional geographic "
-                                                "and economic information.",
-                                                className="text-muted mb-0",
-                                            ),
-
-                                        ]
+                                        id="subcounty-information-panel"
                                     ),
-
+        
                                     style=INSIGHT_STYLE,
                                 ),
-
+        
                                 lg=4,
                             ),
-
+        
                         ],
-
+        
                         className="align-items-center",
                     ),
-
+        
                 ],
-
+        
                 className="p-4",
             ),
-
+        
             className="mb-4 border-0 shadow-sm",
         ),
 
-        
         # =================================================
         # KPI CARDS
         # =================================================
@@ -1321,3 +1338,94 @@ layout = dbc.Container(
         "padding": "25px",
     },
 )
+
+# =========================================================
+# SUBCOUNTY INFORMATION CALLBACK
+# =========================================================
+
+@callback(
+    Output(
+        "subcounty-information-panel",
+        "children"
+    ),
+
+    Input(
+        "overview-subcounty-dropdown",
+        "value"
+    )
+)
+
+def update_subcounty_information(selected_subcounty):
+
+    info = subcounty_information[
+        selected_subcounty
+    ]
+
+    return [
+
+        html.H4(
+            selected_subcounty,
+            className="fw-bold text-primary mb-4",
+        ),
+
+
+        html.Div(
+            [
+                html.H6(
+                    "Agriculture",
+                    className="fw-bold mb-1",
+                ),
+
+                html.P(
+                    info["Agriculture"],
+                    className="mb-3",
+                ),
+            ]
+        ),
+
+
+        html.Div(
+            [
+                html.H6(
+                    "Economy",
+                    className="fw-bold mb-1",
+                ),
+
+                html.P(
+                    info["Economy"],
+                    className="mb-3",
+                ),
+            ]
+        ),
+
+
+        html.Div(
+            [
+                html.H6(
+                    "Geography",
+                    className="fw-bold mb-1",
+                ),
+
+                html.P(
+                    info["Geography"],
+                    className="mb-3",
+                ),
+            ]
+        ),
+
+
+        html.Div(
+            [
+                html.H6(
+                    "Topography",
+                    className="fw-bold mb-1",
+                ),
+
+                html.P(
+                    info["Topography"],
+                    className="mb-0",
+                ),
+            ]
+        ),
+
+    ]
