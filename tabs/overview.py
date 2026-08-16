@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
+import geopandas as gpd
 
 #Download 
 svg_download_config = {
@@ -93,131 +94,157 @@ population_figure.update_xaxes(
     gridcolor="#e9ecef",
 )
 
-# SIAYA SUB-COUNTY MAP
-# Approximate geographic centers used only to position
-# sub-county information on the overview map.
-subcounty_data = pd.DataFrame(
-    {
-        "Subcounty": [
-            "Alego Usonga",
-            "Bondo",
-            "Gem",
-            "Rarieda",
-            "Ugenya",
-            "Ugunja",
-        ],
+# =========================================================
+# SIAYA SUB-COUNTY BOUNDARY MAP
+# =========================================================
 
-        "Latitude": [
-            0.060,
-            -0.090,
-            0.110,
-            -0.170,
-            0.180,
-            0.200,
-        ],
+# Load the same subcounty boundary file used for Google Earth Engine
+subcounty_gdf = gpd.read_file(
+    "Boundary_Data/ke_subcounty.shp"
+)
 
-        "Longitude": [
-            34.285,
-            34.270,
-            34.430,
-            34.390,
-            34.210,
-            34.300,
-        ],
+# Keep only the six Siaya subcounties
+siaya_subcounties = [
+    "Alego Usonga Sub County",
+    "Bondo Sub County",
+    "Gem Sub County",
+    "Rarieda Sub County",
+    "Ugenya Sub County",
+    "Ugunja Sub County",
+]
 
-        "Agriculture": [
-            "Mixed crop and livestock farming",
-            "Crop production, livestock, and fisheries",
-            "Mixed farming and crop production",
-            "Crop production, livestock, and fisheries",
-            "Mixed farming and crop production",
-            "Mixed farming and crop production",
-        ],
+subcounty_gdf = subcounty_gdf[
+    subcounty_gdf["subcounty"].isin(siaya_subcounties)
+].copy()
 
-        "Economy": [
-            "Agriculture, trade, and services centered around Siaya town",
-            "Agriculture, fishing, trade, and the Lake Victoria blue economy",
-            "Agriculture, small-scale trade, and local services",
-            "Agriculture, fishing, livestock, and lake-related economic activity",
-            "Agriculture, cross-regional trade, and small businesses",
-            "Agriculture, commerce, transport, and small businesses",
-        ],
 
-        "Geography": [
-            "Central Siaya County and home to Siaya town",
-            "Southwestern Siaya with extensive Lake Victoria influence",
-            "Eastern part of Siaya County",
-            "Southern Siaya along Lake Victoria",
-            "Northwestern Siaya near the Kenya–Uganda transport corridor",
-            "Northern-central Siaya County",
-        ],
+# Make sure coordinates are latitude/longitude
+subcounty_gdf = subcounty_gdf.to_crs(epsg=4326)
 
-        "Topography": [
-            "Predominantly gently undulating inland terrain",
-            "Low-lying and gently rolling terrain toward Lake Victoria",
-            "Undulating inland landscape with agricultural areas",
-            "Rolling terrain descending toward the Lake Victoria shoreline",
-            "Gently rolling inland terrain",
-            "Gently undulating inland terrain",
-        ],
-    }
+
+# Short names for display
+subcounty_gdf["Subcounty"] = (
+    subcounty_gdf["subcounty"]
+    .str.replace(" Sub County", "", regex=False)
+    .str.strip()
 )
 
 
-# Create detailed hover text
-subcounty_data["hover_text"] = (
-    "<b>"
-    + subcounty_data["Subcounty"]
-    + "</b>"
-    + "<br><br><b>Agriculture:</b> "
-    + subcounty_data["Agriculture"]
-    + "<br><b>Economy:</b> "
-    + subcounty_data["Economy"]
-    + "<br><b>Geography:</b> "
-    + subcounty_data["Geography"]
-    + "<br><b>Topography:</b> "
-    + subcounty_data["Topography"]
+# =========================================================
+# SUBCOUNTY INFORMATION
+# =========================================================
+
+subcounty_information = {
+    "Alego Usonga": {
+        "Agriculture": "Mixed crop and livestock farming",
+        "Economy": "Agriculture, trade, and services centered around Siaya town",
+        "Geography": "Central Siaya County and home to Siaya town",
+        "Topography": "Predominantly gently undulating inland terrain",
+    },
+
+    "Bondo": {
+        "Agriculture": "Crop production, livestock, and fisheries",
+        "Economy": "Agriculture, fishing, trade, and Lake Victoria-related economic activity",
+        "Geography": "Southwestern Siaya County along Lake Victoria",
+        "Topography": "Low-lying and gently rolling terrain toward Lake Victoria",
+    },
+
+    "Gem": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, small-scale trade, and local services",
+        "Geography": "Eastern part of Siaya County",
+        "Topography": "Undulating inland landscape with agricultural areas",
+    },
+
+    "Rarieda": {
+        "Agriculture": "Crop production, livestock, and fisheries",
+        "Economy": "Agriculture, fishing, livestock, and lake-related economic activity",
+        "Geography": "Southern Siaya County along Lake Victoria",
+        "Topography": "Rolling terrain descending toward the Lake Victoria shoreline",
+    },
+
+    "Ugenya": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, trade, and small businesses",
+        "Geography": "Northwestern Siaya County",
+        "Topography": "Gently rolling inland terrain",
+    },
+
+    "Ugunja": {
+        "Agriculture": "Mixed farming and crop production",
+        "Economy": "Agriculture, commerce, transport, and small businesses",
+        "Geography": "Northern-central Siaya County",
+        "Topography": "Gently undulating inland terrain",
+    },
+}
+
+
+# Add information to the GeoDataFrame
+subcounty_gdf["Agriculture"] = (
+    subcounty_gdf["Subcounty"]
+    .map(lambda x: subcounty_information[x]["Agriculture"])
+)
+
+subcounty_gdf["Economy"] = (
+    subcounty_gdf["Subcounty"]
+    .map(lambda x: subcounty_information[x]["Economy"])
+)
+
+subcounty_gdf["Geography"] = (
+    subcounty_gdf["Subcounty"]
+    .map(lambda x: subcounty_information[x]["Geography"])
+)
+
+subcounty_gdf["Topography"] = (
+    subcounty_gdf["Subcounty"]
+    .map(lambda x: subcounty_information[x]["Topography"])
 )
 
 
-siaya_map = go.Figure(
-    go.Scattermapbox(
-        lat=subcounty_data["Latitude"],
-        lon=subcounty_data["Longitude"],
+# =========================================================
+# CREATE POLYGON MAP
+# =========================================================
 
-        mode="markers+text",
+siaya_map = px.choropleth_map(
+    subcounty_gdf,
 
-        marker=dict(
-            size=16,
-            color="#2563eb",
-        ),
+    geojson=subcounty_gdf.geometry.__geo_interface__,
 
-        text=subcounty_data["Subcounty"],
+    locations=subcounty_gdf.index,
 
-        textposition="top center",
+    color="Subcounty",
 
-        textfont=dict(
-            size=13,
-            color="#1f2937",
-        ),
+    hover_name="Subcounty",
 
-        customdata=subcounty_data["hover_text"],
+    hover_data={
+        "Subcounty": False,
+        "Agriculture": True,
+        "Economy": True,
+        "Geography": True,
+        "Topography": True,
+    },
 
-        hovertemplate="%{customdata}<extra></extra>",
-    )
+    map_style="open-street-map",
+
+    center={
+        "lat": 0.03,
+        "lon": 34.30,
+    },
+
+    zoom=8.3,
+
+    opacity=0.55,
+)
+
+
+# Make boundaries easier to see
+siaya_map.update_traces(
+    marker_line_width=2,
+    marker_line_color="white",
 )
 
 
 siaya_map.update_layout(
-    mapbox=dict(
-        style="open-street-map",
-        center=dict(
-            lat=0.03,
-            lon=34.30,
-        ),
-        zoom=8.5,
-    ),
-
     height=560,
 
     margin=dict(
@@ -227,9 +254,9 @@ siaya_map.update_layout(
         b=0,
     ),
 
-    paper_bgcolor="white",
+    legend_title_text="Subcounty",
 
-    showlegend=False,
+    paper_bgcolor="white",
 )
 
 # UNDER 5 TREEMAP
