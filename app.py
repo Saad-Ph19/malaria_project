@@ -190,6 +190,7 @@ app.layout = html.Div(
                     "borderRight": "none",
                 },
             ),
+        ),
 
         # FOOTER
         dbc.Container(
