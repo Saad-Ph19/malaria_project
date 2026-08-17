@@ -30,7 +30,7 @@ svg_download_config = {
 }
 
 
-# =========================================================#
+#====================================================
 # DASHBOARD THEME
 PRIMARY = "#274C77"          # Muted navy
 PRIMARY_DARK = "#1F3B5B"     # Dark navy
@@ -110,13 +110,10 @@ population_figure.update_xaxes(
 
 # =========================================================
 # SIAYA SUBCOUNTY BOUNDARY MAP
-# =========================================================
-
 # Load the same shapefile that was already working
 subcounty_gdf = gpd.read_file(
     "Boundary_Data/ke_subcounty.shp"
 )
-
 
 # Keep only the six Siaya subcounties
 siaya_subcounties = [
@@ -128,34 +125,18 @@ siaya_subcounties = [
     "Ugunja Sub County",
 ]
 
-
-subcounty_gdf = subcounty_gdf[
-    subcounty_gdf["subcounty"].isin(siaya_subcounties)
-].copy()
-
+subcounty_gdf = subcounty_gdf[subcounty_gdf["subcounty"].isin(siaya_subcounties)].copy()
 
 # Make sure map coordinates are longitude / latitude
 subcounty_gdf = subcounty_gdf.to_crs(epsg=4326)
 
-
 # Shorter names for display
-subcounty_gdf["Display_Name"] = (
-    subcounty_gdf["subcounty"]
-    .str.replace(
-        " Sub County",
-        "",
-        regex=False
-    )
-    .str.strip()
-)
+subcounty_gdf["Display_Name"] = (subcounty_gdf["subcounty"].str.replace(" Sub County","",regex=False).str.strip())
 
 
 # =========================================================
 # SUBCOUNTY INFORMATION
-# =========================================================
-
 subcounty_information = {
-
     "Alego Usonga": {
         "Agriculture": "Mixed crop and livestock farming",
         "Economy": "Agriculture, trade, and services centered around Siaya town",
@@ -201,49 +182,20 @@ subcounty_information = {
 
 
 # Add information to GeoDataFrame
-subcounty_gdf["Agriculture"] = (
-    subcounty_gdf["Display_Name"]
-    .map(
-        lambda x: subcounty_information[x]["Agriculture"]
-    )
-)
-
-subcounty_gdf["Economy"] = (
-    subcounty_gdf["Display_Name"]
-    .map(
-        lambda x: subcounty_information[x]["Economy"]
-    )
-)
-
-subcounty_gdf["Geography"] = (
-    subcounty_gdf["Display_Name"]
-    .map(
-        lambda x: subcounty_information[x]["Geography"]
-    )
-)
-
-subcounty_gdf["Topography"] = (
-    subcounty_gdf["Display_Name"]
-    .map(
-        lambda x: subcounty_information[x]["Topography"]
-    )
-)
+subcounty_gdf["Agriculture"] = (subcounty_gdf["Display_Name"].map(lambda x: subcounty_information[x]["Agriculture"]))
+subcounty_gdf["Economy"] = (subcounty_gdf["Display_Name"].map(lambda x: subcounty_information[x]["Economy"]))
+subcounty_gdf["Geography"] = (subcounty_gdf["Display_Name"].map(lambda x: subcounty_information[x]["Geography"]))
+subcounty_gdf["Topography"] = (subcounty_gdf["Display_Name"].map(lambda x: subcounty_information[x]["Topography"]))
 
 
 # =========================================================
 # CREATE POLYGON MAP
-# =========================================================
 siaya_map = px.choropleth_map(
     subcounty_gdf,
-
     geojson=subcounty_gdf.geometry.__geo_interface__,
-
     locations=subcounty_gdf.index,
-
     color="Display_Name",
-
     color_discrete_sequence=MAP_COLORS,
-
     hover_name="Display_Name",
 
     # Only show the name on hover
@@ -255,6 +207,7 @@ siaya_map = px.choropleth_map(
         "Topography": False,
     },
 
+    #Map style
     map_style="open-street-map",
 
     center={
@@ -263,7 +216,6 @@ siaya_map = px.choropleth_map(
     },
 
     zoom=8.3,
-
     opacity=0.55,
 )
 
@@ -277,12 +229,8 @@ siaya_map.update_traces(
 
 # =========================================================
 # CREATE LABEL LOCATIONS INSIDE EACH SUBCOUNTY
-# =========================================================
-
 # representative_point() places the point inside the polygon,
-# making it better for labels than a simple centroid.
 label_points = subcounty_gdf.geometry.representative_point()
-
 
 label_df = pd.DataFrame(
     {
@@ -295,15 +243,11 @@ label_df = pd.DataFrame(
 
 # =========================================================
 # ADD SUBCOUNTY NAMES DIRECTLY ON THE MAP
-# =========================================================
-
 siaya_map.add_trace(
     go.Scattermap(
         lat=label_df["Latitude"],
         lon=label_df["Longitude"],
-
         mode="text",
-
         text=label_df["Subcounty"],
 
         textfont=dict(
@@ -312,32 +256,21 @@ siaya_map.add_trace(
         ),
 
         hoverinfo="skip",
-
         showlegend=False,
     )
 )
 
-
-# =========================================================
 # MAP LAYOUT
-# =========================================================
-
 siaya_map.update_layout(
     height=560,
-
-    margin=dict(
-        l=0,
-        r=0,
-        t=0,
-        b=0,
-    ),
-
+    margin=dict(l=0,r=0,t=0,b=0,),
     paper_bgcolor="white",
 
     # No external legend because names are inside map
     showlegend=False,
 )
 
+#===============================================
 # UNDER 5 TREEMAP
 disease_labels = [
     "Confirmed malaria",
@@ -353,7 +286,6 @@ disease_labels = [
     "All Other Conditions/Diseases"
 ]
 
-
 disease_values = [
     114002,
     98302,
@@ -368,13 +300,11 @@ disease_values = [
     279615
 ]
 
-
 treemap_fig = px.treemap(
     names=disease_labels,
     parents=[""] * len(disease_labels),
     values=disease_values,
 )
-
 
 treemap_fig.update_traces(
     textinfo="label+value+percent root",
@@ -387,18 +317,13 @@ treemap_fig.update_traces(
     ),
 )
 
-
 treemap_fig.update_layout(
     template="plotly_white",
     height=500,
-    margin=dict(
-        l=10,
-        r=10,
-        t=10,
-        b=10
-    )
+    margin=dict(l=10,r=10,t=10,b=10)
 )
 
+#==============================================
 # UNDER 5 MORTALITY
 conditions = [
     "Pneumonia",
@@ -427,7 +352,6 @@ values = [
     5
 ]
 
-
 # Highlight malaria
 colors = [
     "#4e79a7",
@@ -441,7 +365,6 @@ colors = [
     "#4e79a7",
     "#4e79a7"
 ]
-
 
 mortality_fig = go.Figure(
     go.Bar(
@@ -460,29 +383,18 @@ mortality_fig = go.Figure(
     )
 )
 
-
 mortality_fig.update_layout(
     template="plotly_white",
     height=500,
-
-    margin=dict(
-        l=20,
-        r=40,
-        t=20,
-        b=20
-    ),
-
+    margin=dict(l=20,r=40,t=20,b=20),
     xaxis_title="Reported occurrences (count)",
     yaxis_title="",
-
     showlegend=False,
 )
 
+mortality_fig.update_yaxes(autorange="reversed")
 
-mortality_fig.update_yaxes(
-    autorange="reversed"
-)
-
+#==================================================
 # OVER 5 TREEMAP
 over5_labels = [
     "Confirmed Malaria",
@@ -508,7 +420,6 @@ over5_labels = [
     "All Other Diseases"
 ]
 
-
 over5_values = [
     444240,
     219918,
@@ -533,13 +444,11 @@ over5_values = [
     252559
 ]
 
-
 over5_treemap_fig = px.treemap(
     names=over5_labels,
     parents=[""] * len(over5_labels),
     values=over5_values,
 )
-
 
 over5_treemap_fig.update_traces(
     textinfo="label+value+percent root",
@@ -556,13 +465,7 @@ over5_treemap_fig.update_traces(
 over5_treemap_fig.update_layout(
     template="plotly_white",
     height=500,
-
-    margin=dict(
-        l=10,
-        r=10,
-        t=10,
-        b=10
-    )
+    margin=dict(l=10,r=10,t=10,b=10)
 )
 
 # OVER 5 MORTALITY
@@ -579,7 +482,6 @@ over5_conditions = [
     "Congestive Heart Failure"
 ]
 
-
 over5_values = [
     60,
     57,
@@ -593,7 +495,6 @@ over5_values = [
     21
 ]
 
-
 over5_colors = [
     "#4e79a7",
     "#4e79a7",
@@ -606,7 +507,6 @@ over5_colors = [
     "#d62728",
     "#4e79a7",
 ]
-
 
 over5_mortality_fig = go.Figure(
     go.Bar(
@@ -629,29 +529,17 @@ over5_mortality_fig = go.Figure(
 over5_mortality_fig.update_layout(
     template="plotly_white",
     height=500,
-
-    margin=dict(
-        l=20,
-        r=40,
-        t=20,
-        b=20
-    ),
-
+    margin=dict(l=20,r=40,t=20,b=20),
     xaxis_title="Reported occurrences (count)",
     yaxis_title="",
-
     showlegend=False,
 )
 
+over5_mortality_fig.update_yaxes(autorange="reversed")
 
-over5_mortality_fig.update_yaxes(
-    autorange="reversed"
-)
 
 # =========================================================
 # SUBCOUNTY INFORMATION PANEL
-# =========================================================
-
 def build_subcounty_information_panel(selected_subcounty):
     info = subcounty_information[selected_subcounty]
 
@@ -659,10 +547,7 @@ def build_subcounty_information_panel(selected_subcounty):
         html.H4(
             selected_subcounty,
             className="fw-bold mb-4",
-            style={
-                "color": PRIMARY,
-                "fontSize": "22px",
-            },
+            style={"color": PRIMARY,"fontSize": "22px",},
         ),
 
         html.Div(
@@ -729,14 +614,12 @@ def build_subcounty_information_panel(selected_subcounty):
 
 # =========================================================
 # CARD STYLING
-# =========================================================
 CARD_STYLE = {
     "backgroundColor": CARD_BG,
     "border": f"1px solid {BORDER}",
     "borderRadius": "10px",
     "boxShadow": "0 2px 8px rgba(15, 23, 42, 0.05)",
 }
-
 
 INSIGHT_STYLE = {
     "backgroundColor": INSIGHT_BG,
@@ -755,7 +638,6 @@ population_figure.update_traces(
         )
     )
 )
-
 
 for fig in [
     population_figure,
@@ -777,30 +659,21 @@ for fig in [
 
 # =========================================================
 # LAYOUT
-# =========================================================
-
 layout = dbc.Container(
     [
-
         # =================================================
         # SUBCOUNTY FILTER
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
                     html.Label(
                         "Subcounty",
                         className="fw-semibold mb-2",
-                        style={
-                            "color": TEXT,
-                            "fontSize": "14px",
-                        },
+                        style={"color": TEXT,"fontSize": "14px",},
                     ),
 
                     dcc.Dropdown(
                         id="overview-subcounty-dropdown",
-
                         options=[
                             {
                                 "label": name,
@@ -820,62 +693,36 @@ layout = dbc.Container(
                         clearable=False,
                     ),
                 ],
-
-                style={
-                    "padding": "18px 20px",
-                },
+                style={"padding": "18px 20px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
 
 
         # =================================================
         # MAP + SUBCOUNTY INFORMATION
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
-
                     dbc.Row(
                         [
-
-                            # -----------------------------
                             # Map
-                            # -----------------------------
-
                             dbc.Col(
                                 dcc.Graph(
                                     id="siaya-overview-map",
-
                                     figure=siaya_map,
-
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-
-                                    style={
-                                        "height": "560px",
-                                        "width": "100%",
-                                    },
+                                    style={"height": "560px","width": "100%",},
                                 ),
-
                                 lg=8,
-
-                                style={
-                                    "height": "560px",
-                                },
+                                style={"height": "560px",},
                             ),
 
-
-                            # -----------------------------
                             # Subcounty information
-                            # -----------------------------
-
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
@@ -884,7 +731,6 @@ layout = dbc.Container(
 
                                         style={
                                             "padding": "26px",
-
                                             "display": "flex",
                                             "flexDirection": "column",
                                             "justifyContent": "flex-start",
@@ -903,95 +749,59 @@ layout = dbc.Container(
                                     "height": "560px",
                                 },
                             ),
-
                         ],
-
                         className="g-4 align-items-stretch",
                     ),
-
                 ],
-
-                style={
-                    "padding": "20px",
-                },
+                style={"padding": "20px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
 
         # =================================================
         # POPULATION DISTRIBUTION
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
-
                     html.H4(
                         "Population Distribution",
-
                         className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
                         "Projected population distribution across major age groups.",
-
                         className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
+                        style={"color": TEXT_MUTED,},
                     ),
-
 
                     dbc.Row(
                         [
-
                             dbc.Col(
                                 dcc.Graph(
                                     id="population-profile-chart",
-
                                     figure=population_figure,
-
                                     config=svg_download_config,
-
-                                    style={
-                                        "height": "550px",
-                                    },
+                                    style={ "height": "550px",},
                                 ),
 
                                 lg=8,
-
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
-
 
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
                                         [
-
                                             html.H6(
                                                 "Key Insights",
-
                                                 className="fw-bold mb-3",
-
-                                                style={
-                                                    "color": PRIMARY,
-                                                },
+                                                style={"color": PRIMARY,},
                                             ),
 
                                             html.Ul(
                                                 [
-
                                                     html.Li(
                                                         "Children under 15 years represent "
                                                         "the largest population group."
@@ -1012,7 +822,7 @@ layout = dbc.Container(
                                                 ],
 
                                                 style={
-                                                    "fontSize": "15px",
+                                                    "fontSize": "30px",
                                                     "lineHeight": "1.8",
                                                     "color": TEXT,
                                                     "paddingLeft": "20px",
@@ -1020,10 +830,7 @@ layout = dbc.Container(
                                             ),
 
                                         ],
-
-                                        style={
-                                            "padding": "24px",
-                                        },
+                                        style={"padding": "24px",},
                                     ),
 
                                     style={
@@ -1031,46 +838,31 @@ layout = dbc.Container(
                                         "height": "550px",
                                     },
                                 ),
-
                                 lg=4,
-
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
 
                         ],
-
                         className="g-4 align-items-stretch",
                     ),
-
                 ],
-
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
 
 
         # =================================================
         # KPI CARDS
-        # =================================================
-
         dbc.Row(
             [
-
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
                             [
                                 html.Div(
                                     "Total Population",
-
                                     style={
                                         "color": TEXT_MUTED,
                                         "fontSize": "14px",
@@ -1080,9 +872,7 @@ layout = dbc.Container(
 
                                 html.H3(
                                     "1.15M",
-
                                     className="fw-bold mb-0",
-
                                     style={
                                         "color": PRIMARY,
                                         "marginTop": "5px",
@@ -1107,10 +897,8 @@ layout = dbc.Container(
                             "height": "100%",
                         },
                     ),
-
                     lg=3,
                     md=6,
-
                     className="mb-3",
                 ),
 
@@ -1121,19 +909,16 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Population Under 15",
-
                                     style={
                                         "color": TEXT_MUTED,
                                         "fontSize": "14px",
                                         "fontWeight": "500",
                                     },
                                 ),
-
+                                
                                 html.H3(
                                     "475K+",
-
                                     className="fw-bold mb-0",
-
                                     style={
                                         "color": PRIMARY,
                                         "marginTop": "5px",
@@ -1147,10 +932,7 @@ layout = dbc.Container(
                                     },
                                 ),
                             ],
-
-                            style={
-                                "padding": "20px",
-                            },
+                            style={"padding": "20px",},
                         ),
 
                         style={
@@ -1158,10 +940,8 @@ layout = dbc.Container(
                             "height": "100%",
                         },
                     ),
-
                     lg=3,
                     md=6,
-
                     className="mb-3",
                 ),
 
@@ -1172,7 +952,6 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Under-5 Conditions",
-
                                     style={
                                         "color": TEXT_MUTED,
                                         "fontSize": "14px",
@@ -1182,9 +961,7 @@ layout = dbc.Container(
 
                                 html.H3(
                                     "550K+",
-
                                     className="fw-bold mb-0",
-
                                     style={
                                         "color": PRIMARY,
                                         "marginTop": "5px",
@@ -1193,16 +970,10 @@ layout = dbc.Container(
 
                                 html.Small(
                                     "reported outpatient conditions",
-
-                                    style={
-                                        "color": TEXT_MUTED,
-                                    },
+                                    style={"color": TEXT_MUTED,},
                                 ),
                             ],
-
-                            style={
-                                "padding": "20px",
-                            },
+                            style={"padding": "20px",},
                         ),
 
                         style={
@@ -1213,7 +984,6 @@ layout = dbc.Container(
 
                     lg=3,
                     md=6,
-
                     className="mb-3",
                 ),
 
@@ -1224,7 +994,6 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Over-5 Conditions",
-
                                     style={
                                         "color": TEXT_MUTED,
                                         "fontSize": "14px",
@@ -1234,9 +1003,7 @@ layout = dbc.Container(
 
                                 html.H3(
                                     "1.26M+",
-
                                     className="fw-bold mb-0",
-
                                     style={
                                         "color": PRIMARY,
                                         "marginTop": "5px",
@@ -1245,16 +1012,12 @@ layout = dbc.Container(
 
                                 html.Small(
                                     "reported outpatient conditions",
-
                                     style={
                                         "color": TEXT_MUTED,
                                     },
                                 ),
                             ],
-
-                            style={
-                                "padding": "20px",
-                            },
+                            style={"padding": "20px",},
                         ),
 
                         style={
@@ -1277,8 +1040,6 @@ layout = dbc.Container(
 
         # =================================================
         # UNDER 5 CONDITIONS
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1299,22 +1060,16 @@ layout = dbc.Container(
                         "of reported conditions.",
 
                         className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
+                        style={"color": TEXT_MUTED,},
                     ),
 
 
                     dbc.Row(
                         [
-
                             dbc.Col(
                                 dcc.Graph(
                                     id="under5-disease-chart",
-
                                     figure=treemap_fig,
-
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
@@ -1375,7 +1130,7 @@ layout = dbc.Container(
                                                 ],
 
                                                 style={
-                                                    "fontSize": "15px",
+                                                    "fontSize": "30px",
                                                     "lineHeight": "1.8",
                                                     "color": TEXT,
                                                     "paddingLeft": "20px",
@@ -1422,8 +1177,6 @@ layout = dbc.Container(
 
         # =================================================
         # UNDER 5 MORTALITY
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1470,8 +1223,6 @@ layout = dbc.Container(
 
         # =================================================
         # OVER 5 CONDITIONS
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1563,7 +1314,7 @@ layout = dbc.Container(
                                                 ],
 
                                                 style={
-                                                    "fontSize": "15px",
+                                                    "fontSize": "30px",
                                                     "lineHeight": "1.8",
                                                     "color": TEXT,
                                                     "paddingLeft": "20px",
@@ -1571,10 +1322,7 @@ layout = dbc.Container(
                                             ),
 
                                         ],
-
-                                        style={
-                                            "padding": "24px",
-                                        },
+                                        style={"padding": "24px",},
                                     ),
 
                                     style={
@@ -1584,7 +1332,6 @@ layout = dbc.Container(
                                 ),
 
                                 lg=4,
-
                                 style={
                                     "height": "550px",
                                 },
@@ -1610,8 +1357,6 @@ layout = dbc.Container(
 
         # =================================================
         # OVER 5 MORTALITY
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1663,8 +1408,6 @@ layout = dbc.Container(
 
         # =================================================
         # DATA SOURCE
-        # =================================================
-
         html.Div(
             [
 
@@ -1714,8 +1457,6 @@ layout = dbc.Container(
 
 # =========================================================
 # SUBCOUNTY INFORMATION CALLBACK
-# =========================================================
-
 @callback(
     Output("subcounty-information-panel", "children"),
     Input("overview-subcounty-dropdown", "value")
