@@ -265,9 +265,6 @@ siaya_map = px.choropleth_map(
     zoom=8.3,
 
     opacity=0.55,
-
-    # Important for retrieving the clicked subcounty
-    custom_data=["Display_Name"],
 )
 
 
@@ -652,6 +649,85 @@ over5_mortality_fig.update_yaxes(
 )
 
 # =========================================================
+# SUBCOUNTY INFORMATION PANEL
+# =========================================================
+
+def build_subcounty_information_panel(selected_subcounty):
+    info = subcounty_information[selected_subcounty]
+
+    return [
+        html.H4(
+            selected_subcounty,
+            className="fw-bold mb-4",
+            style={
+                "color": PRIMARY,
+                "fontSize": "22px",
+            },
+        ),
+
+        html.Div(
+            [
+                html.H6(
+                    "Agriculture",
+                    className="fw-bold mb-1",
+                    style={"color": TEXT},
+                ),
+                html.P(
+                    info["Agriculture"],
+                    className="mb-3",
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                ),
+            ]
+        ),
+
+        html.Div(
+            [
+                html.H6(
+                    "Economy",
+                    className="fw-bold mb-1",
+                    style={"color": TEXT},
+                ),
+                html.P(
+                    info["Economy"],
+                    className="mb-3",
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                ),
+            ]
+        ),
+
+        html.Div(
+            [
+                html.H6(
+                    "Geography",
+                    className="fw-bold mb-1",
+                    style={"color": TEXT},
+                ),
+                html.P(
+                    info["Geography"],
+                    className="mb-3",
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                ),
+            ]
+        ),
+
+        html.Div(
+            [
+                html.H6(
+                    "Topography",
+                    className="fw-bold mb-1",
+                    style={"color": TEXT},
+                ),
+                html.P(
+                    info["Topography"],
+                    className="mb-0",
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                ),
+            ]
+        ),
+    ]
+
+
+# =========================================================
 # CARD STYLING
 # =========================================================
 CARD_STYLE = {
@@ -804,6 +880,7 @@ layout = dbc.Container(
                                 dbc.Card(
                                     dbc.CardBody(
                                         id="subcounty-information-panel",
+                                        children=build_subcounty_information_panel("Alego Usonga"),
 
                                         style={
                                             "padding": "26px",
@@ -1632,268 +1709,17 @@ layout = dbc.Container(
     style={
         "backgroundColor": PAGE_BG,
         "padding": "24px",
+        "minHeight": "100vh",
     },
 )
 
 # =========================================================
-# GET BOUNDARY COORDINATES FOR SELECTED SUBCOUNTY
-# =========================================================
-
-def get_boundary_coordinates(geometry):
-
-    lons = []
-    lats = []
-
-    # Normal Polygon
-    if geometry.geom_type == "Polygon":
-
-        x, y = geometry.exterior.coords.xy
-
-        lons.extend(list(x))
-        lats.extend(list(y))
-
-
-    # MultiPolygon
-    elif geometry.geom_type == "MultiPolygon":
-
-        for polygon in geometry.geoms:
-
-            x, y = polygon.exterior.coords.xy
-
-            lons.extend(list(x))
-            lats.extend(list(y))
-
-            # Add None to separate individual polygons
-            lons.append(None)
-            lats.append(None)
-
-
-    return lons, lats
-
-
-# =========================================================
-# SUBCOUNTY INFORMATION + MAP HIGHLIGHT CALLBACK
+# SUBCOUNTY INFORMATION CALLBACK
 # =========================================================
 
 @callback(
     Output("subcounty-information-panel", "children"),
-    Output("siaya-overview-map", "figure"),
     Input("overview-subcounty-dropdown", "value")
 )
 def update_subcounty_information(selected_subcounty):
-
-    # =====================================================
-    # INFORMATION PANEL
-    # =====================================================
-
-    info = subcounty_information[selected_subcounty]
-
-
-    information_panel = [
-
-        html.H4(
-            selected_subcounty,
-            className="fw-bold mb-4",
-            style={
-                "color": PRIMARY,
-            },
-        ),
-
-
-        html.Div(
-            [
-                html.H6(
-                    "Agriculture",
-                    className="fw-bold mb-1",
-                ),
-
-                html.P(
-                    info["Agriculture"],
-                    className="mb-3",
-                ),
-            ]
-        ),
-
-
-        html.Div(
-            [
-                html.H6(
-                    "Economy",
-                    className="fw-bold mb-1",
-                ),
-
-                html.P(
-                    info["Economy"],
-                    className="mb-3",
-                ),
-            ]
-        ),
-
-
-        html.Div(
-            [
-                html.H6(
-                    "Geography",
-                    className="fw-bold mb-1",
-                ),
-
-                html.P(
-                    info["Geography"],
-                    className="mb-3",
-                ),
-            ]
-        ),
-
-
-        html.Div(
-            [
-                html.H6(
-                    "Topography",
-                    className="fw-bold mb-1",
-                ),
-
-                html.P(
-                    info["Topography"],
-                    className="mb-0",
-                ),
-            ]
-        ),
-
-    ]
-
-
-    # =====================================================
-    # CREATE BASE MAP
-    # =====================================================
-
-    updated_map = px.choropleth_map(
-        subcounty_gdf,
-
-        geojson=subcounty_gdf.geometry.__geo_interface__,
-
-        locations=subcounty_gdf.index,
-
-        color="Display_Name",
-
-        color_discrete_sequence=MAP_COLORS,
-
-        hover_name="Display_Name",
-
-        hover_data={
-            "Display_Name": False,
-            "Agriculture": False,
-            "Economy": False,
-            "Geography": False,
-            "Topography": False,
-        },
-
-        map_style="open-street-map",
-
-        center={
-            "lat": 0.03,
-            "lon": 34.30,
-        },
-
-        zoom=9,
-
-        opacity=0.55,
-    )
-
-
-    # =====================================================
-    # NORMAL SUBCOUNTY BOUNDARIES
-    # =====================================================
-
-    updated_map.update_traces(
-        marker_line_width=1.5,
-        marker_line_color="white",
-    )
-
-
-    # =====================================================
-    # GET SELECTED SUBCOUNTY
-    # =====================================================
-
-    selected_row = subcounty_gdf[
-        subcounty_gdf["Display_Name"] == selected_subcounty
-    ].iloc[0]
-
-
-    selected_geometry = selected_row.geometry
-
-
-    # Get boundary longitude / latitude
-    boundary_lon, boundary_lat = get_boundary_coordinates(
-        selected_geometry
-    )
-
-
-    # =====================================================
-    # HIGHLIGHT SELECTED BOUNDARY
-    # =====================================================
-
-    updated_map.add_trace(
-        go.Scattermap(
-            lon=boundary_lon,
-            lat=boundary_lat,
-
-            mode="lines",
-
-            line=dict(
-                width=4.5,
-                color=PRIMARY_DARK,
-            ),
-
-            hoverinfo="skip",
-
-            showlegend=False,
-        )
-    )
-
-
-    # =====================================================
-    # ADD SUBCOUNTY NAMES BACK TO MAP
-    # =====================================================
-
-    updated_map.add_trace(
-        go.Scattermap(
-            lat=label_df["Latitude"],
-            lon=label_df["Longitude"],
-
-            mode="text",
-
-            text=label_df["Subcounty"],
-
-            textfont=dict(
-                size=14,
-                color="#1f2937",
-            ),
-
-            hoverinfo="skip",
-
-            showlegend=False,
-        )
-    )
-
-
-    # =====================================================
-    # MAP LAYOUT
-    # =====================================================
-
-    updated_map.update_layout(
-        height=560,
-
-        margin=dict(
-            l=0,
-            r=0,
-            t=0,
-            b=0,
-        ),
-
-        paper_bgcolor="white",
-
-        showlegend=False,
-    )
-
-
-    return information_panel, updated_map
+    return build_subcounty_information_panel(selected_subcounty)
