@@ -29,6 +29,20 @@ svg_download_config = {
     },
 }
 
+
+# =========================================================#
+# DASHBOARD THEME
+PRIMARY = "#274C77"          # Muted navy
+PRIMARY_DARK = "#1F3B5B"     # Dark navy
+PRIMARY_LIGHT = "#EAF0F6"    # Very light blue
+TEXT = "#1F2937"             # Main text
+TEXT_MUTED = "#6B7280"       # Secondary text
+BORDER = "#DCE3EA"           # Soft border
+PAGE_BG = "#F5F7F9"          # Page background
+CARD_BG = "#FFFFFF"          # Card background
+INSIGHT_BG = "#F8FAFC"       # Insight panel background
+MAP_COLORS = ["#6C8EBF","#87A9C7","#7EA6A1","#9B9BC4","#B5A07A","#7F9F8D",]
+
 #population data
 population_categories = [
     "Children under 1",
@@ -227,6 +241,8 @@ siaya_map = px.choropleth_map(
     locations=subcounty_gdf.index,
 
     color="Display_Name",
+
+    color_discrete_sequence=MAP_COLORS,
 
     hover_name="Display_Name",
 
@@ -635,26 +651,30 @@ over5_mortality_fig.update_yaxes(
     autorange="reversed"
 )
 
-# THEME
+# =========================================================
+# CARD STYLING
+# =========================================================
 CARD_STYLE = {
-    "border": "none",
-    "borderRadius": "18px",
-    "boxShadow": "0 4px 15px rgba(0,0,0,0.08)",
+    "backgroundColor": CARD_BG,
+    "border": f"1px solid {BORDER}",
+    "borderRadius": "10px",
+    "boxShadow": "0 2px 8px rgba(15, 23, 42, 0.05)",
 }
 
 
 INSIGHT_STYLE = {
-    "backgroundColor": "#f8fafc",
-    "border": "1px solid #e2e8f0",
-    "borderRadius": "12px",
+    "backgroundColor": INSIGHT_BG,
+    "border": f"1px solid {BORDER}",
+    "borderRadius": "10px",
+    "height": "100%",
 }
 
-# IMPROVE FIGURE STYLING
+# Population figure traces
 population_figure.update_traces(
     marker=dict(
-        color="#2563eb",
+        color=PRIMARY,
         line=dict(
-            color="#1d4ed8",
+            color=PRIMARY_DARK,
             width=1
         )
     )
@@ -679,24 +699,32 @@ for fig in [
     )
 
 
+# =========================================================
 # LAYOUT
+# =========================================================
+
 layout = dbc.Container(
     [
-        # =========================================================
+
+        # =================================================
         # SUBCOUNTY FILTER
-        # =========================================================
-        
+        # =================================================
+
         dbc.Card(
             dbc.CardBody(
                 [
                     html.Label(
                         "Subcounty",
-                        className="fw-bold text-muted mb-2"
+                        className="fw-semibold mb-2",
+                        style={
+                            "color": TEXT,
+                            "fontSize": "14px",
+                        },
                     ),
-        
+
                     dcc.Dropdown(
                         id="overview-subcounty-dropdown",
-        
+
                         options=[
                             {
                                 "label": name,
@@ -711,102 +739,116 @@ layout = dbc.Container(
                                 "Ugunja",
                             ]
                         ],
-        
+
                         value="Alego Usonga",
-        
                         clearable=False,
                     ),
-                ]
+                ],
+
+                style={
+                    "padding": "18px 20px",
+                },
             ),
-        
-            className="border-0 shadow-sm mb-4",
-        
-            style={
-                "borderRadius": "16px"
-            },
+
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
-        
-        
-        dbc.Row(
-            [
-        
-                # =================================================
-                # MAP
-                # =================================================
-                dbc.Col(
-                    dcc.Graph(
-                        id="siaya-overview-map",
-        
-                        figure=siaya_map,
-        
-                        config={
-                            "displayModeBar": False,
-                            "responsive": True,
-                        },
-        
-                        style={
-                            "height": "560px",
-                            "width": "100%",
-                        },
+
+
+        # =================================================
+        # MAP + SUBCOUNTY INFORMATION
+        # =================================================
+
+        dbc.Card(
+            dbc.CardBody(
+                [
+
+                    dbc.Row(
+                        [
+
+                            # -----------------------------
+                            # Map
+                            # -----------------------------
+
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="siaya-overview-map",
+
+                                    figure=siaya_map,
+
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+
+                                    style={
+                                        "height": "560px",
+                                        "width": "100%",
+                                    },
+                                ),
+
+                                lg=8,
+
+                                style={
+                                    "height": "560px",
+                                },
+                            ),
+
+
+                            # -----------------------------
+                            # Subcounty information
+                            # -----------------------------
+
+                            dbc.Col(
+                                dbc.Card(
+                                    dbc.CardBody(
+                                        id="subcounty-information-panel",
+
+                                        style={
+                                            "padding": "26px",
+
+                                            "display": "flex",
+                                            "flexDirection": "column",
+                                            "justifyContent": "flex-start",
+                                        },
+                                    ),
+
+                                    style={
+                                        **INSIGHT_STYLE,
+                                        "height": "560px",
+                                    },
+                                ),
+
+                                lg=4,
+
+                                style={
+                                    "height": "560px",
+                                },
+                            ),
+
+                        ],
+
+                        className="g-4 align-items-stretch",
                     ),
-        
-                    lg=8,
-        
-                    style={
-                        "height": "560px",
-                    },
-                ),
-        
-        
-                # =================================================
-                # INFORMATION PANEL
-                # =================================================
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            id="subcounty-information-panel",
-        
-                            style={
-                                # Keep information at the TOP
-                                "display": "flex",
-                                "flexDirection": "column",
-                                "justifyContent": "flex-start",
-        
-                                # Some breathing room
-                                "padding": "24px",
-                            },
-                        ),
-        
-                        style={
-                            # Make card same height as map
-                            "height": "560px",
-        
-                            # Keep your existing visual style
-                            "backgroundColor": "#f8fafc",
-                            "border": "1px solid #e2e8f0",
-                            "borderRadius": "12px",
-        
-                            # Fill the whole column
-                            "width": "100%",
-                        },
-                    ),
-        
-                    lg=4,
-        
-                    style={
-                        "height": "560px",
-                    },
-                ),
-        
-            ],
-        
-            # Important: do NOT vertically center the information card
-            className="align-items-stretch",
+
+                ],
+
+                style={
+                    "padding": "20px",
+                },
+            ),
+
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
+
 
         # =================================================
         # KPI CARDS
         # =================================================
+
         dbc.Row(
             [
 
@@ -816,26 +858,47 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Total Population",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                        "fontWeight": "500",
+                                    },
                                 ),
 
                                 html.H3(
                                     "1.15M",
-                                    className="fw-bold text-primary mb-0",
+
+                                    className="fw-bold mb-0",
+
+                                    style={
+                                        "color": PRIMARY,
+                                        "marginTop": "5px",
+                                    },
                                 ),
 
                                 html.Small(
                                     "people",
-                                    className="text-muted",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                    },
                                 ),
-                            ]
+                            ],
+
+                            style={
+                                "padding": "20px",
+                            },
                         ),
 
-                        style=CARD_STYLE,
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
 
                     lg=3,
                     md=6,
+
                     className="mb-3",
                 ),
 
@@ -846,26 +909,47 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Population Under 15",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                        "fontWeight": "500",
+                                    },
                                 ),
 
                                 html.H3(
                                     "475K+",
-                                    className="fw-bold text-primary mb-0",
+
+                                    className="fw-bold mb-0",
+
+                                    style={
+                                        "color": PRIMARY,
+                                        "marginTop": "5px",
+                                    },
                                 ),
 
                                 html.Small(
                                     "people",
-                                    className="text-muted",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                    },
                                 ),
-                            ]
+                            ],
+
+                            style={
+                                "padding": "20px",
+                            },
                         ),
 
-                        style=CARD_STYLE,
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
 
                     lg=3,
                     md=6,
+
                     className="mb-3",
                 ),
 
@@ -876,26 +960,48 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Under-5 Conditions",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                        "fontWeight": "500",
+                                    },
                                 ),
 
                                 html.H3(
                                     "550K+",
-                                    className="fw-bold text-primary mb-0",
+
+                                    className="fw-bold mb-0",
+
+                                    style={
+                                        "color": PRIMARY,
+                                        "marginTop": "5px",
+                                    },
                                 ),
 
                                 html.Small(
                                     "reported outpatient conditions",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                    },
                                 ),
-                            ]
+                            ],
+
+                            style={
+                                "padding": "20px",
+                            },
                         ),
 
-                        style=CARD_STYLE,
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
 
                     lg=3,
                     md=6,
+
                     className="mb-3",
                 ),
 
@@ -906,37 +1012,59 @@ layout = dbc.Container(
                             [
                                 html.Div(
                                     "Over-5 Conditions",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                        "fontWeight": "500",
+                                    },
                                 ),
 
                                 html.H3(
                                     "1.26M+",
-                                    className="fw-bold text-primary mb-0",
+
+                                    className="fw-bold mb-0",
+
+                                    style={
+                                        "color": PRIMARY,
+                                        "marginTop": "5px",
+                                    },
                                 ),
 
                                 html.Small(
                                     "reported outpatient conditions",
-                                    className="text-muted",
+
+                                    style={
+                                        "color": TEXT_MUTED,
+                                    },
                                 ),
-                            ]
+                            ],
+
+                            style={
+                                "padding": "20px",
+                            },
                         ),
 
-                        style=CARD_STYLE,
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
 
                     lg=3,
                     md=6,
+
                     className="mb-3",
                 ),
 
             ],
 
-            className="mb-4",
+            className="mb-3 align-items-stretch",
         ),
 
 
         # =================================================
-        # POPULATION INFORMATION
+        # POPULATION DISTRIBUTION
         # =================================================
 
         dbc.Card(
@@ -945,12 +1073,22 @@ layout = dbc.Container(
 
                     html.H4(
                         "Population Distribution",
+
                         className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
                     ),
 
                     html.P(
                         "Projected population distribution across major age groups.",
-                        className="text-muted mb-4",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
                     ),
 
 
@@ -960,15 +1098,21 @@ layout = dbc.Container(
                             dbc.Col(
                                 dcc.Graph(
                                     id="population-profile-chart",
+
                                     figure=population_figure,
+
                                     config=svg_download_config,
 
                                     style={
-                                        "height": "550px"
+                                        "height": "550px",
                                     },
                                 ),
 
                                 lg=8,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
 
@@ -979,7 +1123,12 @@ layout = dbc.Container(
 
                                             html.H6(
                                                 "Key Insights",
-                                                className="fw-bold text-primary",
+
+                                                className="fw-bold mb-3",
+
+                                                style={
+                                                    "color": PRIMARY,
+                                                },
                                             ),
 
                                             html.Ul(
@@ -1007,47 +1156,77 @@ layout = dbc.Container(
                                                 style={
                                                     "fontSize": "15px",
                                                     "lineHeight": "1.8",
+                                                    "color": TEXT,
+                                                    "paddingLeft": "20px",
                                                 },
                                             ),
 
-                                        ]
+                                        ],
+
+                                        style={
+                                            "padding": "24px",
+                                        },
                                     ),
 
-                                    style=INSIGHT_STYLE,
+                                    style={
+                                        **INSIGHT_STYLE,
+                                        "height": "550px",
+                                    },
                                 ),
 
                                 lg=4,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
-                        ]
+                        ],
+
+                        className="g-4 align-items-stretch",
                     ),
 
                 ],
 
-                className="p-4",
+                style={
+                    "padding": "24px",
+                },
             ),
 
-            className="mb-4 border-0 shadow-sm",
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
 
 
         # =================================================
-        # UNDER 5 TOTAL CONDITIONS
+        # UNDER 5 CONDITIONS
         # =================================================
+
         dbc.Card(
             dbc.CardBody(
                 [
 
                     html.H4(
                         "Most Common Outpatient Health Conditions (Under 5 Years)",
+
                         className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
                     ),
 
                     html.P(
                         "Distribution of reported outpatient conditions "
                         "among children under five years. Values represent counts "
                         "of reported conditions.",
-                        className="text-muted mb-4",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
                     ),
 
 
@@ -1057,6 +1236,7 @@ layout = dbc.Container(
                             dbc.Col(
                                 dcc.Graph(
                                     id="under5-disease-chart",
+
                                     figure=treemap_fig,
 
                                     config={
@@ -1065,11 +1245,15 @@ layout = dbc.Container(
                                     },
 
                                     style={
-                                        "height": "550px"
+                                        "height": "550px",
                                     },
                                 ),
 
                                 lg=8,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
 
@@ -1080,7 +1264,12 @@ layout = dbc.Container(
 
                                             html.H6(
                                                 "Key Insights",
-                                                className="fw-bold text-primary",
+
+                                                className="fw-bold mb-3",
+
+                                                style={
+                                                    "color": PRIMARY,
+                                                },
                                             ),
 
                                             html.Ul(
@@ -1112,46 +1301,76 @@ layout = dbc.Container(
                                                 style={
                                                     "fontSize": "15px",
                                                     "lineHeight": "1.8",
+                                                    "color": TEXT,
+                                                    "paddingLeft": "20px",
                                                 },
                                             ),
 
-                                        ]
+                                        ],
+
+                                        style={
+                                            "padding": "24px",
+                                        },
                                     ),
 
-                                    style=INSIGHT_STYLE,
+                                    style={
+                                        **INSIGHT_STYLE,
+                                        "height": "550px",
+                                    },
                                 ),
 
                                 lg=4,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
-                        ]
+                        ],
+
+                        className="g-4 align-items-stretch",
                     ),
 
                 ],
 
-                className="p-4",
+                style={
+                    "padding": "24px",
+                },
             ),
 
-            className="mb-4 border-0 shadow-sm",
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
 
 
         # =================================================
         # UNDER 5 MORTALITY
         # =================================================
+
         dbc.Card(
             dbc.CardBody(
                 [
 
                     html.H4(
                         "Leading Causes of Mortality (Under 5 Years)",
+
                         className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
                     ),
 
                     html.P(
                         "Most frequently reported causes of mortality among "
                         "children under five years. Values are reported occurrences.",
-                        className="text-muted mb-4",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
                     ),
 
                     dcc.Graph(
@@ -1162,30 +1381,45 @@ layout = dbc.Container(
 
                 ],
 
-                className="p-4",
+                style={
+                    "padding": "24px",
+                },
             ),
 
-            className="mb-4 border-0 shadow-sm",
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
 
 
         # =================================================
-        # OVER 5 TOTAL CONDITIONS
+        # OVER 5 CONDITIONS
         # =================================================
+
         dbc.Card(
             dbc.CardBody(
                 [
 
                     html.H4(
                         "Most Common Outpatient Health Conditions (Over 5 Years)",
+
                         className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
                     ),
 
                     html.P(
                         "Distribution of reported outpatient conditions among "
                         "individuals over five years. Values represent counts "
                         "of reported conditions.",
-                        className="text-muted mb-4",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
                     ),
 
 
@@ -1195,6 +1429,7 @@ layout = dbc.Container(
                             dbc.Col(
                                 dcc.Graph(
                                     id="over5-disease-chart",
+
                                     figure=over5_treemap_fig,
 
                                     config={
@@ -1203,11 +1438,15 @@ layout = dbc.Container(
                                     },
 
                                     style={
-                                        "height": "550px"
+                                        "height": "550px",
                                     },
                                 ),
 
                                 lg=8,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
 
@@ -1218,7 +1457,12 @@ layout = dbc.Container(
 
                                             html.H6(
                                                 "Key Insights",
-                                                className="fw-bold text-primary",
+
+                                                className="fw-bold mb-3",
+
+                                                style={
+                                                    "color": PRIMARY,
+                                                },
                                             ),
 
                                             html.Ul(
@@ -1245,50 +1489,81 @@ layout = dbc.Container(
                                                 style={
                                                     "fontSize": "15px",
                                                     "lineHeight": "1.8",
+                                                    "color": TEXT,
+                                                    "paddingLeft": "20px",
                                                 },
                                             ),
 
-                                        ]
+                                        ],
+
+                                        style={
+                                            "padding": "24px",
+                                        },
                                     ),
 
-                                    style=INSIGHT_STYLE,
+                                    style={
+                                        **INSIGHT_STYLE,
+                                        "height": "550px",
+                                    },
                                 ),
 
                                 lg=4,
+
+                                style={
+                                    "height": "550px",
+                                },
                             ),
 
-                        ]
+                        ],
+
+                        className="g-4 align-items-stretch",
                     ),
 
                 ],
 
-                className="p-4",
+                style={
+                    "padding": "24px",
+                },
             ),
 
-            className="mb-4 border-0 shadow-sm",
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
 
 
         # =================================================
         # OVER 5 MORTALITY
         # =================================================
+
         dbc.Card(
             dbc.CardBody(
                 [
 
                     html.H4(
                         "Leading Causes of Mortality (Over 5 Years)",
+
                         className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
                     ),
 
                     html.P(
                         "Most frequently reported causes of mortality among "
                         "individuals over five years. Values are reported occurrences.",
-                        className="text-muted mb-4",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
                     ),
 
                     dcc.Graph(
                         id="over5-mortality-chart",
+
                         figure=over5_mortality_fig,
 
                         config={
@@ -1299,35 +1574,49 @@ layout = dbc.Container(
 
                 ],
 
-                className="p-4",
+                style={
+                    "padding": "24px",
+                },
             ),
 
-            className="mb-4 border-0 shadow-sm",
+            style=CARD_STYLE,
+
+            className="mb-4",
         ),
 
 
         # =================================================
         # DATA SOURCE
         # =================================================
+
         html.Div(
             [
 
                 html.Hr(
                     style={
-                        "borderColor": "#cbd5e1",
+                        "borderColor": BORDER,
+                        "opacity": "1",
                     }
                 ),
 
                 html.P(
                     [
-                        html.Strong("Data source: "),
-                        "Rarieda Sub-County Health Promotion Officer and Community Health Services within Siaya County",
+                        html.Strong(
+                            "Data source: ",
+                            style={
+                                "color": TEXT,
+                            },
+                        ),
+
+                        "Rarieda Sub-County Health Promotion Officer and "
+                        "Community Health Services within Siaya County",
                     ],
 
-                    className="text-muted mb-1",
+                    className="mb-1",
 
                     style={
-                        "fontSize": "20px",
+                        "fontSize": "15px",
+                        "color": TEXT_MUTED,
                     },
                 ),
 
@@ -1341,12 +1630,10 @@ layout = dbc.Container(
     fluid=True,
 
     style={
-        "backgroundColor": "#f8fafc",
-        "padding": "25px",
+        "backgroundColor": PAGE_BG,
+        "padding": "24px",
     },
 )
-
-
 
 # =========================================================
 # GET BOUNDARY COORDINATES FOR SELECTED SUBCOUNTY
@@ -1406,7 +1693,10 @@ def update_subcounty_information(selected_subcounty):
 
         html.H4(
             selected_subcounty,
-            className="fw-bold text-primary mb-4",
+            className="fw-bold mb-4",
+            style={
+                "color": PRIMARY,
+            },
         ),
 
 
@@ -1485,6 +1775,8 @@ def update_subcounty_information(selected_subcounty):
 
         color="Display_Name",
 
+        color_discrete_sequence=MAP_COLORS,
+
         hover_name="Display_Name",
 
         hover_data={
@@ -1549,7 +1841,7 @@ def update_subcounty_information(selected_subcounty):
 
             line=dict(
                 width=4.5,
-                color="#0F4C75",
+                color=PRIMARY_DARK,
             ),
 
             hoverinfo="skip",
