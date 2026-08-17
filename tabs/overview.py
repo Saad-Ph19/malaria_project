@@ -727,75 +727,82 @@ layout = dbc.Container(
         ),
         
         
-        # =========================================================
-        # SIAYA COUNTY MAP
-        # =========================================================
+        dbc.Row(
+            [
         
-        dbc.Card(
-            dbc.CardBody(
-                [
+                # =================================================
+                # MAP
+                # =================================================
+                dbc.Col(
+                    dcc.Graph(
+                        id="siaya-overview-map",
         
-                    html.H4(
-                        "Siaya County Geographic Overview",
-                        className="fw-bold mb-1",
+                        figure=siaya_map,
+        
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+        
+                        style={
+                            "height": "560px",
+                            "width": "100%",
+                        },
                     ),
         
-                    html.P(
-                        "Explore the six sub-counties of Siaya County. "
-                        "Select a subcounty above to view information on "
-                        "agriculture, economic activity, geography, and topography.",
-                        className="text-muted mb-4",
+                    lg=8,
+        
+                    style={
+                        "height": "560px",
+                    },
+                ),
+        
+        
+                # =================================================
+                # INFORMATION PANEL
+                # =================================================
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            id="subcounty-information-panel",
+        
+                            style={
+                                # Keep information at the TOP
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "flex-start",
+        
+                                # Some breathing room
+                                "padding": "24px",
+                            },
+                        ),
+        
+                        style={
+                            # Make card same height as map
+                            "height": "560px",
+        
+                            # Keep your existing visual style
+                            "backgroundColor": "#f8fafc",
+                            "border": "1px solid #e2e8f0",
+                            "borderRadius": "12px",
+        
+                            # Fill the whole column
+                            "width": "100%",
+                        },
                     ),
         
-                    dbc.Row(
-                        [
+                    lg=4,
         
-                            # Map
-                            dbc.Col(
-                                dcc.Graph(
-                                    id="siaya-overview-map",
+                    style={
+                        "height": "560px",
+                    },
+                ),
         
-                                    figure=siaya_map,
+            ],
         
-                                    config={
-                                        "displayModeBar": False,
-                                        "responsive": True,
-                                    },
-        
-                                    style={
-                                        "height": "560px",
-                                    },
-                                ),
-        
-                                lg=8,
-                            ),
-        
-        
-                            # Information panel
-                            dbc.Col(
-                                dbc.Card(
-                                    dbc.CardBody(
-                                        id="subcounty-information-panel"
-                                    ),
-        
-                                    style=INSIGHT_STYLE,
-                                ),
-        
-                                lg=4,
-                            ),
-        
-                        ],
-        
-                        className="align-items-center",
-                    ),
-        
-                ],
-        
-                className="p-4",
-            ),
-        
-            className="mb-4 border-0 shadow-sm",
-        ),
+            # Important: do NOT vertically center the information card
+            className="align-items-stretch",
+        )
 
         # =================================================
         # KPI CARDS
