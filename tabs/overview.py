@@ -547,7 +547,7 @@ def build_subcounty_information_panel(selected_subcounty):
         html.H4(
             selected_subcounty,
             className="fw-bold mb-4",
-            style={"color": PRIMARY,"fontSize": "22px",},
+            style={"color": PRIMARY,"fontSize": "25px",},
         ),
 
         html.Div(
