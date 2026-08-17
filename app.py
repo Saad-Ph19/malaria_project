@@ -22,7 +22,6 @@ ACTIVE_COLOR = "#2C7DA0"       # Selected tab color
 TEXT_COLOR = "#495057"         # Unselected tab text
 PAGE_COLOR = "#F8F9FA"         # Light page background
 
-
 # Shared Tab Styles
 tab_style = {
     "flex": "1",
@@ -30,30 +29,48 @@ tab_style = {
     "fontWeight": "500",
     "fontSize": "18px",
     "padding": "18px 8px",
+
     "backgroundColor": "white",
     "color": TEXT_COLOR,
-    # Remove all Bootstrap tab borders
+
+    # Remove all box borders
+    "border": "none",
     "borderTop": "none",
     "borderLeft": "none",
     "borderRight": "none",
+
+    # Keep space for underline
     "borderBottom": "4px solid transparent",
-    # Remove rounded corners
+
+    # Remove rounded/tab shape
     "borderRadius": "0",
+
+    # Remove browser focus-style box effect
+    "outline": "none",
+    "boxShadow": "none",
 }
 
 active_tab_style = {
     "fontWeight": "700",
     "fontSize": "18px",
+
     "backgroundColor": "white",
     "color": ACTIVE_COLOR,
-    # Remove top, left, and right borders
+
+    # Remove all active-tab box borders
+    "border": "none",
     "borderTop": "none",
     "borderLeft": "none",
     "borderRight": "none",
-    # only show the bottom blue line
+
+    # Keep only the selected-tab underline
     "borderBottom": f"4px solid {ACTIVE_COLOR}",
-    # Remove rounded corners
+
     "borderRadius": "0",
+
+    # Remove any active/focus outline
+    "outline": "none",
+    "boxShadow": "none",
 }
 
 # Tabs
@@ -155,21 +172,24 @@ app.layout = html.Div(
                     description_tab,
                     about_tab,
                 ],
-
+            
                 id="main-tabs",
                 active_tab="overview-tab",
                 className="w-100",
-                style={"display": "flex","width": "100%","backgroundColor": "white","margin": "0",},
+            
+                style={
+                    "display": "flex",
+                    "width": "100%",
+                    "backgroundColor": "white",
+                    "margin": "0",
+            
+                    # Important
+                    "border": "none",
+                    "borderTop": "none",
+                    "borderLeft": "none",
+                    "borderRight": "none",
+                },
             ),
-
-            style={
-                "width": "100%",
-                "backgroundColor": "white",
-                "borderBottom": "1px solid #DEE2E6",
-                # Very subtle separation from page content
-                "boxShadow": "0 2px 5px rgba(0,0,0,0.06)",
-            },
-        ),
 
         # FOOTER
         dbc.Container(
