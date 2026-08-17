@@ -921,6 +921,141 @@ layout = dbc.Container(
             className="mb-4",
         ),
 
+        # =================================================
+        # POPULATION DISTRIBUTION
+        # =================================================
+
+        dbc.Card(
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Population Distribution",
+
+                        className="fw-bold mb-1",
+
+                        style={
+                            "color": TEXT,
+                        },
+                    ),
+
+                    html.P(
+                        "Projected population distribution across major age groups.",
+
+                        className="mb-4",
+
+                        style={
+                            "color": TEXT_MUTED,
+                        },
+                    ),
+
+
+                    dbc.Row(
+                        [
+
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="population-profile-chart",
+
+                                    figure=population_figure,
+
+                                    config=svg_download_config,
+
+                                    style={
+                                        "height": "550px",
+                                    },
+                                ),
+
+                                lg=8,
+
+                                style={
+                                    "height": "550px",
+                                },
+                            ),
+
+
+                            dbc.Col(
+                                dbc.Card(
+                                    dbc.CardBody(
+                                        [
+
+                                            html.H6(
+                                                "Key Insights",
+
+                                                className="fw-bold mb-3",
+
+                                                style={
+                                                    "color": PRIMARY,
+                                                },
+                                            ),
+
+                                            html.Ul(
+                                                [
+
+                                                    html.Li(
+                                                        "Children under 15 years represent "
+                                                        "the largest population group."
+                                                    ),
+
+                                                    html.Li(
+                                                        "Population demographics highlight "
+                                                        "the importance of child health and "
+                                                        "malaria prevention."
+                                                    ),
+
+                                                    html.Li(
+                                                        "Age structure influences disease "
+                                                        "burden, healthcare utilization, "
+                                                        "and resource planning."
+                                                    ),
+
+                                                ],
+
+                                                style={
+                                                    "fontSize": "15px",
+                                                    "lineHeight": "1.8",
+                                                    "color": TEXT,
+                                                    "paddingLeft": "20px",
+                                                },
+                                            ),
+
+                                        ],
+
+                                        style={
+                                            "padding": "24px",
+                                        },
+                                    ),
+
+                                    style={
+                                        **INSIGHT_STYLE,
+                                        "height": "550px",
+                                    },
+                                ),
+
+                                lg=4,
+
+                                style={
+                                    "height": "550px",
+                                },
+                            ),
+
+                        ],
+
+                        className="g-4 align-items-stretch",
+                    ),
+
+                ],
+
+                style={
+                    "padding": "24px",
+                },
+            ),
+
+            style=CARD_STYLE,
+
+            className="mb-4",
+        ),
+
 
         # =================================================
         # KPI CARDS
@@ -1137,142 +1272,6 @@ layout = dbc.Container(
             ],
 
             className="mb-3 align-items-stretch",
-        ),
-
-
-        # =================================================
-        # POPULATION DISTRIBUTION
-        # =================================================
-
-        dbc.Card(
-            dbc.CardBody(
-                [
-
-                    html.H4(
-                        "Population Distribution",
-
-                        className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
-                    ),
-
-                    html.P(
-                        "Projected population distribution across major age groups.",
-
-                        className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
-                    ),
-
-
-                    dbc.Row(
-                        [
-
-                            dbc.Col(
-                                dcc.Graph(
-                                    id="population-profile-chart",
-
-                                    figure=population_figure,
-
-                                    config=svg_download_config,
-
-                                    style={
-                                        "height": "550px",
-                                    },
-                                ),
-
-                                lg=8,
-
-                                style={
-                                    "height": "550px",
-                                },
-                            ),
-
-
-                            dbc.Col(
-                                dbc.Card(
-                                    dbc.CardBody(
-                                        [
-
-                                            html.H6(
-                                                "Key Insights",
-
-                                                className="fw-bold mb-3",
-
-                                                style={
-                                                    "color": PRIMARY,
-                                                },
-                                            ),
-
-                                            html.Ul(
-                                                [
-
-                                                    html.Li(
-                                                        "Children under 15 years represent "
-                                                        "the largest population group."
-                                                    ),
-
-                                                    html.Li(
-                                                        "Population demographics highlight "
-                                                        "the importance of child health and "
-                                                        "malaria prevention."
-                                                    ),
-
-                                                    html.Li(
-                                                        "Age structure influences disease "
-                                                        "burden, healthcare utilization, "
-                                                        "and resource planning."
-                                                    ),
-
-                                                ],
-
-                                                style={
-                                                    "fontSize": "15px",
-                                                    "lineHeight": "1.8",
-                                                    "color": TEXT,
-                                                    "paddingLeft": "20px",
-                                                },
-                                            ),
-
-                                        ],
-
-                                        style={
-                                            "padding": "24px",
-                                        },
-                                    ),
-
-                                    style={
-                                        **INSIGHT_STYLE,
-                                        "height": "550px",
-                                    },
-                                ),
-
-                                lg=4,
-
-                                style={
-                                    "height": "550px",
-                                },
-                            ),
-
-                        ],
-
-                        className="g-4 align-items-stretch",
-                    ),
-
-                ],
-
-                style={
-                    "padding": "24px",
-                },
-            ),
-
-            style=CARD_STYLE,
-
-            className="mb-4",
         ),
 
 
