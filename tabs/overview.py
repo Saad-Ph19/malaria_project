@@ -802,7 +802,7 @@ layout = dbc.Container(
         
             # Important: do NOT vertically center the information card
             className="align-items-stretch",
-        )
+        ),
 
         # =================================================
         # KPI CARDS
