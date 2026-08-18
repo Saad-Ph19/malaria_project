@@ -595,165 +595,131 @@ layout = dbc.Container(
         ),
 
 
-        # =================================================
-        # CLIMATE TRENDS
-        # =================================================
-
-        html.Div(
-            [
-
-                html.H4(
-                    "Climate Trends",
-
-                    className="fw-bold mb-1",
-
-                    style={
-                        "color": TEXT,
-                    },
-                ),
-
-                html.P(
-                    "Monthly climate and environmental conditions for the selected subcounty.",
-
-                    className="mb-3",
-
-                    style={
-                        "color": TEXT_MUTED,
-                        "fontSize": "14px",
-                    },
-                ),
-
-            ]
-        ),
-
-
-        # =================================================
-        # FILTER PANEL
-        # =================================================
-
+        # =========================================================
+        # CLIMATE TRENDS + FILTERS
+        # =========================================================
+        
         dbc.Card(
             dbc.CardBody(
                 [
-
+        
+                    # Section title
+                    html.H4(
+                        "Climate Trends",
+                        className="fw-bold mb-1",
+                        style={
+                            "color": TEXT,
+                        },
+                    ),
+        
+                    html.P(
+                        "Monthly climate and environmental conditions for the selected subcounty.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+        
+                    # Filters
                     dbc.Row(
                         [
-
-                            # --------------------------------
-                            # SUBCOUNTY
-                            # --------------------------------
-
+        
+                            # Subcounty
                             dbc.Col(
                                 [
-
+        
                                     html.Label(
                                         "Subcounty",
-
                                         className="fw-semibold mb-2",
-
                                         style={
                                             "color": TEXT,
                                             "fontSize": "14px",
                                         },
                                     ),
-
+        
                                     dcc.Dropdown(
                                         id="climate-subcounty-dropdown",
-
+        
                                         options=[
                                             {
-                                                "label":
-                                                    s.replace(
-                                                        " Sub County",
-                                                        ""
-                                                    ),
-
-                                                "value":
-                                                    s,
+                                                "label": s.replace(
+                                                    " Sub County",
+                                                    ""
+                                                ),
+                                                "value": s,
                                             }
-
-                                            for s
-                                            in subcounties
+        
+                                            for s in subcounties
                                         ],
-
+        
                                         value=subcounties[0],
-
+        
                                         clearable=False,
                                     ),
-
+        
                                 ],
-
+        
                                 lg=8,
                             ),
-
-
-                            # --------------------------------
-                            # YEAR
-                            # --------------------------------
-
+        
+        
+                            # Year
                             dbc.Col(
                                 [
-
+        
                                     html.Label(
                                         "Year",
-
                                         className="fw-semibold mb-2",
-
                                         style={
                                             "color": TEXT,
                                             "fontSize": "14px",
                                         },
                                     ),
-
+        
                                     dcc.Dropdown(
                                         id="climate-year-dropdown",
-
+        
                                         options=[
                                             {
-                                                "label":
-                                                    "All Years",
-
-                                                "value":
-                                                    "ALL",
+                                                "label": "All Years",
+                                                "value": "ALL",
                                             }
                                         ]
                                         +
                                         [
                                             {
-                                                "label":
-                                                    str(year),
-
-                                                "value":
-                                                    year,
+                                                "label": str(year),
+                                                "value": year,
                                             }
-
-                                            for year
-                                            in years
+        
+                                            for year in years
                                         ],
-
+        
                                         value="ALL",
-
+        
                                         clearable=False,
                                     ),
-
+        
                                 ],
-
+        
                                 lg=4,
                             ),
-
+        
                         ]
                     ),
+        
                 ],
-
+        
                 style={
-                    "padding": "18px 20px",
+                    "padding": "22px 24px",
                 },
             ),
-
+        
             style=CARD_STYLE,
-
+        
             className="mb-4",
         ),
-
 
         # =================================================
         # TEMPERATURE + RAINFALL
