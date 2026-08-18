@@ -671,12 +671,12 @@ layout = dbc.Container(
                     html.P(
                         "Siaya County, located in Kenya's Nyanza region, consists of six subcounties: "
                         "Alego Usonga, Bondo, Gem, Rarieda, Ugenya, and Ugunja. "
-                        "The county spans approximately 2,530 km² of land and includes part of Lake Victoria,"
-                        "creating diverse geographic settings across the county. Lakeside subcounties such as"
+                        "The county spans approximately 2,530 km² of land and includes part of Lake Victoria, "
+                        "creating diverse geographic settings across the county. Lakeside subcounties such as "
                         "Bondo and Rarieda often differ from inland areas in their economic activities, settlement patterns, "
-                        "and environmental conditions. These geographic differences contribute to variations in population"
-                        "characteristics, agriculture, fishing, access to services, infrastructure,"
-                        "and health outcomes across the county. Use the selectors below to explore the"
+                        "and environmental conditions. These geographic differences contribute to variations in population "
+                        "characteristics, agriculture, fishing, access to services, infrastructure, "
+                        "and health outcomes across the county. Use the selectors below to explore the "
                         "unique characteristics of each subcounty and gain a broader understanding of Siaya County.",
                         className="mb-4",
                         style={
@@ -715,8 +715,8 @@ layout = dbc.Container(
                                 value="Alego Usonga",
                                 clearable=False,
                             ),
-        
                         ],
+                        lg=8,
                     ),
         
                     # =================================================
