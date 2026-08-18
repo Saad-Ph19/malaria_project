@@ -661,101 +661,183 @@ for fig in [
 # LAYOUT
 layout = dbc.Container(
     [
-        # =================================================
-        # SUBCOUNTY FILTER
+        # =========================================================
+        # SIAYA COUNTY OVERVIEW + SUBCOUNTY FILTER + MAP
+        # =========================================================
+        
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.Label(
-                        "Subcounty",
-                        className="fw-semibold mb-2",
-                        style={"color": TEXT,"fontSize": "14px",},
+        
+                    # =================================================
+                    # TITLE
+                    # =================================================
+                    html.H4(
+                        "Siaya County Overview",
+                        className="fw-bold mb-1",
+                        style={
+                            "color": TEXT,
+                            "fontSize": "22px",
+                        },
                     ),
-
-                    dcc.Dropdown(
-                        id="overview-subcounty-dropdown",
-                        options=[
-                            {
-                                "label": name,
-                                "value": name
-                            }
-                            for name in [
-                                "Alego Usonga",
-                                "Bondo",
-                                "Gem",
-                                "Rarieda",
-                                "Ugenya",
-                                "Ugunja",
-                            ]
+        
+                    # =================================================
+                    # DESCRIPTION
+                    # =================================================
+                    html.P(
+                        "Siaya County is composed of six subcounties that differ in "
+                        "geographic setting, agricultural activity, local economic "
+                        "conditions, and topography. These differences provide important "
+                        "context for understanding variation in population characteristics, "
+                        "health conditions, and access to services across the county. "
+                        "Use the selector below to explore the general characteristics "
+                        "of each subcounty.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                            "lineHeight": "1.7",
+                            "maxWidth": "1050px",
+                        },
+                    ),
+        
+                    # =================================================
+                    # SUBCOUNTY FILTER
+                    # =================================================
+                    html.Div(
+                        [
+        
+                            html.Label(
+                                "Subcounty",
+                                className="fw-semibold mb-2",
+                                style={
+                                    "color": TEXT,
+                                    "fontSize": "14px",
+                                },
+                            ),
+        
+                            dcc.Dropdown(
+                                id="overview-subcounty-dropdown",
+        
+                                options=[
+                                    {
+                                        "label": name,
+                                        "value": name
+                                    }
+                                    for name in [
+                                        "Alego Usonga",
+                                        "Bondo",
+                                        "Gem",
+                                        "Rarieda",
+                                        "Ugenya",
+                                        "Ugunja",
+                                    ]
+                                ],
+        
+                                value="Alego Usonga",
+        
+                                clearable=False,
+        
+                                style={
+                                    "maxWidth": "520px",
+                                },
+                            ),
+        
                         ],
-
-                        value="Alego Usonga",
-                        clearable=False,
+        
+                        style={
+                            "backgroundColor": "#F8FAFC",
+                            "border": f"1px solid {BORDER}",
+                            "borderRadius": "8px",
+                            "padding": "16px 18px",
+                            "marginBottom": "22px",
+                        },
                     ),
-                ],
-                style={"padding": "18px 20px",},
-            ),
-            style=CARD_STYLE,
-            className="mb-4",
-        ),
-
-
-        # =================================================
-        # MAP + SUBCOUNTY INFORMATION
-        dbc.Card(
-            dbc.CardBody(
-                [
+        
+                    # =================================================
+                    # MAP + SUBCOUNTY INFORMATION
+                    # =================================================
                     dbc.Row(
                         [
-                            # Map
+        
+                            # -------------------------------------------------
+                            # MAP
+                            # -------------------------------------------------
                             dbc.Col(
                                 dcc.Graph(
                                     id="siaya-overview-map",
+        
                                     figure=siaya_map,
+        
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-                                    style={"height": "560px","width": "100%",},
+        
+                                    style={
+                                        "height": "560px",
+                                        "width": "100%",
+                                    },
                                 ),
+        
                                 lg=8,
-                                style={"height": "560px",},
+        
+                                style={
+                                    "height": "560px",
+                                },
                             ),
-
-                            # Subcounty information
+        
+                            # -------------------------------------------------
+                            # SUBCOUNTY INFORMATION PANEL
+                            # -------------------------------------------------
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
                                         id="subcounty-information-panel",
-                                        children=build_subcounty_information_panel("Alego Usonga"),
-
+        
+                                        children=build_subcounty_information_panel(
+                                            "Alego Usonga"
+                                        ),
+        
                                         style={
                                             "padding": "26px",
+        
                                             "display": "flex",
                                             "flexDirection": "column",
                                             "justifyContent": "flex-start",
                                         },
                                     ),
-
+        
                                     style={
                                         **INSIGHT_STYLE,
+        
                                         "height": "560px",
+        
+                                        "width": "100%",
                                     },
                                 ),
-
+        
                                 lg=4,
-
+        
                                 style={
                                     "height": "560px",
                                 },
                             ),
+        
                         ],
+        
                         className="g-4 align-items-stretch",
                     ),
+        
                 ],
-                style={"padding": "20px",},
+        
+                style={
+                    "padding": "24px",
+                },
             ),
+        
             style=CARD_STYLE,
+        
             className="mb-4",
         ),
 
