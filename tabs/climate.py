@@ -252,16 +252,16 @@ layout = dbc.Container(
                     ),
 
                     html.P(
-                        "Climate conditions vary across Siaya County due to differences in "
-                        "geographic location, vegetation, seasonal weather patterns, and proximity "
-                        "to Lake Victoria. Comparing these conditions across subcounties can help "
-                        "identify spatial differences in temperature, precipitation, humidity, "
-                        "and vegetation. Use the filters below to explore how these climate and "
-                        "environmental conditions vary across the six subcounties and over time.",
+                        "The six subcounties of Siaya County exhibit distinct climate and environmental characteristics."
+                        "Subcounties bordering Lake Victoria generally experience different humidity, rainfall,"
+                        "and vegetation patterns than those located farther inland due to the moderating influence of the lake."
+                        "Variations in land cover, geography, and seasonal weather conditions also contribute to differences in"
+                        "temperature, precipitation, and environmental conditions across the county. Use the filters below to"
+                        "compare these patterns across subcounties and examine how they change over time.",
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
-                            "fontSize": "20px",
+                            "fontSize": "22px",
                             "lineHeight": "1.7",
                             #"maxWidth": "1050px",
                         },
@@ -400,7 +400,7 @@ layout = dbc.Container(
         
                     html.P(
                         "Monthly climate and environmental conditions for the selected subcounty."
-                        "Use the filters below to explore data by subcounty and year.",
+                        " Use the filters below to explore data by subcounty and year.",
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
