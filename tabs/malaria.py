@@ -8,6 +8,27 @@ import numpy as np
 import glob
 import os
 
+# =========================================================
+# DASHBOARD THEME
+# =========================================================
+
+PRIMARY = "#274C77"
+PRIMARY_DARK = "#1F3B5B"
+TEXT = "#1F2937"
+TEXT_MUTED = "#6B7280"
+BORDER = "#DCE3EA"
+PAGE_BG = "#F5F7F9"
+CARD_BG = "#FFFFFF"
+PANEL_BG = "#F8FAFC"
+
+CARD_STYLE = {
+    "backgroundColor": CARD_BG,
+    "border": f"1px solid {BORDER}",
+    "borderRadius": "10px",
+    "boxShadow": "0 2px 8px rgba(15, 23, 42, 0.05)",
+}
+
+
 # Bednet data
 bednet_files = glob.glob("Bednet_Data/*.xlsx")
 
@@ -312,24 +333,21 @@ prevalence_long = prevalence_long.sort_values(
 
 
 # ---------------------------------------------------------#
-# Helper function for Sankey labels
+# ---------------------------------------------------------#
+# SANKEY HELPERS
+# ---------------------------------------------------------
+
 def format_sankey_value(value):
     if value >= 1_000_000:
         return f"{value / 1_000_000:.2f}M"
-
     elif value >= 1_000:
         return f"{value / 1_000:.0f}k"
-
     else:
         return f"{value:,.0f}"
 
 
 def format_sankey_label(name, value, total):
-    percent = (
-        (value / total) * 100
-        if total > 0
-        else 0
-    )
+    percent = (value / total) * 100 if total > 0 else 0
 
     return (
         f"{name}<br>"
@@ -337,210 +355,272 @@ def format_sankey_label(name, value, total):
     )
 
 
-# Sankey Vis
-# ---------------------------------------------------------
-# SANKEY VISUALIZATION
-# ---------------------------------------------------------
+def create_sankey_figure(data):
+    """
+    Create a consistent Sankey diagram for the current malaria filters.
 
-under5_cases = df["Cases.Fever < 5"].sum()
-over5_cases = df["Cases.Fever >= 5"].sum()
+    Age-group percentages are calculated against all fever cases.
+    RDT outcome percentages are calculated within the corresponding age group.
+    """
 
-positive_under5 = (
-    df["Cases.Fever.with.RDT.Positive < 5"].sum()
-)
+    # Fever cases
+    under5_cases = (
+        pd.to_numeric(
+            data["Cases.Fever < 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
-positive_over5 = (
-    df["Cases.Fever.with.RDT.Positive >= 5"].sum()
-)
+    over5_cases = (
+        pd.to_numeric(
+            data["Cases.Fever >= 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
-negative_under5 = (
-    df["Cases.Fever.with.RDT. negative < 5"].sum()
-)
+    # RDT positive
+    positive_under5 = (
+        pd.to_numeric(
+            data["Cases.Fever.with.RDT.Positive < 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
-negative_over5 = (
-    df["Cases.Fever.with.RDT. negative >= 5"].sum()
-)
+    positive_over5 = (
+        pd.to_numeric(
+            data["Cases.Fever.with.RDT.Positive >= 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
+    # RDT negative
+    negative_under5 = (
+        pd.to_numeric(
+            data["Cases.Fever.with.RDT. negative < 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
-# Fever cases not tested
-not_tested_under5 = (
-    under5_cases
-    - positive_under5
-    - negative_under5
-)
+    negative_over5 = (
+        pd.to_numeric(
+            data["Cases.Fever.with.RDT. negative >= 5"],
+            errors="coerce"
+        )
+        .fillna(0)
+        .sum()
+    )
 
-not_tested_over5 = (
-    over5_cases
-    - positive_over5
-    - negative_over5
-)
+    # Not tested
+    not_tested_under5 = max(
+        under5_cases - positive_under5 - negative_under5,
+        0
+    )
 
+    not_tested_over5 = max(
+        over5_cases - positive_over5 - negative_over5,
+        0
+    )
 
-# Total fever cases
-total_fever_cases = (
-    under5_cases
-    + over5_cases
-)
+    total_fever_cases = under5_cases + over5_cases
 
+    # Node labels with counts and percentages
+    sankey_labels = [
+        format_sankey_label(
+            "Fever Cases",
+            total_fever_cases,
+            total_fever_cases
+        ),
+        format_sankey_label(
+            "Children <5",
+            under5_cases,
+            total_fever_cases
+        ),
+        format_sankey_label(
+            "Individuals ≥5",
+            over5_cases,
+            total_fever_cases
+        ),
+        format_sankey_label(
+            "RDT Positive <5",
+            positive_under5,
+            under5_cases
+        ),
+        format_sankey_label(
+            "RDT Negative <5",
+            negative_under5,
+            under5_cases
+        ),
+        format_sankey_label(
+            "Not Tested <5",
+            not_tested_under5,
+            under5_cases
+        ),
+        format_sankey_label(
+            "RDT Positive ≥5",
+            positive_over5,
+            over5_cases
+        ),
+        format_sankey_label(
+            "RDT Negative ≥5",
+            negative_over5,
+            over5_cases
+        ),
+        format_sankey_label(
+            "Not Tested ≥5",
+            not_tested_over5,
+            over5_cases
+        ),
+    ]
 
-# ---------------------------------------------------------#
-# Sankey labels with counts and proportions
-sankey_labels = [
-
-    # Total
-    format_sankey_label(
-        "Fever Cases",
-        total_fever_cases,
-        total_fever_cases
-    ),
-
-    # Age groups
-    format_sankey_label(
-        "Children <5",
+    link_values = [
         under5_cases,
-        total_fever_cases
-    ),
-
-    format_sankey_label(
-        "Individuals ≥5",
         over5_cases,
-        total_fever_cases
-    ),
-
-    # Under 5 outcomes
-    format_sankey_label(
-        "RDT Positive <5",
         positive_under5,
-        under5_cases
-    ),
-
-    format_sankey_label(
-        "RDT Negative <5",
         negative_under5,
-        under5_cases
-    ),
-
-    format_sankey_label(
-        "Not Tested <5",
         not_tested_under5,
-        under5_cases
-    ),
-
-    # 5+ outcomes
-    format_sankey_label(
-        "RDT Positive ≥5",
         positive_over5,
-        over5_cases
-    ),
-
-    format_sankey_label(
-        "RDT Negative ≥5",
         negative_over5,
-        over5_cases
-    ),
-
-    format_sankey_label(
-        "Not Tested ≥5",
         not_tested_over5,
-        over5_cases
-    ),
-]
+    ]
 
+    link_totals = [
+        total_fever_cases,
+        total_fever_cases,
+        under5_cases,
+        under5_cases,
+        under5_cases,
+        over5_cases,
+        over5_cases,
+        over5_cases,
+    ]
 
-fever_age_fig = go.Figure(
-    go.Sankey(
+    link_customdata = []
 
-        arrangement="snap",
+    for value, total in zip(link_values, link_totals):
+        percent = (value / total) * 100 if total > 0 else 0
 
-        node=dict(
-            pad=25,
-            thickness=25,
+        link_customdata.append(
+            f"{format_sankey_value(value)} ({percent:.1f}%)"
+        )
 
-            line=dict(
-                color="rgba(0,0,0,0.2)",
-                width=1
+    sankey_fig = go.Figure(
+        go.Sankey(
+            arrangement="snap",
+
+            node=dict(
+                pad=30,
+                thickness=24,
+
+                line=dict(
+                    color="#FFFFFF",
+                    width=1.5,
+                ),
+
+                label=sankey_labels,
+
+                # Restrained research-dashboard palette
+                color=[
+                    "#274C77",
+                    "#708EAA",
+                    "#557C71",
+                    "#A95D5D",
+                    "#BDA46D",
+                    "#8A9199",
+                    "#8F4F4F",
+                    "#C4B17C",
+                    "#9AA0A6",
+                ],
+
+                hovertemplate=(
+                    "%{label}"
+                    "<extra></extra>"
+                ),
             ),
 
-            label=sankey_labels,
+            link=dict(
+                source=[
+                    0, 0,
+                    1, 1, 1,
+                    2, 2, 2,
+                ],
 
-            color=[
-                "#2563eb",
-                "#f97316",
-                "#16a34a",
-                "#dc2626",
-                "#fbbf24",
-                "#6b7280",
-                "#b91c1c",
-                "#fde68a",
-                "#9ca3af"
-            ],
-        ),
+                target=[
+                    1, 2,
+                    3, 4, 5,
+                    6, 7, 8,
+                ],
 
-        link=dict(
+                value=link_values,
+                customdata=link_customdata,
 
-            source=[
-                0, 0,
-                1, 1, 1,
-                2, 2, 2
-            ],
+                color=[
+                    "rgba(112,142,170,0.30)",
+                    "rgba(85,124,113,0.30)",
+                    "rgba(169,93,93,0.30)",
+                    "rgba(189,164,109,0.30)",
+                    "rgba(138,145,153,0.25)",
+                    "rgba(143,79,79,0.30)",
+                    "rgba(196,177,124,0.30)",
+                    "rgba(154,160,166,0.25)",
+                ],
 
-            target=[
-                1, 2,
-                3, 4, 5,
-                6, 7, 8
-            ],
-
-            value=[
-                under5_cases,
-                over5_cases,
-
-                positive_under5,
-                negative_under5,
-                not_tested_under5,
-
-                positive_over5,
-                negative_over5,
-                not_tested_over5
-            ],
-
-            color=[
-                "rgba(249,115,22,0.35)",
-                "rgba(22,163,74,0.35)",
-
-                "rgba(220,38,38,0.35)",
-                "rgba(251,191,36,0.35)",
-                "rgba(107,114,128,0.35)",
-
-                "rgba(185,28,28,0.35)",
-                "rgba(253,230,138,0.35)",
-                "rgba(156,163,175,0.35)"
-            ]
+                hovertemplate=(
+                    "<b>%{source.label}</b>"
+                    "<br>to"
+                    "<br><b>%{target.label}</b>"
+                    "<br><br>"
+                    "%{customdata}"
+                    "<extra></extra>"
+                ),
+            ),
         )
     )
-)
 
+    sankey_fig.update_layout(
+        template="plotly_white",
+        height=680,
 
-fever_age_fig.update_layout(
-    template="plotly_white",
-    height=700,
+        margin=dict(
+            l=30,
+            r=30,
+            t=20,
+            b=20,
+        ),
 
-    margin=dict(
-        l=20,
-        r=20,
-        t=20,
-        b=20
+        paper_bgcolor="white",
+
+        font=dict(
+            family="Segoe UI",
+            size=14,
+            color=TEXT,
+        ),
     )
-)
 
+    return sankey_fig
+
+
+# Initial Sankey
+fever_age_fig = create_sankey_figure(df)
 
 # Stocks
 stock_fig = go.Figure()
+
 stock_fig.add_trace(
     go.Bar(
         x=df["Month"],
         y=df["Stock mRDTs"],
         name="mRDT Stock",
-        marker_color="#2563eb"
+        marker_color="#527A9B"
     )
 )
 
@@ -549,7 +629,7 @@ stock_fig.add_trace(
         x=df["Month"],
         y=df["Stock ACTs"],
         name="ACT Stock",
-        marker_color="#16a34a"
+        marker_color="#688B78"
     )
 )
 
@@ -557,44 +637,73 @@ stock_fig.update_layout(
     barmode="group",
     template="plotly_white",
     height=450,
-    margin=dict(l=20, r=20, t=20, b=20)
+    margin=dict(l=55, r=20, t=20, b=50),
+
+    font=dict(
+        family="Segoe UI",
+        size=13,
+        color=TEXT,
+    ),
+
+    paper_bgcolor="white",
+    plot_bgcolor="white",
+
+    legend=dict(
+        orientation="h",
+        x=0.5,
+        xanchor="center",
+        y=1.08,
+    ),
 )
 
-# Chew weight bands
+stock_fig.update_xaxes(
+    title_text="Month",
+    showgrid=False,
+)
+
+stock_fig.update_yaxes(
+    title_text="Stock level (count)",
+    gridcolor="#EDF1F4",
+    zeroline=False,
+)
+
+
+# Weight-Based ACT Distribution
 weight_fig = go.Figure()
+
 weight_fig.add_trace(
     go.Bar(
-        name="5-<15 kg",
+        name="5 to <15 kg (<3 yrs old)",
         x=df["Month"],
         y=df["CHEW Weight band 5 to <15 kg  (<3 yrs)"],
-        marker_color="#60a5fa"
+        marker_color="#6C8EBF"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="15-<25 kg",
+        name="15 to <25 kg (3 to <8 yrs old)",
         x=df["Month"],
         y=df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"],
-        marker_color="#34d399"
+        marker_color="#7F9F8D"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="25-<35 kg",
+        name="25 to <35 kg (8 to <12 yrs old)",
         x=df["Month"],
         y=df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"],
-        marker_color="#f59e0b"
+        marker_color="#B5A07A"
     )
 )
 
 weight_fig.add_trace(
     go.Bar(
-        name="≥35 kg",
+        name="≥35 kg (≥12 yrs old)",
         x=df["Month"],
         y=df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"],
-        marker_color="#ef4444"
+        marker_color="#8A6F73"
     )
 )
 
@@ -602,7 +711,34 @@ weight_fig.update_layout(
     barmode="stack",
     template="plotly_white",
     height=450,
-    margin=dict(l=20, r=20, t=20, b=20)
+    margin=dict(l=55, r=20, t=20, b=50),
+
+    font=dict(
+        family="Segoe UI",
+        size=13,
+        color=TEXT,
+    ),
+
+    paper_bgcolor="white",
+    plot_bgcolor="white",
+
+    legend=dict(
+        orientation="h",
+        x=0.5,
+        xanchor="center",
+        y=1.14,
+    ),
+)
+
+weight_fig.update_xaxes(
+    title_text="Month",
+    showgrid=False,
+)
+
+weight_fig.update_yaxes(
+    title_text="ACT distribution (count)",
+    gridcolor="#EDF1F4",
+    zeroline=False,
 )
 
 #bednets
@@ -1554,247 +1690,565 @@ non_malaria_box_fig.update_layout(
 )
 
 
-# Layout
+# =========================================================
+# LAYOUT
+# =========================================================
+
 layout = dbc.Container(
     [
 
-    dbc.Card(
-    dbc.CardBody(
-        [
-                dbc.Row(
-                        [
-                            dbc.Col(
-                                [
-                                    html.Label("Subcounty",className="fw-bold text-muted mb-2"),     
-                                    dcc.Dropdown(
-                                        id="malaria-subcounty-dropdown",
-                                        options=[
-                                            {"label": "All Subcounties", "value": "ALL"}
-                                        ] + [
-                                            {"label": str(s), "value": str(s)}
-                                            for s in sorted(df["Subcounty"].dropna().unique())
-                                        ],
-                                        value="ALL",
-                                        clearable=False,
-                                    ),
-                                ],
-                                lg=8,
-                            ),
-        
-                            dbc.Col(
-                                [
-                                    html.Label("Year",className="fw-bold text-muted mb-2"),
-                                    dcc.Dropdown(
-                                        id="malaria-year-dropdown",
-                                        options=[
-                                            {"label": "All Years", "value": "ALL"}
-                                        ] + [
-                                            {"label": str(y), "value": str(y)}
-                                            for y in sorted(df["Year"].unique())
-                                        ],
-                                        value="ALL",
-                                        clearable=False,
-                                    )         
-                                ],
-                                lg=4,
-                            ),
-                        ],
+        # =================================================
+        # MALARIA SURVEILLANCE OVERVIEW + FILTERS
+        # =================================================
+        dbc.Card(
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Malaria Surveillance Overview",
+                        className="fw-bold mb-1",
+                        style={
+                            "color": TEXT,
+                            "fontSize": "22px",
+                        },
                     ),
-                ]
+
+                    html.P(
+                        "Explore malaria-related fever cases, diagnostic testing, "
+                        "treatment, commodity availability, and prevention indicators "
+                        "across Siaya County. Use the filters below to examine patterns "
+                        "for individual subcounties and years.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                            "lineHeight": "1.7",
+                            "maxWidth": "1050px",
+                        },
+                    ),
+
+                    html.Div(
+                        [
+                            dbc.Row(
+                                [
+
+                                    dbc.Col(
+                                        [
+
+                                            html.Label(
+                                                "Subcounty",
+                                                className="fw-semibold mb-2",
+                                                style={
+                                                    "color": TEXT,
+                                                    "fontSize": "14px",
+                                                },
+                                            ),
+
+                                            dcc.Dropdown(
+                                                id="malaria-subcounty-dropdown",
+
+                                                options=[
+                                                    {
+                                                        "label": "All Subcounties",
+                                                        "value": "ALL",
+                                                    }
+                                                ]
+                                                +
+                                                [
+                                                    {
+                                                        "label": str(s).replace(
+                                                            " Sub County",
+                                                            ""
+                                                        ),
+                                                        "value": str(s),
+                                                    }
+
+                                                    for s in sorted(
+                                                        df["Subcounty"]
+                                                        .dropna()
+                                                        .unique()
+                                                    )
+                                                ],
+
+                                                value="ALL",
+                                                clearable=False,
+                                            ),
+
+                                        ],
+                                        lg=8,
+                                    ),
+
+                                    dbc.Col(
+                                        [
+
+                                            html.Label(
+                                                "Year",
+                                                className="fw-semibold mb-2",
+                                                style={
+                                                    "color": TEXT,
+                                                    "fontSize": "14px",
+                                                },
+                                            ),
+
+                                            dcc.Dropdown(
+                                                id="malaria-year-dropdown",
+
+                                                options=[
+                                                    {
+                                                        "label": "All Years",
+                                                        "value": "ALL",
+                                                    }
+                                                ]
+                                                +
+                                                [
+                                                    {
+                                                        "label": str(int(y)),
+                                                        "value": str(int(y)),
+                                                    }
+
+                                                    for y in sorted(
+                                                        df["Year"]
+                                                        .dropna()
+                                                        .unique()
+                                                    )
+                                                ],
+
+                                                value="ALL",
+                                                clearable=False,
+                                            ),
+
+                                        ],
+                                        lg=4,
+                                    ),
+
+                                ],
+                                className="g-3",
+                            )
+                        ],
+
+                        style={
+                            "backgroundColor": PANEL_BG,
+                            "border": f"1px solid {BORDER}",
+                            "borderRadius": "8px",
+                            "padding": "16px 18px",
+                        },
+                    ),
+
+                ],
+                style={
+                    "padding": "24px",
+                },
             ),
-        
-            className="border-0 shadow-sm mb-4",
-            style={"borderRadius": "16px",},
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # SANKEY
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4("Fever Cases by Age Group and RDT Outcome",className="fw-bold mb-1"),
-                html.P("Distribution of reported fever cases by age group and malaria diagnostic outcome.",className="text-muted mb-4"),
-        
-                dcc.Graph(
-                    id="malaria-sankey",
-                    figure=fever_age_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Fever Cases by Age Group and RDT Outcome",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Flow of reported fever cases from age group to malaria "
+                        "diagnostic outcome. Counts and proportions are shown for "
+                        "each stage of the diagnostic pathway.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="malaria-sankey",
+                        figure=fever_age_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                        style={
+                            "height": "680px",
+                        },
+                    ),
+
+                ],
+                style={
+                    "padding": "24px",
+                },
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # NON-MALARIAL FEVER OVER TIME
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Proportion of Non-Malarial Fever Cases",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Monthly proportion of reported fever cases that tested negative for malaria across all subcounties.",
-                    className="text-muted mb-4"
-                ),
-        
-                dcc.Graph(
-                    id="non-malaria-fever",
-                    figure=non_malaria_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Proportion of Non-Malarial Fever Cases",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Monthly proportion of reported fever cases that tested "
+                        "negative for malaria across all subcounties.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="non-malaria-fever",
+                        figure=non_malaria_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "24px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # FEVER TESTING AND TREATMENT
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Fever Testing and Treatment by Age Group",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Annual fever cases, malaria testing, positive RDT results, and treatment by age group across all subcounties.",
-                    className="text-muted mb-4"
-                ),
-        
-                dcc.Graph(
-                    id="malaria-age-summary",
-                    figure=age_group_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Fever Testing and Treatment by Age Group",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Annual fever cases, malaria testing, positive RDT results, "
+                        "and treatment by age group across all subcounties.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="malaria-age-summary",
+                        figure=age_group_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "24px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # NON-MALARIAL FEVER BY YEAR / COUNTY / AGE
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Proportion of Non-Malarial Fever by Year, Subcounty, and Age Group",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Annual proportion of reported fever cases that tested negative for malaria by age group and subcounty.",
-                    className="text-muted mb-4"
-                ),
-        
-                dcc.Graph(
-                    id="non-malaria-age-group",
-                    figure=non_malaria_age_fig,
-                    config={
-                        "displayModeBar": False
-                    }
-                )
-            ]),
-        
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Proportion of Non-Malarial Fever by Year, Subcounty, and Age Group",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Annual proportion of reported fever cases that tested "
+                        "negative for malaria by age group and subcounty.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="non-malaria-age-group",
+                        figure=non_malaria_age_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "24px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # MALARIA PREVALENCE
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Malaria Estimated Prevalence by Age Group and Year",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Monthly estimated malaria prevalence among RDT-tested fever cases by age group across all subcounties.",
-                    className="text-muted mb-4"
-                ),
-        
-                dcc.Graph(
-                    id="malaria-prevalence-age-year",
-                    figure=prevalence_fig,
-                    config={
-                        "displayModeBar": False
-                    }
-                )
-            ]),
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Malaria Estimated Prevalence by Age Group and Year",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Monthly estimated malaria prevalence among RDT-tested "
+                        "fever cases by age group across all subcounties.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="malaria-prevalence-age-year",
+                        figure=prevalence_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "24px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
 
+
+        # =================================================
+        # NON-MALARIAL FEVER DISTRIBUTION
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H4(
-                    "Distribution of Non-Malarial Fever by Subcounty and Age Group",
-                    className="fw-bold mb-1"
-                ),
-        
-                html.P(
-                    "Distribution of monthly non-malarial fever percentages across all years by subcounty and age group.",
-                    className="text-muted mb-4"
-                ),
-        
-                dcc.Graph(
-                    id="non-malaria-boxplot",
-                    figure=non_malaria_box_fig,
-                    config={
-                        "displayModeBar": False
-                    }
-                )
-            ]),
-        
-            className="border-0 shadow-sm mb-4"
+            dbc.CardBody(
+                [
+
+                    html.H4(
+                        "Distribution of Non-Malarial Fever by Subcounty and Age Group",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Distribution of monthly non-malarial fever percentages "
+                        "across all years by subcounty and age group.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        id="non-malaria-boxplot",
+                        figure=non_malaria_box_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "24px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
-        
-                
+
+
+        # =================================================
+        # COMMODITY / ACT DISTRIBUTION
+        # =================================================
         dbc.Row(
             [
+
                 dbc.Col(
                     dbc.Card(
-                        dbc.CardBody([
-                            html.H5("Commodity Stock Levels",className="fw-bold"),
-                            html.P("Monthly mRDT and ACT stock availability.",className="text-muted"),
-                            dcc.Graph(
-                                id="malaria-stock",
-                                figure=stock_fig,
-                                config={"displayModeBar": False}
-                            )
-                        ]),
-                        className="border-0 shadow-sm"
+                        dbc.CardBody(
+                            [
+
+                                html.H5(
+                                    "Commodity Stock Levels",
+                                    className="fw-bold mb-1",
+                                    style={"color": TEXT},
+                                ),
+
+                                html.P(
+                                    "Monthly mRDT and ACT stock availability.",
+                                    className="mb-3",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                    },
+                                ),
+
+                                dcc.Graph(
+                                    id="malaria-stock",
+                                    figure=stock_fig,
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+                                ),
+
+                            ],
+                            style={"padding": "22px"},
+                        ),
+
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
-                    lg=6
+
+                    lg=6,
+                    className="mb-4",
                 ),
 
                 dbc.Col(
                     dbc.Card(
-                        dbc.CardBody([
-                            html.H5("CHEW Weight-Band Distribution",className="fw-bold"),
-                            html.P("Monthly distribution across weight categories.",className="text-muted"),
-                            dcc.Graph(
-                                id="malaria-weight",
-                                figure=weight_fig,
-                                config={"displayModeBar": False}
-                            )
-                        ]),
-                        className="border-0 shadow-sm"
+                        dbc.CardBody(
+                            [
+
+                                html.H5(
+                                    "Weight-Based ACT Distribution",
+                                    className="fw-bold mb-1",
+                                    style={"color": TEXT},
+                                ),
+
+                                html.P(
+                                    "Monthly ACT distribution across weight categories "
+                                    "and corresponding age guides.",
+                                    className="mb-3",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                    },
+                                ),
+
+                                dcc.Graph(
+                                    id="malaria-weight",
+                                    figure=weight_fig,
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+                                ),
+
+                            ],
+                            style={"padding": "22px"},
+                        ),
+
+                        style={
+                            **CARD_STYLE,
+                            "height": "100%",
+                        },
                     ),
-                    lg=6
+
+                    lg=6,
+                    className="mb-4",
                 ),
-            ]
+
+            ],
+            className="align-items-stretch",
         ),
+
+
+        # =================================================
+        # BED NET DISTRIBUTION
+        # =================================================
         dbc.Card(
-            dbc.CardBody([
-                html.H5(
-                    "ANC Bed Net Distribution",
-                    className="fw-bold"
-                ),
-        
-                html.P(
-                    "Long-lasting insecticidal nets distributed to antenatal care clients.",
-                    className="text-muted"
-                ),
-        
-                dcc.Graph(
-                    figure=bednet_fig,
-                    config={"displayModeBar": False}
-                )
-            ]),
-            className="border-0 shadow-sm mt-4"
+            dbc.CardBody(
+                [
+
+                    html.H5(
+                        "ANC Bed Net Distribution",
+                        className="fw-bold mb-1",
+                        style={"color": TEXT},
+                    ),
+
+                    html.P(
+                        "Long-lasting insecticidal nets distributed to antenatal "
+                        "care clients.",
+                        className="mb-3",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                        },
+                    ),
+
+                    dcc.Graph(
+                        figure=bednet_fig,
+                        config={
+                            "displayModeBar": False,
+                            "responsive": True,
+                        },
+                    ),
+
+                ],
+                style={"padding": "22px"},
+            ),
+
+            style=CARD_STYLE,
+            className="mb-4",
         ),
+
     ],
+
     fluid=True,
-    style={"backgroundColor": "#f8fafc","padding": "20px","minHeight": "100vh",},
+
+    style={
+        "backgroundColor": PAGE_BG,
+        "padding": "24px",
+        "minHeight": "100vh",
+    },
 )
 
-#Callback function
+# =========================================================
+# MALARIA FILTER CALLBACK
+# =========================================================
+
 @callback(
     [
         Output("malaria-sankey", "figure"),
@@ -1806,10 +2260,10 @@ layout = dbc.Container(
         Input("malaria-year-dropdown", "value"),
     ]
 )
-
 def update_malaria(subcounty, year):
 
     filtered_df = df.copy()
+
     # Filter Subcounty
     if subcounty != "ALL":
         filtered_df = filtered_df[
@@ -1822,85 +2276,28 @@ def update_malaria(subcounty, year):
             filtered_df["Year"].astype(str) == str(year)
         ]
 
-    # Sankey values
-    under5_cases = filtered_df["Cases.Fever < 5"].sum()
-    over5_cases = filtered_df["Cases.Fever >= 5"].sum()
-    positive_under5 = (filtered_df["Cases.Fever.with.RDT.Positive < 5"].sum())
-    positive_over5 = (filtered_df["Cases.Fever.with.RDT.Positive >= 5"].sum())
-    negative_under5 = (filtered_df["Cases.Fever.with.RDT. negative < 5"].sum())
-    negative_over5 = (filtered_df["Cases.Fever.with.RDT. negative >= 5"].sum())
-    not_tested_under5 = (under5_cases - positive_under5 - negative_under5)
-    not_tested_over5 = (over5_cases - positive_over5 - negative_over5)
 
-    sankey_fig = go.Figure(
-        go.Sankey(
-            arrangement="snap",
+    # =====================================================
+    # SANKEY
+    # =====================================================
 
-            node=dict(
-                pad=25,
-                thickness=25,
-
-                label=[
-                    "Fever Cases",
-                    "Children <5",
-                    "Individuals ≥5",
-                    "RDT Positive <5",
-                    "RDT Negative <5",
-                    "Not Tested <5",
-                    "RDT Positive ≥5",
-                    "RDT Negative ≥5",
-                    "Not Tested ≥5"
-                ],
-                color=[
-                    "#2563eb",
-                    "#f97316",
-                    "#16a34a",
-                    "#dc2626",
-                    "#fbbf24",
-                    "#6b7280",
-                    "#b91c1c",
-                    "#fde68a",
-                    "#9ca3af"
-                ]
-            ),
-
-            link=dict(
-                source=[
-                    0,0,
-                    1,1,1,
-                    2,2,2
-                ],
-                
-                target=[
-                    1,2,
-                    3,4,5,
-                    6,7,8
-                ],
-                
-                value=[
-                    under5_cases,
-                    over5_cases,
-                    positive_under5,
-                    negative_under5,
-                    not_tested_under5,
-                    positive_over5,
-                    negative_over5,
-                    not_tested_over5
-                ]
-            )
-        )
+    sankey_fig = create_sankey_figure(
+        filtered_df
     )
 
-    sankey_fig.update_layout(template="plotly_white",height=700)
 
-    # Stock figures
+    # =====================================================
+    # STOCK FIGURE
+    # =====================================================
+
     stock_fig = go.Figure()
+
     stock_fig.add_trace(
         go.Bar(
             x=filtered_df["Month"],
             y=filtered_df["Stock mRDTs"],
             name="mRDT Stock",
-            marker_color="#2563eb"
+            marker_color="#527A9B"
         )
     )
 
@@ -1909,55 +2306,129 @@ def update_malaria(subcounty, year):
             x=filtered_df["Month"],
             y=filtered_df["Stock ACTs"],
             name="ACT Stock",
-            marker_color="#16a34a"
+            marker_color="#688B78"
         )
     )
 
     stock_fig.update_layout(
         barmode="group",
         template="plotly_white",
-        height=450
+        height=450,
+        margin=dict(l=55, r=20, t=20, b=50),
+
+        font=dict(
+            family="Segoe UI",
+            size=13,
+            color=TEXT,
+        ),
+
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+
+        legend=dict(
+            orientation="h",
+            x=0.5,
+            xanchor="center",
+            y=1.08,
+        ),
     )
 
-    # Weight figures
+    stock_fig.update_xaxes(
+        title_text="Month",
+        showgrid=False,
+    )
+
+    stock_fig.update_yaxes(
+        title_text="Stock level (count)",
+        gridcolor="#EDF1F4",
+        zeroline=False,
+    )
+
+
+    # =====================================================
+    # WEIGHT-BASED ACT FIGURE
+    # =====================================================
+
     weight_fig = go.Figure()
+
     weight_fig.add_trace(
         go.Bar(
-            name="5-<15 kg",
+            name="5 to <15 kg (<3 yrs old)",
             x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 5 to <15 kg  (<3 yrs)"]
+            y=filtered_df[
+                "CHEW Weight band 5 to <15 kg  (<3 yrs)"
+            ],
+            marker_color="#6C8EBF"
         )
     )
 
     weight_fig.add_trace(
         go.Bar(
-            name="15-<25 kg",
+            name="15 to <25 kg (3 to <8 yrs old)",
             x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"]
+            y=filtered_df[
+                "CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"
+            ],
+            marker_color="#7F9F8D"
         )
     )
 
     weight_fig.add_trace(
         go.Bar(
-            name="25-<35 kg",
+            name="25 to <35 kg (8 to <12 yrs old)",
             x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"]
+            y=filtered_df[
+                "CHEW Weight band 25 to <35 kg (8 to <12 yrs)"
+            ],
+            marker_color="#B5A07A"
         )
     )
 
     weight_fig.add_trace(
         go.Bar(
-            name="≥35 kg",
+            name="≥35 kg (≥12 yrs old)",
             x=filtered_df["Month"],
-            y=filtered_df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"]
+            y=filtered_df[
+                "CHEW Weight band ≥ 35 kg (≥ 12 yrs)"
+            ],
+            marker_color="#8A6F73"
         )
     )
 
     weight_fig.update_layout(
         barmode="stack",
         template="plotly_white",
-        height=450
+        height=450,
+        margin=dict(l=55, r=20, t=20, b=50),
+
+        font=dict(
+            family="Segoe UI",
+            size=13,
+            color=TEXT,
+        ),
+
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+
+        legend=dict(
+            orientation="h",
+            x=0.5,
+            xanchor="center",
+            y=1.14,
+        ),
     )
+
+    weight_fig.update_xaxes(
+        title_text="Month",
+        showgrid=False,
+    )
+
+    weight_fig.update_yaxes(
+        title_text="ACT distribution (count)",
+        gridcolor="#EDF1F4",
+        zeroline=False,
+    )
+
 
     return (
         sankey_fig,
