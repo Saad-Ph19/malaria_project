@@ -85,22 +85,15 @@ population_figure.update_layout(
     yaxis_title="",
     template="plotly_white",
     height=520,
-    margin={
-        "l": 30,
-        "r": 130,
-        "t": 20,
-        "b": 60,
-    },
+    margin={"l": 30,"r": 130,"t": 20,"b": 60,},
     showlegend=False,
     bargap=0.22,
 )
-
 
 population_figure.update_yaxes(
     autorange="reversed",
     automargin=True,
 )
-
 
 population_figure.update_xaxes(
     tickformat=",",
@@ -663,62 +656,48 @@ layout = dbc.Container(
     [
         # =========================================================
         # SIAYA COUNTY OVERVIEW + SUBCOUNTY FILTER + MAP
-        # =========================================================
-        
         dbc.Card(
             dbc.CardBody(
                 [
-        
-                    # =================================================
                     # TITLE
-                    # =================================================
                     html.H4(
                         "Siaya County Overview",
                         className="fw-bold mb-1",
-                        style={
-                            "color": TEXT,
-                            "fontSize": "22px",
-                        },
+                        style={"color": TEXT,},
                     ),
         
                     # =================================================
                     # DESCRIPTION
-                    # =================================================
                     html.P(
-                        "Siaya County is composed of six subcounties that differ in "
-                        "geographic setting, agricultural activity, local economic "
-                        "conditions, and topography. These differences provide important "
-                        "context for understanding variation in population characteristics, "
-                        "health conditions, and access to services across the county. "
-                        "Use the selector below to explore the general characteristics "
-                        "of each subcounty.",
+                        "Siaya County, located in Kenya's Nyanza region, consists of six subcounties: "
+                        "Alego Usonga, Bondo, Gem, Rarieda, Ugenya, and Ugunja. "
+                        "The county spans approximately 2,530 km² of land and includes part of Lake Victoria,"
+                        "creating diverse geographic settings across the county. Lakeside subcounties such as"
+                        "Bondo and Rarieda often differ from inland areas in their economic activities, settlement patterns, "
+                        "and environmental conditions. These geographic differences contribute to variations in population"
+                        "characteristics, agriculture, fishing, access to services, infrastructure,"
+                        "and health outcomes across the county. Use the selectors below to explore the"
+                        "unique characteristics of each subcounty and gain a broader understanding of Siaya County.",
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
-                            "fontSize": "14px",
+                            "fontSize": "22px",
                             "lineHeight": "1.7",
-                            "maxWidth": "1050px",
                         },
                     ),
         
                     # =================================================
                     # SUBCOUNTY FILTER
-                    # =================================================
                     html.Div(
                         [
-        
                             html.Label(
                                 "Subcounty",
                                 className="fw-semibold mb-2",
-                                style={
-                                    "color": TEXT,
-                                    "fontSize": "14px",
-                                },
+                                style={"color": TEXT,"fontSize": "14px",},
                             ),
         
                             dcc.Dropdown(
                                 id="overview-subcounty-dropdown",
-        
                                 options=[
                                     {
                                         "label": name,
@@ -733,25 +712,11 @@ layout = dbc.Container(
                                         "Ugunja",
                                     ]
                                 ],
-        
                                 value="Alego Usonga",
-        
                                 clearable=False,
-        
-                                style={
-                                    "maxWidth": "520px",
-                                },
                             ),
         
                         ],
-        
-                        style={
-                            "backgroundColor": "#F8FAFC",
-                            "border": f"1px solid {BORDER}",
-                            "borderRadius": "8px",
-                            "padding": "16px 18px",
-                            "marginBottom": "22px",
-                        },
                     ),
         
                     # =================================================
