@@ -716,57 +716,39 @@ layout = dbc.Container(
                                 clearable=False,
                             ),
                         ],
-                        lg=8,
+                        className="mb-5",
                     ),
         
                     # =================================================
                     # MAP + SUBCOUNTY INFORMATION
-                    # =================================================
                     dbc.Row(
                         [
-        
-                            # -------------------------------------------------
                             # MAP
-                            # -------------------------------------------------
                             dbc.Col(
                                 dcc.Graph(
                                     id="siaya-overview-map",
-        
                                     figure=siaya_map,
-        
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-        
-                                    style={
-                                        "height": "560px",
-                                        "width": "100%",
-                                    },
+                                    style={"height": "560px","width": "100%",},
                                 ),
-        
                                 lg=8,
-        
-                                style={
-                                    "height": "560px",
-                                },
+                                style={"height": "560px",},
                             ),
-        
-                            # -------------------------------------------------
+                            
                             # SUBCOUNTY INFORMATION PANEL
-                            # -------------------------------------------------
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
                                         id="subcounty-information-panel",
-        
                                         children=build_subcounty_information_panel(
                                             "Alego Usonga"
                                         ),
         
                                         style={
                                             "padding": "26px",
-        
                                             "display": "flex",
                                             "flexDirection": "column",
                                             "justifyContent": "flex-start",
@@ -775,34 +757,20 @@ layout = dbc.Container(
         
                                     style={
                                         **INSIGHT_STYLE,
-        
                                         "height": "560px",
-        
                                         "width": "100%",
                                     },
                                 ),
-        
                                 lg=4,
-        
-                                style={
-                                    "height": "560px",
-                                },
+                                style={"height": "560px",},
                             ),
-        
                         ],
-        
                         className="g-4 align-items-stretch",
                     ),
-        
                 ],
-        
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-        
             style=CARD_STYLE,
-        
             className="mb-4",
         ),
 
@@ -888,7 +856,6 @@ layout = dbc.Container(
                                 lg=4,
                                 style={"height": "550px",},
                             ),
-
                         ],
                         className="g-4 align-items-stretch",
                     ),
@@ -928,15 +895,10 @@ layout = dbc.Container(
 
                                 html.Small(
                                     "people",
-                                    style={
-                                        "color": TEXT_MUTED,
-                                    },
+                                    style={"color": TEXT_MUTED,},
                                 ),
                             ],
-
-                            style={
-                                "padding": "20px",
-                            },
+                            style={"padding": "20px",},
                         ),
 
                         style={
@@ -948,7 +910,6 @@ layout = dbc.Container(
                     md=6,
                     className="mb-3",
                 ),
-
 
                 dbc.Col(
                     dbc.Card(
@@ -974,9 +935,7 @@ layout = dbc.Container(
 
                                 html.Small(
                                     "people",
-                                    style={
-                                        "color": TEXT_MUTED,
-                                    },
+                                    style={"color": TEXT_MUTED,},
                                 ),
                             ],
                             style={"padding": "20px",},
@@ -1059,9 +1018,7 @@ layout = dbc.Container(
 
                                 html.Small(
                                     "reported outpatient conditions",
-                                    style={
-                                        "color": TEXT_MUTED,
-                                    },
+                                    style={"color": TEXT_MUTED,},
                                 ),
                             ],
                             style={"padding": "20px",},
@@ -1072,44 +1029,32 @@ layout = dbc.Container(
                             "height": "100%",
                         },
                     ),
-
                     lg=3,
                     md=6,
-
                     className="mb-3",
                 ),
-
             ],
-
             className="mb-3 align-items-stretch",
         ),
-
 
         # =================================================
         # UNDER 5 CONDITIONS
         dbc.Card(
             dbc.CardBody(
                 [
-
                     html.H4(
                         "Most Common Outpatient Health Conditions (Under 5 Years)",
-
                         className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
                         "Distribution of reported outpatient conditions "
                         "among children under five years. Values represent counts "
                         "of reported conditions.",
-
                         className="mb-4",
                         style={"color": TEXT_MUTED,},
                     ),
-
 
                     dbc.Row(
                         [
@@ -1122,16 +1067,11 @@ layout = dbc.Container(
                                         "responsive": True,
                                     },
 
-                                    style={
-                                        "height": "550px",
-                                    },
+                                    style={"height": "550px",},
                                 ),
 
                                 lg=8,
-
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
 
 
@@ -1139,20 +1079,14 @@ layout = dbc.Container(
                                 dbc.Card(
                                     dbc.CardBody(
                                         [
-
                                             html.H6(
                                                 "Key Insights",
-
                                                 className="fw-bold mb-3",
-
-                                                style={
-                                                    "color": PRIMARY,
-                                                },
+                                                style={"color": PRIMARY,},
                                             ),
 
                                             html.Ul(
                                                 [
-
                                                     html.Li(
                                                         "Confirmed malaria was the "
                                                         "leading outpatient condition."
@@ -1183,12 +1117,8 @@ layout = dbc.Container(
                                                     "paddingLeft": "20px",
                                                 },
                                             ),
-
                                         ],
-
-                                        style={
-                                            "padding": "24px",
-                                        },
+                                        style={"padding": "24px",},
                                     ),
 
                                     style={
@@ -1196,31 +1126,19 @@ layout = dbc.Container(
                                         "height": "550px",
                                     },
                                 ),
-
                                 lg=4,
-
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
-
                         ],
-
                         className="g-4 align-items-stretch",
                     ),
-
                 ],
 
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
-
 
         # =================================================
         # UNDER 5 MORTALITY
@@ -1230,23 +1148,15 @@ layout = dbc.Container(
 
                     html.H4(
                         "Leading Causes of Mortality (Under 5 Years)",
-
                         className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
                         "Most frequently reported causes of mortality among "
                         "children under five years. Values are reported occurrences.",
-
                         className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
+                        style={"color": TEXT_MUTED,},
                     ),
 
                     dcc.Graph(
@@ -1254,34 +1164,22 @@ layout = dbc.Container(
                         figure=mortality_fig,
                         config=svg_download_config,
                     ),
-
                 ],
-
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
-
 
         # =================================================
         # OVER 5 CONDITIONS
         dbc.Card(
             dbc.CardBody(
                 [
-
                     html.H4(
                         "Most Common Outpatient Health Conditions (Over 5 Years)",
-
                         className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
@@ -1290,58 +1188,37 @@ layout = dbc.Container(
                         "of reported conditions.",
 
                         className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
+                        style={"color": TEXT_MUTED,},
                     ),
-
 
                     dbc.Row(
                         [
-
                             dbc.Col(
                                 dcc.Graph(
                                     id="over5-disease-chart",
-
                                     figure=over5_treemap_fig,
-
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
-
-                                    style={
-                                        "height": "550px",
-                                    },
+                                    style={"height": "550px",},
                                 ),
-
                                 lg=8,
-
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
-
 
                             dbc.Col(
                                 dbc.Card(
                                     dbc.CardBody(
                                         [
-
                                             html.H6(
                                                 "Key Insights",
-
                                                 className="fw-bold mb-3",
-
-                                                style={
-                                                    "color": PRIMARY,
-                                                },
+                                                style={"color": PRIMARY,},
                                             ),
 
                                             html.Ul(
                                                 [
-
                                                     html.Li(
                                                         "Confirmed malaria was the "
                                                         "leading outpatient condition."
@@ -1357,7 +1234,6 @@ layout = dbc.Container(
                                                         "The top twenty conditions represented "
                                                         "approximately 80% of visits."
                                                     ),
-
                                                 ],
 
                                                 style={
@@ -1367,7 +1243,6 @@ layout = dbc.Container(
                                                     "paddingLeft": "20px",
                                                 },
                                             ),
-
                                         ],
                                         style={"padding": "24px",},
                                     ),
@@ -1379,85 +1254,55 @@ layout = dbc.Container(
                                 ),
 
                                 lg=4,
-                                style={
-                                    "height": "550px",
-                                },
+                                style={"height": "550px",},
                             ),
-
                         ],
-
                         className="g-4 align-items-stretch",
                     ),
-
                 ],
-
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
-
 
         # =================================================
         # OVER 5 MORTALITY
         dbc.Card(
             dbc.CardBody(
                 [
-
                     html.H4(
                         "Leading Causes of Mortality (Over 5 Years)",
-
                         className="fw-bold mb-1",
-
-                        style={
-                            "color": TEXT,
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
                         "Most frequently reported causes of mortality among "
                         "individuals over five years. Values are reported occurrences.",
-
                         className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                        },
+                        style={"color": TEXT_MUTED,},
                     ),
 
                     dcc.Graph(
                         id="over5-mortality-chart",
-
                         figure=over5_mortality_fig,
-
                         config={
                             "displayModeBar": False,
                             "responsive": True,
                         },
                     ),
-
                 ],
-
-                style={
-                    "padding": "24px",
-                },
+                style={"padding": "24px",},
             ),
-
             style=CARD_STYLE,
-
             className="mb-4",
         ),
-
 
         # =================================================
         # DATA SOURCE
         html.Div(
             [
-
                 html.Hr(
                     style={
                         "borderColor": BORDER,
@@ -1469,9 +1314,7 @@ layout = dbc.Container(
                     [
                         html.Strong(
                             "Data source: ",
-                            style={
-                                "color": TEXT,
-                            },
+                            style={"color": TEXT,},
                         ),
 
                         "Rarieda Sub-County Health Promotion Officer and "
@@ -1479,22 +1322,17 @@ layout = dbc.Container(
                     ],
 
                     className="mb-1",
-
                     style={
                         "fontSize": "15px",
                         "color": TEXT_MUTED,
                     },
                 ),
-
             ],
-
             className="mt-4 mb-3 px-2",
         ),
-
     ],
 
     fluid=True,
-
     style={
         "backgroundColor": PAGE_BG,
         "padding": "24px",
