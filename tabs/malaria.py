@@ -2102,18 +2102,23 @@ layout = dbc.Container(
         # =================================================
         dbc.Row(
             [
-
+        
+                # =================================================
+                # COMMODITY STOCK LEVELS
+                # =================================================
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
                             [
-
+        
                                 html.H5(
                                     "Commodity Stock Levels",
                                     className="fw-bold mb-1",
-                                    style={"color": TEXT},
+                                    style={
+                                        "color": TEXT,
+                                    },
                                 ),
-
+        
                                 html.P(
                                     "Monthly mRDT and ACT stock availability.",
                                     className="mb-3",
@@ -2122,41 +2127,59 @@ layout = dbc.Container(
                                         "fontSize": "14px",
                                     },
                                 ),
-
+        
                                 dcc.Graph(
                                     id="malaria-stock",
                                     figure=stock_fig,
+        
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
+        
+                                    style={
+                                        "height": "450px",
+                                        "width": "100%",
+                                    },
                                 ),
-
+        
                             ],
-                            style={"padding": "22px"},
+        
+                            style={
+                                "padding": "22px",
+                            },
                         ),
-
+        
                         style={
                             **CARD_STYLE,
-                            "height": "100%",
+        
+                            # IMPORTANT:
+                            # fixed/controlled card height
+                            "height": "550px",
                         },
                     ),
-
+        
                     lg=6,
                     className="mb-4",
                 ),
-
+        
+        
+                # =================================================
+                # WEIGHT-BASED ACT DISTRIBUTION
+                # =================================================
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
                             [
-
+        
                                 html.H5(
                                     "Weight-Based ACT Distribution",
                                     className="fw-bold mb-1",
-                                    style={"color": TEXT},
+                                    style={
+                                        "color": TEXT,
+                                    },
                                 ),
-
+        
                                 html.P(
                                     "Monthly ACT distribution across weight categories "
                                     "and corresponding age guides.",
@@ -2166,32 +2189,45 @@ layout = dbc.Container(
                                         "fontSize": "14px",
                                     },
                                 ),
-
+        
                                 dcc.Graph(
                                     id="malaria-weight",
                                     figure=weight_fig,
+        
                                     config={
                                         "displayModeBar": False,
                                         "responsive": True,
                                     },
+        
+                                    style={
+                                        "height": "450px",
+                                        "width": "100%",
+                                    },
                                 ),
-
+        
                             ],
-                            style={"padding": "22px"},
+        
+                            style={
+                                "padding": "22px",
+                            },
                         ),
-
+        
                         style={
                             **CARD_STYLE,
-                            "height": "100%",
+        
+                            # Same height as left card
+                            "height": "550px",
                         },
                     ),
-
+        
                     lg=6,
                     className="mb-4",
                 ),
-
+        
             ],
-            className="align-items-stretch",
+        
+            # Do NOT use align-items-stretch here
+            className="mb-2",
         ),
 
 
