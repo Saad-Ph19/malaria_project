@@ -432,17 +432,6 @@ layout = dbc.Container(
                     ),
 
                     html.P(
-                        "Spatial distribution of selected climate indicators across Siaya County subcounties.",
-
-                        className="mb-4",
-
-                        style={
-                            "color": TEXT_MUTED,
-                            "fontSize": "14px",
-                        },
-                    ),
-
-                    html.P(
                         "Climate conditions vary across Siaya County due to differences in "
                         "geographic location, vegetation, seasonal weather patterns, and proximity "
                         "to Lake Victoria. Comparing these conditions across subcounties can help "
@@ -452,9 +441,9 @@ layout = dbc.Container(
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
-                            "fontSize": "14px",
+                            "fontSize": "20px",
                             "lineHeight": "1.7",
-                            "maxWidth": "1050px",
+                            #"maxWidth": "1050px",
                         },
                     ),
 
