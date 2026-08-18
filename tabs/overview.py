@@ -676,7 +676,7 @@ layout = dbc.Container(
                         "Bondo and Rarieda often differ from inland areas in their economic activities, settlement patterns, "
                         "and environmental conditions. These geographic differences contribute to variations in population "
                         "characteristics, agriculture, fishing, access to services, infrastructure, "
-                        "and health outcomes across the county. Use the selectors below to explore the "
+                        "and health outcomes across the county. Use the selector below to explore the "
                         "unique characteristics of each subcounty and gain a broader understanding of Siaya County.",
                         className="mb-4",
                         style={
