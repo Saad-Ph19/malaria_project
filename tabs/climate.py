@@ -442,6 +442,21 @@ layout = dbc.Container(
                         },
                     ),
 
+                    html.P(
+                        "Climate conditions vary across Siaya County due to differences in "
+                        "geographic location, vegetation, seasonal weather patterns, and proximity "
+                        "to Lake Victoria. Comparing these conditions across subcounties can help "
+                        "identify spatial differences in temperature, precipitation, humidity, "
+                        "and vegetation. Use the filters below to explore how these climate and "
+                        "environmental conditions vary across the six subcounties and over time.",
+                        className="mb-4",
+                        style={
+                            "color": TEXT_MUTED,
+                            "fontSize": "14px",
+                            "lineHeight": "1.7",
+                            "maxWidth": "1050px",
+                        },
+                    ),
 
                     # -------------------------------------
                     # MAP FILTERS
