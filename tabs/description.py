@@ -125,4 +125,5 @@ layout = dbc.Container(
             style=CARD_STYLE,
             className="mb-4",
         ),
+    ],
 )
