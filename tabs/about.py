@@ -83,7 +83,7 @@ layout = dbc.Container(
                             }
                     ),
                     
-                    html.P("The project integrates data from:",className="text-muted",
+                    html.P("The project integrates data from:",
                            style={                            
                                "fontSize": "20px",
                                 "lineHeight": "1.8",
@@ -96,7 +96,7 @@ layout = dbc.Container(
                         html.Li("Kenya Health Information System (KHIS)"),
                         html.Li("Google Earth spatial datasets"),
                         html.Li("Climate and environmental information supporting geospatial disease surveillance"),
-                    ], className="text-muted", 
+                    ], 
                             style={
                                 "fontSize": "20px",
                                 "lineHeight": "1.8",
@@ -105,12 +105,12 @@ layout = dbc.Container(
                                 "paddingLeft": "45px",
                             },
                     ),
-                    html.P("In case of questions and/or requests, please contact PI Felix Pabon-Rodriguez via email at fpabonr@iu.edu.",className="text-muted",
+                    html.P("In case of questions and/or requests, please contact PI Felix Pabon-Rodriguez via email at fpabonr@iu.edu.",
                            style={
-                                    "fontSize": "20px",
-                                    "lineHeight": "1.8",
-                                    "color": TEXT,
-                                    "marginBottom": "20px",
+                                "fontSize": "20px",
+                                "lineHeight": "1.8",
+                                "color": TEXT,
+                                "marginBottom": "20px",
                            },
                     ),
                 ]
