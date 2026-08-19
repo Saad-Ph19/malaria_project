@@ -1707,21 +1707,24 @@ layout = dbc.Container(
                     html.H4(
                         "Malaria Surveillance Overview",
                         className="fw-bold mb-1",
-                        style={
-                            "color": TEXT,
-                            "fontSize": "22px",
-                        },
+                        style={"color": TEXT,},
                     ),
 
                     html.P(
-                        "Explore malaria-related fever cases, diagnostic testing, "
-                        "treatment, commodity availability, and prevention indicators "
-                        "across Siaya County. Use the filters below to examine patterns "
-                        "for individual subcounties and years.",
+                        "Malaria remains a major public health concern in Siaya County, "
+                        "with transmission patterns varying across subcounties due to differences "
+                        "in environmental conditions, population characteristics, healthcare access, "
+                        "and malaria prevention efforts. This dashboard provides an overview of malaria-related "
+                        "fever cases, diagnostic testing, treatment outcomes, commodity availability, "
+                        "and prevention indicators across the county. "
+                        "By comparing trends across the six subcounties, users can identify differences "
+                        "in disease burden, healthcare utilization, testing practices, treatment coverage, "
+                        "and resource availability. Use the filters below to explore malaria surveillance "
+                        "indicators by subcounty and year and examine how patterns change over time. ",
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
-                            "fontSize": "14px",
+                            "fontSize": "22px",
                             "lineHeight": "1.7",
                             "maxWidth": "1050px",
                         },
