@@ -2451,8 +2451,17 @@ def update_malaria(subcounty, year):
         ]
 
     # =====================================================
-    # AGGREGATE COMMODITY DATA BY MONTH
+    # SANKEY
     # =====================================================
+
+    sankey_fig = create_sankey_figure(
+        filtered_df
+    )
+
+
+    # =========================================================
+    # AGGREGATE COMMODITY DATA BY MONTH
+    # =========================================================
     
     commodity_filtered = (
         filtered_df
@@ -2483,152 +2492,221 @@ def update_malaria(subcounty, year):
         )
         .sort_values("Month")
     )
-
-    # =====================================================
-    # SANKEY
-    # =====================================================
-
-    sankey_fig = create_sankey_figure(
-        filtered_df
-    )
-
-
-    # =====================================================
-    # STOCK FIGURE
-    # =====================================================
-
+    
+    
+    # =========================================================
+    # COMMODITY STOCK LEVELS
+    # =========================================================
+    
     stock_fig = go.Figure()
-
+    
     stock_fig.add_trace(
         go.Bar(
             x=commodity_filtered["Month"],
             y=commodity_filtered["Stock_mRDTs"],
             name="mRDT Stock",
-            marker_color="#527A9B"
+            marker_color="#527A9B",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "mRDT Stock: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     stock_fig.add_trace(
         go.Bar(
             x=commodity_filtered["Month"],
             y=commodity_filtered["Stock_ACTs"],
             name="ACT Stock",
-            marker_color="#688B78"
+            marker_color="#688B78",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "ACT Stock: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     stock_fig.update_layout(
         barmode="group",
         template="plotly_white",
         height=450,
-        margin=dict(l=55, r=20, t=20, b=50),
-
+    
+        margin=dict(
+            l=55,
+            r=20,
+            t=45,
+            b=55,
+        ),
+    
         font=dict(
             family="Segoe UI",
             size=13,
             color=TEXT,
         ),
-
+    
         paper_bgcolor="white",
         plot_bgcolor="white",
-
+    
         legend=dict(
             orientation="h",
             x=0.5,
             xanchor="center",
             y=1.08,
+            yanchor="bottom",
         ),
+    
+        bargap=0.25,
+        bargroupgap=0.08,
     )
-
+    
     stock_fig.update_xaxes(
         title_text="Month",
+    
+        tickmode="array",
+        tickvals=list(range(1, 13)),
+    
+        ticktext=[
+            "Jan", "Feb", "Mar", "Apr",
+            "May", "Jun", "Jul", "Aug",
+            "Sep", "Oct", "Nov", "Dec",
+        ],
+    
         showgrid=False,
     )
-
+    
     stock_fig.update_yaxes(
         title_text="Stock level (count)",
         gridcolor="#EDF1F4",
         zeroline=False,
     )
-
-
-    # =====================================================
-    # WEIGHT-BASED ACT FIGURE
-    # =====================================================
-
+    
+    
+    # =========================================================
+    # WEIGHT-BASED ACT DISTRIBUTION
+    # =========================================================
+    
     weight_fig = go.Figure()
-
+    
     weight_fig.add_trace(
         go.Bar(
-            name="5 to <15 kg (<3 yrs old)",
             x=commodity_filtered["Month"],
             y=commodity_filtered["Weight_5_15"],
-            marker_color="#6C8EBF"
+    
+            name="5 to <15 kg (<3 yrs old)",
+            marker_color="#6C8EBF",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "5 to <15 kg: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     weight_fig.add_trace(
         go.Bar(
-            name="15 to <25 kg (3 to <8 yrs old)",
-            x=filtered_df["Month"],
             x=commodity_filtered["Month"],
             y=commodity_filtered["Weight_15_25"],
-            marker_color="#7F9F8D"
+    
+            name="15 to <25 kg (3 to <8 yrs old)",
+            marker_color="#7F9F8D",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "15 to <25 kg: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     weight_fig.add_trace(
         go.Bar(
-            name="25 to <35 kg (8 to <12 yrs old)",
             x=commodity_filtered["Month"],
             y=commodity_filtered["Weight_25_35"],
-            marker_color="#B5A07A"
+    
+            name="25 to <35 kg (8 to <12 yrs old)",
+            marker_color="#B5A07A",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "25 to <35 kg: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     weight_fig.add_trace(
         go.Bar(
-            name="≥35 kg (≥12 yrs old)",
             x=commodity_filtered["Month"],
             y=commodity_filtered["Weight_35plus"],
-            marker_color="#8A6F73"
+    
+            name="≥35 kg (≥12 yrs old)",
+            marker_color="#8A6F73",
+    
+            hovertemplate=(
+                "Month: %{x}<br>"
+                "≥35 kg: %{y:,.0f}"
+                "<extra></extra>"
+            ),
         )
     )
-
+    
     weight_fig.update_layout(
         barmode="stack",
         template="plotly_white",
         height=450,
-        margin=dict(l=55, r=20, t=20, b=50),
-
+    
+        margin=dict(
+            l=55,
+            r=20,
+            t=45,
+            b=55,
+        ),
+    
         font=dict(
             family="Segoe UI",
             size=13,
             color=TEXT,
         ),
-
+    
         paper_bgcolor="white",
         plot_bgcolor="white",
-
+    
         legend=dict(
             orientation="h",
             x=0.5,
             xanchor="center",
-            y=1.14,
+            y=1.10,
+            yanchor="bottom",
         ),
+    
+        bargap=0.25,
     )
-
+    
     weight_fig.update_xaxes(
         title_text="Month",
+    
+        tickmode="array",
+        tickvals=list(range(1, 13)),
+    
+        ticktext=[
+            "Jan", "Feb", "Mar", "Apr",
+            "May", "Jun", "Jul", "Aug",
+            "Sep", "Oct", "Nov", "Dec",
+        ],
+    
         showgrid=False,
     )
-
+    
     weight_fig.update_yaxes(
         title_text="ACT distribution (count)",
         gridcolor="#EDF1F4",
         zeroline=False,
     )
-
 
     return (
         sankey_fig,
