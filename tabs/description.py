@@ -55,7 +55,7 @@ layout = dbc.Container(
                         [
                             html.P("The Siaya County Disease and Climate Monitoring Dashboard is an interactive geospatial surveillance platform that integrates malaria epidemiology, climate, and health system data to support infectious disease research and public health decision-making in western Kenya. ",
                                 style={
-                                    "fontSize": "18px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
@@ -64,7 +64,7 @@ layout = dbc.Container(
 
                             html.P("Beyond tracking malaria incidence, the dashboard visualizes the distribution and availability of key malaria control resources, including rapid diagnostic tests (RDTs), artemisinin-based combination therapies (ACTs), and insecticide-treated bed nets (ITNs), allowing users to evaluate disease burden alongside healthcare resource allocation and intervention coverage. ",
                                 style={
-                                    "fontSize": "18px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
@@ -73,7 +73,7 @@ layout = dbc.Container(
 
                             html.P("This integrated approach supports investigations into malaria and other febrile illnesses by identifying transmission hotspots, assessing preparedness, and exploring the environmental and operational factors influencing disease dynamics. The inclusion of commodity stock monitoring aligns with WHO recommendations for integrated malaria surveillance systems that combine epidemiologic, environmental, and supply chain data. ",
                                 style={
-                                    "fontSize": "18px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
@@ -82,7 +82,7 @@ layout = dbc.Container(
 
                             html.P("This project is in collaboration between researchers from Indiana University School of Medicine [IUSM] and Indiana University Indianapolis [IUI] (Indianapolis, Indiana, USA), Jaramogi Oginga Odinga University of Science and Technology [JOOUST] (Bondo, Kenya), and Siaya County Public Health Department. See the Project Contributors tab for more information. ",
                                 style={
-                                    "fontSize": "18px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
@@ -92,7 +92,7 @@ layout = dbc.Container(
                             html.H4(
                                 "Key Features: ",
                                 className="fw-bold mb-3",
-                                style={"color": TEXT, "fontSize": "22px",},
+                                style={"color": TEXT, "fontSize": "25px",},
                             ),
         
                             html.Div(
@@ -117,7 +117,7 @@ layout = dbc.Container(
                                 ],
                             ),
                         ],
-                        style={"maxWidth": "1150px",},
+                        #style={"maxWidth": "1150px",},
                     ),
                 ],
                 style={"padding": "30px",},
