@@ -2,10 +2,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 
-# =========================================================
-# THEME
-# =========================================================
-
+#Theme colors 
 PRIMARY = "#274C77"
 TEXT = "#1F2937"
 TEXT_MUTED = "#6B7280"
@@ -25,15 +22,9 @@ CARD_STYLE = {
 
 # =========================================================
 # LAYOUT
-# =========================================================
-
 layout = dbc.Container(
     [
-
-        # =================================================
         # PROJECT DESCRIPTION
-        # =================================================
-
         dbc.Card(
             dbc.CardBody(
                 [
@@ -44,7 +35,7 @@ layout = dbc.Container(
                         className="fw-bold mb-2",
                         style={
                             "color": PRIMARY,
-                            "fontSize": "28px",
+                            "fontSize": "30px",
                         },
                     ),
 
@@ -63,110 +54,65 @@ layout = dbc.Container(
                     # Main description
                     html.Div(
                         [
-
-                            html.P(
-                                "The Siaya County Disease and Climate Monitoring Dashboard is an interactive geospatial surveillance platform that integrates malaria epidemiology, climate, and health system data to support infectious disease research and public health decision-making in western Kenya.",
+                            html.P("The Siaya County Disease and Climate Monitoring Dashboard is an interactive geospatial surveillance platform that integrates malaria epidemiology, climate, and health system data to support infectious disease research and public health decision-making in western Kenya. ",
                                 style={
-                                    "fontSize": "17px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
                                 },
                             ),
 
-                            html.P(
-                                "Beyond tracking malaria incidence, the dashboard visualizes the distribution and availability of key malaria control resources, including rapid diagnostic tests (RDTs), artemisinin-based combination therapies (ACTs), and insecticide-treated bed nets (ITNs), allowing users to evaluate disease burden alongside healthcare resource allocation and intervention coverage.",
+                            html.P("Beyond tracking malaria incidence, the dashboard visualizes the distribution and availability of key malaria control resources, including rapid diagnostic tests (RDTs), artemisinin-based combination therapies (ACTs), and insecticide-treated bed nets (ITNs), allowing users to evaluate disease burden alongside healthcare resource allocation and intervention coverage. ",
                                 style={
-                                    "fontSize": "17px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
                                 },
                             ),
 
-                            html.P(
-                                "This integrated approach supports investigations into malaria and other febrile illnesses by identifying transmission hotspots, assessing preparedness, and exploring the environmental and operational factors influencing disease dynamics. The inclusion of commodity stock monitoring aligns with WHO recommendations for integrated malaria surveillance systems that combine epidemiologic, environmental, and supply chain data.",
+                            html.P("This integrated approach supports investigations into malaria and other febrile illnesses by identifying transmission hotspots, assessing preparedness, and exploring the environmental and operational factors influencing disease dynamics. The inclusion of commodity stock monitoring aligns with WHO recommendations for integrated malaria surveillance systems that combine epidemiologic, environmental, and supply chain data. ",
                                 style={
-                                    "fontSize": "17px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "20px",
                                 },
                             ),
 
-                            html.P(
-                                "This project is in collaboration between researchers from Indiana University School of Medicine [IUSM] and Indiana University Indianapolis [IUI] (Indianapolis, Indiana, USA), Jaramogi Oginga Odinga University of Science and Technology [JOOUST] (Bondo, Kenya), and Siaya County Public Health Department. See the Project Contributors tab for more information. ",
+                            html.P("This project is in collaboration between researchers from Indiana University School of Medicine [IUSM] and Indiana University Indianapolis [IUI] (Indianapolis, Indiana, USA), Jaramogi Oginga Odinga University of Science and Technology [JOOUST] (Bondo, Kenya), and Siaya County Public Health Department. See the Project Contributors tab for more information. ",
                                 style={
-                                    "fontSize": "17px",
+                                    "fontSize": "20px",
                                     "lineHeight": "1.8",
                                     "color": TEXT,
                                     "marginBottom": "0",
                                 },
                             ),
-
                         ],
 
-                        style={
-                            "maxWidth": "1150px",
-                        },
+                        style={"maxWidth": "1150px",},
                     ),
-
                 ],
+                style={"padding": "30px",},
 
-                style={
-                    "padding": "30px",
-                },
-            ),
-
-            style=CARD_STYLE,
-
-            className="mb-4",
-        ),
-
-
-        # =================================================
-        # KEY FEATURES
-        # =================================================
-
-        dbc.Card(
-            dbc.CardBody(
+                            dbc.CardBody(
                 [
-
                     html.H4(
                         "Key Features: ",
                         className="fw-bold mb-3",
-                        style={
-                            "color": TEXT,
-                            "fontSize": "22px",
-                        },
+                        style={"color": TEXT, "fontSize": "22px",},
                     ),
 
                     html.Div(
                         [
-
                             html.Ul(
                                 [
-
-                                    html.Li(
-                                        "Malaria surveillance and disease burden monitoring"
-                                    ),
-
-                                    html.Li(
-                                        "Climate and environmental data integration"
-                                    ),
-
-                                    html.Li(
-                                        "Commodity stock monitoring (RDTs, ACTs, ITNs)"
-                                    ),
-
-                                    html.Li(
-                                        "Interactive visualizations and forecasting tools"
-                                    ),
-
-                                    html.Li(
-                                        "Decision-support for public health planning"
-                                    ),
-
+                                    html.Li("Malaria surveillance and disease burden monitoring"),
+                                    html.Li("Climate and environmental data integration"),
+                                    html.Li("Commodity stock monitoring (RDTs, ACTs, ITNs)"),
+                                    html.Li("Interactive visualizations and forecasting tools"),
+                                    html.Li("Decision-support for public health planning"),
                                 ],
 
                                 style={
@@ -194,12 +140,61 @@ layout = dbc.Container(
                     "padding": "26px 30px",
                 },
             ),
-
+                
+            ),
             style=CARD_STYLE,
-
             className="mb-4",
         ),
 
+        # Key features parts
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4(
+                        "Key Features: ",
+                        className="fw-bold mb-3",
+                        style={"color": TEXT, "fontSize": "22px",},
+                    ),
+
+                    html.Div(
+                        [
+                            html.Ul(
+                                [
+                                    html.Li("Malaria surveillance and disease burden monitoring"),
+                                    html.Li("Climate and environmental data integration"),
+                                    html.Li("Commodity stock monitoring (RDTs, ACTs, ITNs)"),
+                                    html.Li("Interactive visualizations and forecasting tools"),
+                                    html.Li("Decision-support for public health planning"),
+                                ],
+
+                                style={
+                                    "fontSize": "17px",
+                                    "lineHeight": "2",
+                                    "color": TEXT,
+                                    "marginBottom": "0",
+                                    "paddingLeft": "22px",
+                                },
+                            ),
+
+                        ],
+
+                        style={
+                            "backgroundColor": PANEL_BG,
+                            "border": f"1px solid {BORDER}",
+                            "borderRadius": "8px",
+                            "padding": "20px 24px",
+                        },
+                    ),
+
+                ],
+
+                style={
+                    "padding": "26px 30px",
+                },
+            ),
+            style=CARD_STYLE,
+            className="mb-4",
+        ),
     ],
 
     fluid=True,
