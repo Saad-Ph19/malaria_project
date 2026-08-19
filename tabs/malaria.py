@@ -8,10 +8,7 @@ import numpy as np
 import glob
 import os
 
-# =========================================================
 # DASHBOARD THEME
-# =========================================================
-
 PRIMARY = "#274C77"
 PRIMARY_DARK = "#1F3B5B"
 TEXT = "#1F2937"
@@ -115,7 +112,6 @@ df["Non_Malarial_Fever_Percent"] = np.where(
     np.nan
 )
 
-
 # Fever / RDT / ACT Summary by Age Group and Year
 # Always displays ALL subcounties and ALL years
 age_summary = df.copy()
@@ -174,7 +170,6 @@ age_summary["RDT_Neg_5plus"] = (
     ).fillna(0)
 )
 
-
 # Total RDT tested = positive + negative
 age_summary["RDT_Tested_U5"] = (
     age_summary["RDT_Pos_U5"]
@@ -205,7 +200,7 @@ year_age_summary = (
 )
 
 
-####
+#===================================================
 # Malaria Estimated Prevalence by Age Group and Year
 prevalence_data = df.copy()
 
@@ -332,11 +327,8 @@ prevalence_long = prevalence_long.sort_values(
 )
 
 
-# ---------------------------------------------------------#
-# ---------------------------------------------------------#
+# =========================================================
 # SANKEY HELPERS
-# ---------------------------------------------------------
-
 def format_sankey_value(value):
     if value >= 1_000_000:
         return f"{value / 1_000_000:.2f}M"
@@ -356,81 +348,21 @@ def format_sankey_label(name, value, total):
 
 
 def create_sankey_figure(data):
-    """
-    Create a consistent Sankey diagram for the current malaria filters.
-
-    Age-group percentages are calculated against all fever cases.
-    RDT outcome percentages are calculated within the corresponding age group.
-    """
-
     # Fever cases
-    under5_cases = (
-        pd.to_numeric(
-            data["Cases.Fever < 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
-
-    over5_cases = (
-        pd.to_numeric(
-            data["Cases.Fever >= 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
+    under5_cases = (pd.to_numeric(data["Cases.Fever < 5"],errors="coerce").fillna(0).sum())
+    over5_cases = (pd.to_numeric(data["Cases.Fever >= 5"],errors="coerce").fillna(0).sum())
 
     # RDT positive
-    positive_under5 = (
-        pd.to_numeric(
-            data["Cases.Fever.with.RDT.Positive < 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
-
-    positive_over5 = (
-        pd.to_numeric(
-            data["Cases.Fever.with.RDT.Positive >= 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
+    positive_under5 = (pd.to_numeric(data["Cases.Fever.with.RDT.Positive < 5"],errors="coerce").fillna(0).sum())
+    positive_over5 = (pd.to_numeric(data["Cases.Fever.with.RDT.Positive >= 5"],errors="coerce").fillna(0).sum())
 
     # RDT negative
-    negative_under5 = (
-        pd.to_numeric(
-            data["Cases.Fever.with.RDT. negative < 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
-
-    negative_over5 = (
-        pd.to_numeric(
-            data["Cases.Fever.with.RDT. negative >= 5"],
-            errors="coerce"
-        )
-        .fillna(0)
-        .sum()
-    )
+    negative_under5 = (pd.to_numeric(data["Cases.Fever.with.RDT. negative < 5"],errors="coerce").fillna(0).sum())
+    negative_over5 = (pd.to_numeric(data["Cases.Fever.with.RDT. negative >= 5"],errors="coerce").fillna(0).sum())
 
     # Not tested
-    not_tested_under5 = max(
-        under5_cases - positive_under5 - negative_under5,
-        0
-    )
-
-    not_tested_over5 = max(
-        over5_cases - positive_over5 - negative_over5,
-        0
-    )
-
+    not_tested_under5 = max(under5_cases - positive_under5 - negative_under5,0)
+    not_tested_over5 = max(over5_cases - positive_over5 - negative_over5,0)
     total_fever_cases = under5_cases + over5_cases
 
     # Node labels with counts and percentages
@@ -608,18 +540,13 @@ def create_sankey_figure(data):
 
     return sankey_fig
 
-
 # Initial Sankey
 fever_age_fig = create_sankey_figure(df)
 
-# Stocks
 # =========================================================
 # COMMODITY STOCK + WEIGHT-BASED ACT DATA
-# =========================================================
-
 # Aggregate all available records by month.
-# This prevents multiple bars from being drawn on top of
-# each other for the same month.
+# This prevents multiple bars from being drawn on top of each other for the same month.
 commodity_monthly = (
     df
     .groupby("Month", as_index=False)
@@ -650,13 +577,9 @@ commodity_monthly = (
     .sort_values("Month")
 )
 
-
 # =========================================================
 # COMMODITY STOCK LEVELS
-# =========================================================
-
 stock_fig = go.Figure()
-
 
 stock_fig.add_trace(
     go.Bar(
@@ -754,10 +677,7 @@ stock_fig.update_yaxes(
 
 # =========================================================
 # WEIGHT-BASED ACT DISTRIBUTION
-# =========================================================
-
 weight_fig = go.Figure()
-
 
 weight_fig.add_trace(
     go.Bar(
@@ -911,21 +831,13 @@ bednet_fig.update_layout(
 
 # Proportion of Non-Malarial Fever Cases
 # Always displays ALL subcounties and ALL years
-
 non_malaria_data = df.copy()
 
 # Shorten the Subcounty names ONLY for this visualization
-non_malaria_data["Subcounty"] = (
-    non_malaria_data["Subcounty"]
-    .astype(str)
-    .str.replace(" Sub County", "", regex=False)
-    .str.strip()
-)
+non_malaria_data["Subcounty"] = (non_malaria_data["Subcounty"].astype(str).str.replace(" Sub County", "", regex=False).str.strip())
 
 # Sort data by Subcounty and date
-non_malaria_data = non_malaria_data.sort_values(
-    ["Subcounty", "Date"]
-)
+non_malaria_data = non_malaria_data.sort_values(["Subcounty", "Date"])
 
 # Create small-multiple line chart
 non_malaria_fig = px.line(
@@ -1025,7 +937,7 @@ non_malaria_fig.add_annotation(
     font=dict(size=14)
 )
 
-###
+#====================================================
 # Create 2 x 2 visualization
 age_group_fig = make_subplots(
     rows=2,
@@ -1049,7 +961,7 @@ under5_color = "#F8766D"
 over5_color = "#00BFC4"
 
 
-# 1. Subjects with Fever
+# Subjects with Fever
 age_group_fig.add_trace(
     go.Bar(
         x=years,
@@ -1090,7 +1002,7 @@ age_group_fig.add_trace(
     col=1
 )
 
-# 2. Subjects RDT Tested
+# Subjects RDT Tested
 age_group_fig.add_trace(
     go.Bar(
         x=years,
@@ -1133,7 +1045,7 @@ age_group_fig.add_trace(
     col=2
 )
 
-# 3. Subjects with RDT+
+# Subjects with RDT+
 age_group_fig.add_trace(
     go.Bar(
         x=years,
@@ -1260,7 +1172,7 @@ age_group_fig.update_yaxes(
     col=2
 )
 
-# --------------------------------------------------------- #
+#===========================================================
 # Prevalence Visualization
 prevalence_fig = px.line(
     prevalence_long,
@@ -1403,7 +1315,7 @@ prevalence_fig.add_annotation(
 )
 
 
-# ---------------------------------------------------------#
+#=====================================================
 # Proportion of Non-Malarial Fever
 # by Year, Subcounty, and Age Group
 
@@ -1520,7 +1432,7 @@ non_malaria_age_long = pd.concat(
     ignore_index=True
 )
 
-# ----
+# ============================================
 # Visualization
 non_malaria_age_fig = px.bar(
     non_malaria_age_long,
@@ -1653,10 +1565,9 @@ non_malaria_age_fig.add_annotation(
     )
 )
 
-# ---------------------------------------------------------#
+#=====================================================
 # Distribution of Non-Malarial Fever
 # by Subcounty and Age Group
-
 box_data = df.copy()
 
 # Clean subcounty names for display
@@ -1835,25 +1746,30 @@ non_malaria_box_fig.update_layout(
     )
 )
 
-
 # =========================================================
 # LAYOUT
-# =========================================================
-
 layout = dbc.Container(
     [
-
         # =================================================
         # MALARIA SURVEILLANCE OVERVIEW + FILTERS
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
-
-                    html.H4(
+                    #Title
+                    html.H3(
                         "Malaria Surveillance Overview",
                         className="fw-bold mb-1",
-                        style={"color": TEXT,},
+                        style={"color": "#274C77","fontSize": "28px",},
+                    ),
+                    # Small divider under title
+                    html.Div(
+                        style={
+                            "width": "55px",
+                            "height": "3px",
+                            "backgroundColor": "#274C77",
+                            "borderRadius": "2px",
+                            "marginBottom": "24px",
+                        }
                     ),
 
                     html.P(
@@ -1868,9 +1784,9 @@ layout = dbc.Container(
                         "indicators by subcounty and year.",
                         className="mb-4",
                         style={
-                            "color": TEXT_MUTED,
-                            "fontSize": "22px",
-                            "lineHeight": "1.7",
+                            "color": "#1F2937",
+                            "fontSize": "20px",
+                            "lineHeight": "1.8",
                         },
                     ),
 
@@ -1887,7 +1803,7 @@ layout = dbc.Container(
                                                 className="fw-semibold mb-2",
                                                 style={
                                                     "color": TEXT,
-                                                    "fontSize": "14px",
+                                                    "fontSize": "18px",
                                                 },
                                             ),
 
@@ -1933,7 +1849,7 @@ layout = dbc.Container(
                                                 className="fw-semibold mb-2",
                                                 style={
                                                     "color": TEXT,
-                                                    "fontSize": "14px",
+                                                    "fontSize": "18px",
                                                 },
                                             ),
 
