@@ -42,12 +42,12 @@ PAGE_BG = "#F5F7F9"          # Page background
 CARD_BG = "#FFFFFF"          # Card background
 INSIGHT_BG = "#F8FAFC"       # Insight panel background
 MAP_COLORS = [
-    "#003F5C",
-    "#2F4B7C",
-    "#665191",
-    "#A05195",
-    "#D45087",
-    "#F95D6A",
+    "#2563EB",  # Alego Usonga
+    "#059669",  # Bondo
+    "#D97706",  # Gem
+    "#DC2626",  # Rarieda
+    "#7C3AED",  # Ugenya
+    "#0891B2",  # Ugunja
 ]
 
 #population data
