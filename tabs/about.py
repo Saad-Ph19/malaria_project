@@ -89,7 +89,7 @@ layout = dbc.Container(
                                 "lineHeight": "1.8",
                                 "color": TEXT,
                                 "marginBottom": "20px",
-                           }
+                           },
                     ),
                     
                     html.Ul([
@@ -103,15 +103,15 @@ layout = dbc.Container(
                                 "color": TEXT,
                                 "marginBottom": "20px",
                                 "paddingLeft": "45px",
-                            }
+                            },
                     ),
                     html.P("In case of questions and/or requests, please contact PI Felix Pabon-Rodriguez via email at fpabonr@iu.edu.",className="text-muted",
                            style={
-                            "fontSize": "20px",
-                            "lineHeight": "1.8",
-                            "color": TEXT,
-                            "marginBottom": "20px",
-                           }
+                                    "fontSize": "20px",
+                                    "lineHeight": "1.8",
+                                    "color": TEXT,
+                                    "marginBottom": "20px",
+                           },
                     ),
                 ]
             ),
