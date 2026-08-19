@@ -129,6 +129,6 @@ layout = dbc.Container(
     style={
         "backgroundColor": PAGE_BG,
         "padding": "24px",
-        "minHeight": "100vh",
+        "minHeight": "80vh",
     },
 )
