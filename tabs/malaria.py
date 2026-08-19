@@ -1884,6 +1884,139 @@ layout = dbc.Container(
             className="mb-4",
         ),
 
+        # =================================================
+        # COMMODITY / ACT DISTRIBUTION
+        # =================================================
+        dbc.Row(
+            [
+        
+                # =================================================
+                # COMMODITY STOCK LEVELS
+                # =================================================
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+        
+                                html.H5(
+                                    "Commodity Stock Levels",
+                                    className="fw-bold mb-1",
+                                    style={
+                                        "color": TEXT,
+                                    },
+                                ),
+        
+                                html.P(
+                                    "Monthly mRDT and ACT stock availability.",
+                                    className="mb-3",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                    },
+                                ),
+        
+                                dcc.Graph(
+                                    id="malaria-stock",
+                                    figure=stock_fig,
+        
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+        
+                                    style={
+                                        "height": "450px",
+                                        "width": "100%",
+                                    },
+                                ),
+        
+                            ],
+        
+                            style={
+                                "padding": "22px",
+                            },
+                        ),
+        
+                        style={
+                            **CARD_STYLE,
+        
+                            # IMPORTANT:
+                            # fixed/controlled card height
+                            "height": "550px",
+                        },
+                    ),
+        
+                    lg=6,
+                    className="mb-4",
+                ),
+        
+        
+                # =================================================
+                # WEIGHT-BASED ACT DISTRIBUTION
+                # =================================================
+                dbc.Col(
+                    dbc.Card(
+                        dbc.CardBody(
+                            [
+        
+                                html.H5(
+                                    "Weight-Based ACT Distribution",
+                                    className="fw-bold mb-1",
+                                    style={
+                                        "color": TEXT,
+                                    },
+                                ),
+        
+                                html.P(
+                                    "Monthly ACT distribution across weight categories "
+                                    "and corresponding age guides.",
+                                    className="mb-3",
+                                    style={
+                                        "color": TEXT_MUTED,
+                                        "fontSize": "14px",
+                                    },
+                                ),
+        
+                                dcc.Graph(
+                                    id="malaria-weight",
+                                    figure=weight_fig,
+        
+                                    config={
+                                        "displayModeBar": False,
+                                        "responsive": True,
+                                    },
+        
+                                    style={
+                                        "height": "450px",
+                                        "width": "100%",
+                                    },
+                                ),
+        
+                            ],
+        
+                            style={
+                                "padding": "22px",
+                            },
+                        ),
+        
+                        style={
+                            **CARD_STYLE,
+        
+                            # Same height as left card
+                            "height": "550px",
+                        },
+                    ),
+        
+                    lg=6,
+                    className="mb-4",
+                ),
+        
+            ],
+        
+            # Do NOT use align-items-stretch here
+            className="mb-2",
+        ),
+
 
         # =================================================
         # NON-MALARIAL FEVER OVER TIME
@@ -2088,141 +2221,6 @@ layout = dbc.Container(
             style=CARD_STYLE,
             className="mb-4",
         ),
-
-
-        # =================================================
-        # COMMODITY / ACT DISTRIBUTION
-        # =================================================
-        dbc.Row(
-            [
-        
-                # =================================================
-                # COMMODITY STOCK LEVELS
-                # =================================================
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            [
-        
-                                html.H5(
-                                    "Commodity Stock Levels",
-                                    className="fw-bold mb-1",
-                                    style={
-                                        "color": TEXT,
-                                    },
-                                ),
-        
-                                html.P(
-                                    "Monthly mRDT and ACT stock availability.",
-                                    className="mb-3",
-                                    style={
-                                        "color": TEXT_MUTED,
-                                        "fontSize": "14px",
-                                    },
-                                ),
-        
-                                dcc.Graph(
-                                    id="malaria-stock",
-                                    figure=stock_fig,
-        
-                                    config={
-                                        "displayModeBar": False,
-                                        "responsive": True,
-                                    },
-        
-                                    style={
-                                        "height": "450px",
-                                        "width": "100%",
-                                    },
-                                ),
-        
-                            ],
-        
-                            style={
-                                "padding": "22px",
-                            },
-                        ),
-        
-                        style={
-                            **CARD_STYLE,
-        
-                            # IMPORTANT:
-                            # fixed/controlled card height
-                            "height": "550px",
-                        },
-                    ),
-        
-                    lg=6,
-                    className="mb-4",
-                ),
-        
-        
-                # =================================================
-                # WEIGHT-BASED ACT DISTRIBUTION
-                # =================================================
-                dbc.Col(
-                    dbc.Card(
-                        dbc.CardBody(
-                            [
-        
-                                html.H5(
-                                    "Weight-Based ACT Distribution",
-                                    className="fw-bold mb-1",
-                                    style={
-                                        "color": TEXT,
-                                    },
-                                ),
-        
-                                html.P(
-                                    "Monthly ACT distribution across weight categories "
-                                    "and corresponding age guides.",
-                                    className="mb-3",
-                                    style={
-                                        "color": TEXT_MUTED,
-                                        "fontSize": "14px",
-                                    },
-                                ),
-        
-                                dcc.Graph(
-                                    id="malaria-weight",
-                                    figure=weight_fig,
-        
-                                    config={
-                                        "displayModeBar": False,
-                                        "responsive": True,
-                                    },
-        
-                                    style={
-                                        "height": "450px",
-                                        "width": "100%",
-                                    },
-                                ),
-        
-                            ],
-        
-                            style={
-                                "padding": "22px",
-                            },
-                        ),
-        
-                        style={
-                            **CARD_STYLE,
-        
-                            # Same height as left card
-                            "height": "550px",
-                        },
-                    ),
-        
-                    lg=6,
-                    className="mb-4",
-                ),
-        
-            ],
-        
-            # Do NOT use align-items-stretch here
-            className="mb-2",
-        ),
-
 
         # =================================================
         # BED NET DISTRIBUTION
