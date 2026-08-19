@@ -245,10 +245,20 @@ layout = dbc.Container(
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H4(
+                    html.H3(
                         "Climate Spatial Overview",
                         className="fw-bold mb-1",
-                        style={"color": TEXT,},
+                        style={"color": "#274C77","fontSize": "28px",},
+                    ),
+                    # Small divider under title
+                    html.Div(
+                        style={
+                            "width": "55px",
+                            "height": "3px",
+                            "backgroundColor": "#274C77",
+                            "borderRadius": "2px",
+                            "marginBottom": "24px",
+                        }
                     ),
 
                     html.P(
@@ -260,9 +270,9 @@ layout = dbc.Container(
                         "compare these patterns across subcounties and examine how they change over time.",
                         className="mb-4",
                         style={
-                            "color": TEXT_MUTED,
-                            "fontSize": "22px",
-                            "lineHeight": "1.7",
+                            "color": "#1F2937",
+                            "fontSize": "20px",
+                            "lineHeight": "1.8",
                             #"maxWidth": "1050px",
                         },
                     ),
@@ -277,7 +287,7 @@ layout = dbc.Container(
                                         className="fw-semibold mb-2",
                                         style={
                                             "color": TEXT,
-                                            "fontSize": "14px",
+                                            "fontSize": "18px",
                                         },
                                     ),
 
@@ -327,7 +337,7 @@ layout = dbc.Container(
                                         className="fw-semibold mb-2",
                                         style={
                                             "color": TEXT,
-                                            "fontSize": "14px",
+                                            "fontSize": "18px",
                                         },
                                     ),
 
