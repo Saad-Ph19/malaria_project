@@ -126,4 +126,10 @@ layout = dbc.Container(
             className="mb-4",
         ),
     ],
+    fluid=True,
+    style={
+        "backgroundColor": PAGE_BG,
+        "padding": "24px",
+        "minHeight": "100vh",
+    },
 )
