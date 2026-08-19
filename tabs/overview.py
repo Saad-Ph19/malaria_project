@@ -809,7 +809,7 @@ layout = dbc.Container(
                                     dbc.CardBody(
                                         [
                                             html.H6(
-                                                "Key Insights",
+                                                "Key Insights from this Visualization",
                                                 className="fw-bold mb-3",
                                                 style={"color": PRIMARY,},
                                             ),
@@ -1079,7 +1079,7 @@ layout = dbc.Container(
                                     dbc.CardBody(
                                         [
                                             html.H6(
-                                                "Key Insights",
+                                                "Key Insights from this Visualization",
                                                 className="fw-bold mb-3",
                                                 style={"color": PRIMARY,},
                                             ),
@@ -1211,7 +1211,7 @@ layout = dbc.Container(
                                     dbc.CardBody(
                                         [
                                             html.H6(
-                                                "Key Insights",
+                                                "Key Insights from this Visualization",
                                                 className="fw-bold mb-3",
                                                 style={"color": PRIMARY,},
                                             ),
