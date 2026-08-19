@@ -613,31 +613,99 @@ def create_sankey_figure(data):
 fever_age_fig = create_sankey_figure(df)
 
 # Stocks
+# =========================================================
+# COMMODITY STOCK + WEIGHT-BASED ACT DATA
+# =========================================================
+
+# Aggregate all available records by month.
+# This prevents multiple bars from being drawn on top of
+# each other for the same month.
+commodity_monthly = (
+    df
+    .groupby("Month", as_index=False)
+    .agg(
+        Stock_mRDTs=("Stock mRDTs", "sum"),
+        Stock_ACTs=("Stock ACTs", "sum"),
+
+        Weight_5_15=(
+            "CHEW Weight band 5 to <15 kg  (<3 yrs)",
+            "sum"
+        ),
+
+        Weight_15_25=(
+            "CHEW Weight band 15 to <25 kg  (3 to <8 yrs)",
+            "sum"
+        ),
+
+        Weight_25_35=(
+            "CHEW Weight band 25 to <35 kg (8 to <12 yrs)",
+            "sum"
+        ),
+
+        Weight_35plus=(
+            "CHEW Weight band ≥ 35 kg (≥ 12 yrs)",
+            "sum"
+        ),
+    )
+    .sort_values("Month")
+)
+
+
+# =========================================================
+# COMMODITY STOCK LEVELS
+# =========================================================
+
 stock_fig = go.Figure()
 
-stock_fig.add_trace(
-    go.Bar(
-        x=df["Month"],
-        y=df["Stock mRDTs"],
-        name="mRDT Stock",
-        marker_color="#527A9B"
-    )
-)
 
 stock_fig.add_trace(
     go.Bar(
-        x=df["Month"],
-        y=df["Stock ACTs"],
-        name="ACT Stock",
-        marker_color="#688B78"
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Stock_mRDTs"],
+
+        name="mRDT Stock",
+
+        marker_color="#527A9B",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "mRDT Stock: %{y:,.0f}"
+            "<extra></extra>"
+        ),
     )
 )
+
+
+stock_fig.add_trace(
+    go.Bar(
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Stock_ACTs"],
+
+        name="ACT Stock",
+
+        marker_color="#688B78",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "ACT Stock: %{y:,.0f}"
+            "<extra></extra>"
+        ),
+    )
+)
+
 
 stock_fig.update_layout(
     barmode="group",
     template="plotly_white",
+
     height=450,
-    margin=dict(l=55, r=20, t=20, b=50),
+
+    margin=dict(
+        l=55,
+        r=20,
+        t=45,
+        b=55
+    ),
 
     font=dict(
         family="Segoe UI",
@@ -653,13 +721,29 @@ stock_fig.update_layout(
         x=0.5,
         xanchor="center",
         y=1.08,
+        yanchor="bottom",
     ),
+
+    bargap=0.25,
+    bargroupgap=0.08,
 )
+
 
 stock_fig.update_xaxes(
     title_text="Month",
+
+    tickmode="array",
+    tickvals=list(range(1, 13)),
+
+    ticktext=[
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+    ],
+
     showgrid=False,
 )
+
 
 stock_fig.update_yaxes(
     title_text="Stock level (count)",
@@ -668,50 +752,97 @@ stock_fig.update_yaxes(
 )
 
 
-# Weight-Based ACT Distribution
+# =========================================================
+# WEIGHT-BASED ACT DISTRIBUTION
+# =========================================================
+
 weight_fig = go.Figure()
+
 
 weight_fig.add_trace(
     go.Bar(
         name="5 to <15 kg (<3 yrs old)",
-        x=df["Month"],
-        y=df["CHEW Weight band 5 to <15 kg  (<3 yrs)"],
-        marker_color="#6C8EBF"
+
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Weight_5_15"],
+
+        marker_color="#6C8EBF",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "5 to <15 kg: %{y:,.0f}"
+            "<extra></extra>"
+        ),
     )
 )
+
 
 weight_fig.add_trace(
     go.Bar(
         name="15 to <25 kg (3 to <8 yrs old)",
-        x=df["Month"],
-        y=df["CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"],
-        marker_color="#7F9F8D"
+
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Weight_15_25"],
+
+        marker_color="#7F9F8D",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "15 to <25 kg: %{y:,.0f}"
+            "<extra></extra>"
+        ),
     )
 )
+
 
 weight_fig.add_trace(
     go.Bar(
         name="25 to <35 kg (8 to <12 yrs old)",
-        x=df["Month"],
-        y=df["CHEW Weight band 25 to <35 kg (8 to <12 yrs)"],
-        marker_color="#B5A07A"
+
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Weight_25_35"],
+
+        marker_color="#B5A07A",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "25 to <35 kg: %{y:,.0f}"
+            "<extra></extra>"
+        ),
     )
 )
+
 
 weight_fig.add_trace(
     go.Bar(
         name="≥35 kg (≥12 yrs old)",
-        x=df["Month"],
-        y=df["CHEW Weight band ≥ 35 kg (≥ 12 yrs)"],
-        marker_color="#8A6F73"
+
+        x=commodity_monthly["Month"],
+        y=commodity_monthly["Weight_35plus"],
+
+        marker_color="#8A6F73",
+
+        hovertemplate=(
+            "Month: %{x}<br>"
+            "≥35 kg: %{y:,.0f}"
+            "<extra></extra>"
+        ),
     )
 )
+
 
 weight_fig.update_layout(
     barmode="stack",
     template="plotly_white",
+
     height=450,
-    margin=dict(l=55, r=20, t=20, b=50),
+
+    margin=dict(
+        l=55,
+        r=20,
+        t=45,
+        b=55
+    ),
 
     font=dict(
         family="Segoe UI",
@@ -726,14 +857,29 @@ weight_fig.update_layout(
         orientation="h",
         x=0.5,
         xanchor="center",
-        y=1.14,
+        y=1.10,
+        yanchor="bottom",
     ),
+
+    bargap=0.25,
 )
+
 
 weight_fig.update_xaxes(
     title_text="Month",
+
+    tickmode="array",
+    tickvals=list(range(1, 13)),
+
+    ticktext=[
+        "Jan", "Feb", "Mar", "Apr",
+        "May", "Jun", "Jul", "Aug",
+        "Sep", "Oct", "Nov", "Dec"
+    ],
+
     showgrid=False,
 )
+
 
 weight_fig.update_yaxes(
     title_text="ACT distribution (count)",
@@ -2287,6 +2433,7 @@ layout = dbc.Container(
         Input("malaria-year-dropdown", "value"),
     ]
 )
+
 def update_malaria(subcounty, year):
 
     filtered_df = df.copy()
@@ -2303,6 +2450,39 @@ def update_malaria(subcounty, year):
             filtered_df["Year"].astype(str) == str(year)
         ]
 
+    # =====================================================
+    # AGGREGATE COMMODITY DATA BY MONTH
+    # =====================================================
+    
+    commodity_filtered = (
+        filtered_df
+        .groupby("Month", as_index=False)
+        .agg(
+            Stock_mRDTs=("Stock mRDTs", "sum"),
+            Stock_ACTs=("Stock ACTs", "sum"),
+    
+            Weight_5_15=(
+                "CHEW Weight band 5 to <15 kg  (<3 yrs)",
+                "sum"
+            ),
+    
+            Weight_15_25=(
+                "CHEW Weight band 15 to <25 kg  (3 to <8 yrs)",
+                "sum"
+            ),
+    
+            Weight_25_35=(
+                "CHEW Weight band 25 to <35 kg (8 to <12 yrs)",
+                "sum"
+            ),
+    
+            Weight_35plus=(
+                "CHEW Weight band ≥ 35 kg (≥ 12 yrs)",
+                "sum"
+            ),
+        )
+        .sort_values("Month")
+    )
 
     # =====================================================
     # SANKEY
@@ -2321,8 +2501,8 @@ def update_malaria(subcounty, year):
 
     stock_fig.add_trace(
         go.Bar(
-            x=filtered_df["Month"],
-            y=filtered_df["Stock mRDTs"],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Stock_mRDTs"],
             name="mRDT Stock",
             marker_color="#527A9B"
         )
@@ -2330,8 +2510,8 @@ def update_malaria(subcounty, year):
 
     stock_fig.add_trace(
         go.Bar(
-            x=filtered_df["Month"],
-            y=filtered_df["Stock ACTs"],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Stock_ACTs"],
             name="ACT Stock",
             marker_color="#688B78"
         )
@@ -2381,10 +2561,8 @@ def update_malaria(subcounty, year):
     weight_fig.add_trace(
         go.Bar(
             name="5 to <15 kg (<3 yrs old)",
-            x=filtered_df["Month"],
-            y=filtered_df[
-                "CHEW Weight band 5 to <15 kg  (<3 yrs)"
-            ],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Weight_5_15"],
             marker_color="#6C8EBF"
         )
     )
@@ -2393,9 +2571,8 @@ def update_malaria(subcounty, year):
         go.Bar(
             name="15 to <25 kg (3 to <8 yrs old)",
             x=filtered_df["Month"],
-            y=filtered_df[
-                "CHEW Weight band 15 to <25 kg  (3 to <8 yrs)"
-            ],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Weight_15_25"],
             marker_color="#7F9F8D"
         )
     )
@@ -2403,10 +2580,8 @@ def update_malaria(subcounty, year):
     weight_fig.add_trace(
         go.Bar(
             name="25 to <35 kg (8 to <12 yrs old)",
-            x=filtered_df["Month"],
-            y=filtered_df[
-                "CHEW Weight band 25 to <35 kg (8 to <12 yrs)"
-            ],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Weight_25_35"],
             marker_color="#B5A07A"
         )
     )
@@ -2414,10 +2589,8 @@ def update_malaria(subcounty, year):
     weight_fig.add_trace(
         go.Bar(
             name="≥35 kg (≥12 yrs old)",
-            x=filtered_df["Month"],
-            y=filtered_df[
-                "CHEW Weight band ≥ 35 kg (≥ 12 yrs)"
-            ],
+            x=commodity_filtered["Month"],
+            y=commodity_filtered["Weight_35plus"],
             marker_color="#8A6F73"
         )
     )
