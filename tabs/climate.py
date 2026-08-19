@@ -360,8 +360,7 @@ layout = dbc.Container(
                                                 "value":
                                                     year,
                                             }
-                                            for year
-                                            in years
+                                            for year in sorted(years, reverse=True)
                                         ],
 
                                         value="ALL",
@@ -417,8 +416,9 @@ layout = dbc.Container(
                     ),
         
                     html.P(
-                        "Monthly climate and environmental conditions for the selected subcounty."
-                        " Use the filters below to explore data by specific subcounty and year.",
+                        "Explore monthly climate and environmental conditions for each subcounty in "
+                        "Siaya County. Select a subcounty and year using the filters below to view "
+                        "location-specific climate patterns and trends. ",
                         className="mb-4",
                         style={
                             "color": "#1F2937",
@@ -489,8 +489,7 @@ layout = dbc.Container(
                                                 "label": str(year),
                                                 "value": year,
                                             }
-        
-                                            for year in years
+                                            for year in sorted(years, reverse=True)
                                         ],
         
                                         value="ALL",
