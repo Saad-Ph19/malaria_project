@@ -403,18 +403,27 @@ layout = dbc.Container(
                     html.H4(
                         "Climate Trends",
                         className="fw-bold mb-1",
+                        style={"color": "#274C77","fontSize": "28px",},
+                    ),
+                    # Small divider under title
+                    html.Div(
                         style={
-                            "color": TEXT,
-                        },
+                            "width": "55px",
+                            "height": "3px",
+                            "backgroundColor": "#274C77",
+                            "borderRadius": "2px",
+                            "marginBottom": "24px",
+                        }
                     ),
         
                     html.P(
                         "Monthly climate and environmental conditions for the selected subcounty."
-                        " Use the filters below to explore data by subcounty and year.",
+                        " Use the filters below to explore data by specific subcounty and year.",
                         className="mb-4",
                         style={
-                            "color": TEXT_MUTED,
+                            "color": "#1F2937",
                             "fontSize": "20px",
+                            "lineHeight": "1.8",
                         },
                     ),
         
