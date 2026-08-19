@@ -73,7 +73,6 @@ layout = dbc.Container(
                             html.Strong("App Developer: "),
                             "Saad Pharis"]),
                         ], 
-                            className="text-muted",
                             style={                                            
                                 "fontSize": "20px",
                                 "lineHeight": "1.8",
