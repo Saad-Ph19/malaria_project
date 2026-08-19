@@ -128,48 +128,47 @@ subcounty_gdf["Display_Name"] = (subcounty_gdf["subcounty"].str.replace(" Sub Co
 
 
 # =========================================================
-# SUBCOUNTY INFORMATION
 subcounty_information = {
     "Alego Usonga": {
-        "Agriculture": "Mixed crop and livestock farming",
-        "Economy": "Agriculture, trade, and services centered around Siaya town",
-        "Geography": "Central Siaya County and home to Siaya town",
-        "Topography": "Predominantly gently undulating inland terrain",
+        "Agriculture": "Mixed crop cultivation and livestock farming",
+        "Economy": "Agriculture, commerce, government services, and trade centered around Siaya town",
+        "Geography": "Central Siaya County and location of the county headquarters (Siaya town)",
+        "Topography": "Gently rolling inland terrain with predominantly agricultural landscapes",
     },
 
     "Bondo": {
-        "Agriculture": "Crop production, livestock, and fisheries",
-        "Economy": "Agriculture, fishing, trade, and Lake Victoria-related economic activity",
-        "Geography": "Southwestern Siaya County along Lake Victoria",
-        "Topography": "Low-lying and gently rolling terrain toward Lake Victoria",
+        "Agriculture": "Crop production, livestock keeping, and fisheries",
+        "Economy": "Fishing, agriculture, trade, tourism, and other Lake Victoria-related activities",
+        "Geography": "Western Siaya County along Lake Victoria",
+        "Topography": "Relatively low-lying terrain with plains and gentle slopes toward the lakeshore",
     },
 
     "Gem": {
-        "Agriculture": "Mixed farming and crop production",
-        "Economy": "Agriculture, small-scale trade, and local services",
-        "Geography": "Eastern part of Siaya County",
-        "Topography": "Undulating inland landscape with agricultural areas",
+        "Agriculture": "Mixed farming with maize, legumes, and livestock production",
+        "Economy": "Agriculture, local markets, and small-scale businesses",
+        "Geography": "Eastern Siaya County bordering Kisumu County",
+        "Topography": "Undulating inland terrain characterized by agricultural land and scattered hills",
     },
 
     "Rarieda": {
-        "Agriculture": "Crop production, livestock, and fisheries",
-        "Economy": "Agriculture, fishing, livestock, and lake-related economic activity",
-        "Geography": "Southern Siaya County along Lake Victoria",
-        "Topography": "Rolling terrain descending toward the Lake Victoria shoreline",
+        "Agriculture": "Crop production, livestock keeping, and fisheries",
+        "Economy": "Fishing, agriculture, livestock production, and lakeside trade activities",
+        "Geography": "Southern Siaya County along the shores of Lake Victoria",
+        "Topography": "Rolling terrain with low-lying areas extending toward Lake Victoria",
     },
 
     "Ugenya": {
-        "Agriculture": "Mixed farming and crop production",
-        "Economy": "Agriculture, trade, and small businesses",
-        "Geography": "Northwestern Siaya County",
-        "Topography": "Gently rolling inland terrain",
+        "Agriculture": "Mixed farming with crop cultivation and livestock production",
+        "Economy": "Agriculture, trade, and small-scale enterprises",
+        "Geography": "Northwestern Siaya County near the Busia County border",
+        "Topography": "Predominantly flat to gently rolling inland terrain",
     },
 
     "Ugunja": {
         "Agriculture": "Mixed farming and crop production",
-        "Economy": "Agriculture, commerce, transport, and small businesses",
-        "Geography": "Northern-central Siaya County",
-        "Topography": "Gently undulating inland terrain",
+        "Economy": "Commerce, transportation, agriculture, and small businesses",
+        "Geography": "North-central Siaya County along major transportation corridors",
+        "Topography": "Gently undulating inland terrain with extensive agricultural activity",
     },
 }
 
@@ -538,9 +537,10 @@ def build_subcounty_information_panel(selected_subcounty):
 
     return [
         html.H4(
+            "Subcounty: "
             selected_subcounty,
             className="fw-bold mb-4",
-            style={"color": PRIMARY,"fontSize": "25px",},
+            style={"color": PRIMARY,"fontSize": "30px"},
         ),
 
         html.Div(
@@ -548,12 +548,12 @@ def build_subcounty_information_panel(selected_subcounty):
                 html.H6(
                     "Agriculture",
                     className="fw-bold mb-1",
-                    style={"color": TEXT},
+                    style={"color": TEXT, "fontSize": "25px"},
                 ),
                 html.P(
                     info["Agriculture"],
                     className="mb-3",
-                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6", "fontSize": "20px"},
                 ),
             ]
         ),
@@ -563,12 +563,12 @@ def build_subcounty_information_panel(selected_subcounty):
                 html.H6(
                     "Economy",
                     className="fw-bold mb-1",
-                    style={"color": TEXT},
+                    style={"color": TEXT, "fontSize": "25px"},
                 ),
                 html.P(
                     info["Economy"],
                     className="mb-3",
-                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6","fontSize": "20px"},
                 ),
             ]
         ),
@@ -578,12 +578,12 @@ def build_subcounty_information_panel(selected_subcounty):
                 html.H6(
                     "Geography",
                     className="fw-bold mb-1",
-                    style={"color": TEXT},
+                    style={"color": TEXT,"fontSize": "25px"},
                 ),
                 html.P(
                     info["Geography"],
                     className="mb-3",
-                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6","fontSize": "20px"},
                 ),
             ]
         ),
@@ -593,12 +593,12 @@ def build_subcounty_information_panel(selected_subcounty):
                 html.H6(
                     "Topography",
                     className="fw-bold mb-1",
-                    style={"color": TEXT},
+                    style={"color": TEXT, "fontSize": "25px"},
                 ),
                 html.P(
                     info["Topography"],
                     className="mb-0",
-                    style={"color": TEXT_MUTED, "lineHeight": "1.6"},
+                    style={"color": TEXT_MUTED, "lineHeight": "1.6", "fontSize": "20px"},
                 ),
             ]
         ),
