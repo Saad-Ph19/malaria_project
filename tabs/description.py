@@ -95,52 +95,6 @@ layout = dbc.Container(
                     ),
                 ],
                 style={"padding": "30px",},
-
-                            dbc.CardBody(
-                [
-                    html.H4(
-                        "Key Features: ",
-                        className="fw-bold mb-3",
-                        style={"color": TEXT, "fontSize": "22px",},
-                    ),
-
-                    html.Div(
-                        [
-                            html.Ul(
-                                [
-                                    html.Li("Malaria surveillance and disease burden monitoring"),
-                                    html.Li("Climate and environmental data integration"),
-                                    html.Li("Commodity stock monitoring (RDTs, ACTs, ITNs)"),
-                                    html.Li("Interactive visualizations and forecasting tools"),
-                                    html.Li("Decision-support for public health planning"),
-                                ],
-
-                                style={
-                                    "fontSize": "17px",
-                                    "lineHeight": "2",
-                                    "color": TEXT,
-                                    "marginBottom": "0",
-                                    "paddingLeft": "22px",
-                                },
-                            ),
-
-                        ],
-
-                        style={
-                            "backgroundColor": PANEL_BG,
-                            "border": f"1px solid {BORDER}",
-                            "borderRadius": "8px",
-                            "padding": "20px 24px",
-                        },
-                    ),
-
-                ],
-
-                style={
-                    "padding": "26px 30px",
-                },
-            ),
-                
             ),
             style=CARD_STYLE,
             className="mb-4",
