@@ -1715,18 +1715,16 @@ layout = dbc.Container(
                         "with transmission patterns varying across subcounties due to differences "
                         "in environmental conditions, population characteristics, healthcare access, "
                         "and malaria prevention efforts. This dashboard provides an overview of malaria-related "
-                        "fever cases, diagnostic testing, treatment outcomes, commodity availability, "
-                        "and prevention indicators across the county. "
+                        "fever cases, diagnostic testing, treatment outcomes, and commodity availability. "
                         "By comparing trends across the six subcounties, users can identify differences "
                         "in disease burden, healthcare utilization, testing practices, treatment coverage, "
                         "and resource availability. Use the filters below to explore malaria surveillance "
-                        "indicators by subcounty and year and examine how patterns change over time. ",
+                        "indicators by subcounty and year.",
                         className="mb-4",
                         style={
                             "color": TEXT_MUTED,
                             "fontSize": "22px",
                             "lineHeight": "1.7",
-                            "maxWidth": "1050px",
                         },
                     ),
 
@@ -1828,15 +1826,7 @@ layout = dbc.Container(
                                 className="g-3",
                             )
                         ],
-
-                        style={
-                            "backgroundColor": PANEL_BG,
-                            "border": f"1px solid {BORDER}",
-                            "borderRadius": "8px",
-                            "padding": "16px 18px",
-                        },
                     ),
-
                 ],
                 style={
                     "padding": "24px",
