@@ -702,7 +702,7 @@ layout = dbc.Container(
                             html.Label(
                                 "Subcounty",
                                 className="fw-semibold mb-2",
-                                style={"color": TEXT,"fontSize": "14px",},
+                                style={"color": TEXT,"fontSize": "18px",},
                             ),
         
                             dcc.Dropdown(
