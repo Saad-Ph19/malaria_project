@@ -41,7 +41,14 @@ BORDER = "#DCE3EA"           # Soft border
 PAGE_BG = "#F5F7F9"          # Page background
 CARD_BG = "#FFFFFF"          # Card background
 INSIGHT_BG = "#F8FAFC"       # Insight panel background
-MAP_COLORS = ["#6C8EBF","#87A9C7","#7EA6A1","#9B9BC4","#B5A07A","#7F9F8D",]
+MAP_COLORS = [
+    "#003F5C",
+    "#2F4B7C",
+    "#665191",
+    "#A05195",
+    "#D45087",
+    "#F95D6A",
+]
 
 #population data
 population_categories = [
