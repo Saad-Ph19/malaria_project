@@ -438,7 +438,7 @@ layout = dbc.Container(
                                         className="fw-semibold mb-2",
                                         style={
                                             "color": TEXT,
-                                            "fontSize": "14px",
+                                            "fontSize": "18px",
                                         },
                                     ),
         
@@ -470,7 +470,7 @@ layout = dbc.Container(
                                         className="fw-semibold mb-2",
                                         style={
                                             "color": TEXT,
-                                            "fontSize": "14px",
+                                            "fontSize": "18px",
                                         },
                                     ),
         
