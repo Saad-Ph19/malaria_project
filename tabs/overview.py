@@ -214,7 +214,7 @@ siaya_map = px.choropleth_map(
         "lon": 34.30,
     },
 
-    zoom=8.3,
+    zoom=7.8,
     opacity=0.55,
 )
 
