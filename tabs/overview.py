@@ -659,10 +659,20 @@ layout = dbc.Container(
             dbc.CardBody(
                 [
                     # TITLE
-                    html.H4(
+                    html.H3(
                         "Siaya County Overview",
                         className="fw-bold mb-1",
-                        style={"color": TEXT,},
+                        style={"color": "#274C77","fontSize": "28px",},
+                    ),
+                    # Small divider under title
+                    html.Div(
+                        style={
+                            "width": "55px",
+                            "height": "3px",
+                            "backgroundColor": "#274C77",
+                            "borderRadius": "2px",
+                            "marginBottom": "24px",
+                        }
                     ),
         
                     # =================================================
@@ -679,9 +689,9 @@ layout = dbc.Container(
                         "unique characteristics of each subcounty and gain a broader understanding of Siaya County.",
                         className="mb-4",
                         style={
-                            "color": TEXT_MUTED,
-                            "fontSize": "22px",
-                            "lineHeight": "1.7",
+                            "color": "#1F2937",
+                            "fontSize": "20px",
+                            "lineHeight": "1.8",
                         },
                     ),
         
