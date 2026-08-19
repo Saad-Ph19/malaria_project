@@ -1902,7 +1902,6 @@ layout = dbc.Container(
 
         # =================================================
         # SANKEY
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1948,13 +1947,9 @@ layout = dbc.Container(
 
         # =================================================
         # COMMODITY / ACT DISTRIBUTION
-        # =================================================
         dbc.Row(
             [
-        
-                # =================================================
                 # COMMODITY STOCK LEVELS
-                # =================================================
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
@@ -2015,7 +2010,6 @@ layout = dbc.Container(
         
                 # =================================================
                 # WEIGHT-BASED ACT DISTRIBUTION
-                # =================================================
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
@@ -2082,7 +2076,6 @@ layout = dbc.Container(
 
         # =================================================
         # NON-MALARIAL FEVER OVER TIME
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2123,7 +2116,6 @@ layout = dbc.Container(
 
         # =================================================
         # FEVER TESTING AND TREATMENT
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2164,7 +2156,6 @@ layout = dbc.Container(
 
         # =================================================
         # NON-MALARIAL FEVER BY YEAR / COUNTY / AGE
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2205,7 +2196,6 @@ layout = dbc.Container(
 
         # =================================================
         # MALARIA PREVALENCE
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2246,7 +2236,6 @@ layout = dbc.Container(
 
         # =================================================
         # NON-MALARIAL FEVER DISTRIBUTION
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2286,7 +2275,6 @@ layout = dbc.Container(
 
         # =================================================
         # BED NET DISTRIBUTION
-        # =================================================
         dbc.Card(
             dbc.CardBody(
                 [
@@ -2336,8 +2324,6 @@ layout = dbc.Container(
 
 # =========================================================
 # MALARIA FILTER CALLBACK
-# =========================================================
-
 @callback(
     [
         Output("malaria-sankey", "figure"),
@@ -2368,17 +2354,10 @@ def update_malaria(subcounty, year):
 
     # =====================================================
     # SANKEY
-    # =====================================================
-
-    sankey_fig = create_sankey_figure(
-        filtered_df
-    )
-
+    sankey_fig = create_sankey_figure(filtered_df)
 
     # =========================================================
     # AGGREGATE COMMODITY DATA BY MONTH
-    # =========================================================
-    
     commodity_filtered = (
         filtered_df
         .groupby("Month", as_index=False)
@@ -2412,8 +2391,6 @@ def update_malaria(subcounty, year):
     
     # =========================================================
     # COMMODITY STOCK LEVELS
-    # =========================================================
-    
     stock_fig = go.Figure()
     
     stock_fig.add_trace(
@@ -2503,8 +2480,6 @@ def update_malaria(subcounty, year):
     
     # =========================================================
     # WEIGHT-BASED ACT DISTRIBUTION
-    # =========================================================
-    
     weight_fig = go.Figure()
     
     weight_fig.add_trace(
