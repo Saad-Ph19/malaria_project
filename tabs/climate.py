@@ -252,11 +252,11 @@ layout = dbc.Container(
                     ),
 
                     html.P(
-                        "The six subcounties of Siaya County exhibit distinct climate and environmental characteristics."
-                        "Subcounties bordering Lake Victoria generally experience different humidity, rainfall,"
-                        "and vegetation patterns than those located farther inland due to the moderating influence of the lake."
-                        "Variations in land cover, geography, and seasonal weather conditions also contribute to differences in"
-                        "temperature, precipitation, and environmental conditions across the county. Use the filters below to"
+                        "The six subcounties of Siaya County exhibit distinct climate and environmental characteristics. "
+                        "Subcounties bordering Lake Victoria generally experience different humidity, rainfall, "
+                        "and vegetation patterns than those located farther inland due to the moderating influence of the lake. "
+                        "Variations in land cover, geography, and seasonal weather conditions also contribute to differences in "
+                        "temperature, precipitation, and environmental conditions across the county. Use the filters below to "
                         "compare these patterns across subcounties and examine how they change over time.",
                         className="mb-4",
                         style={
