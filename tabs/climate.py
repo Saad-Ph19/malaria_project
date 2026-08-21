@@ -5,6 +5,8 @@ import geopandas as gpd
 import glob
 import plotly.graph_objects as go
 import plotly.express as px
+import os
+import gdown
 
 
 #=========================================================
@@ -23,30 +25,15 @@ CARD_STYLE = {
     "boxShadow": "0 2px 8px rgba(15, 23, 42, 0.05)",
 }
 
-
 # =========================================================
-# DATA Import 
-import os
-import glob
-import gdown
-import pandas as pd
-
-# =========================================================
-# DATA IMPORT FROM GOOGLE DRIVE
-# =========================================================
-
+# DATA IMPORT 
 DRIVE_FOLDER_URL = (
     "https://drive.google.com/drive/folders/"
     "1DeKaLUtbfvK8CHx3ZU5-tNtCuSD9PI5h?usp=sharing"
 )
 
-# Temporary folder on Render
 DOWNLOAD_FOLDER = "/tmp/Climate_Data"
-
-# Create folder if it does not exist
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
-
-# Download the Google Drive folder
 gdown.download_folder(
     url=DRIVE_FOLDER_URL,
     output=DOWNLOAD_FOLDER,
@@ -54,10 +41,7 @@ gdown.download_folder(
     use_cookies=False
 )
 
-# =========================================================
-# READ CSV FILES
-# =========================================================
-
+# Read csv files
 files = glob.glob(
     os.path.join(DOWNLOAD_FOLDER, "*.csv")
 )
@@ -79,10 +63,6 @@ df = pd.concat(
     ignore_index=True
 )
 
-print(f"Loaded {len(files)} CSV files.")
-print(f"Total rows: {len(df)}")
-
-#=========================================================
 # DATA Cleaning
 df["Year"] = pd.to_numeric(df["Year"],errors="coerce")
 df["Month"] = pd.to_numeric(df["Month"],errors="coerce")
@@ -101,7 +81,7 @@ subcounties = sorted(df["SubCounty"].dropna().unique())
 years = sorted(df["Year"].dropna().astype(int).unique())
 
 # =========================================================
-# LOAD SIAYA SUBCOUNTY BOUNDARIES
+# Load the siaya subcounty boundaries
 subcounty_gdf = gpd.read_file(
     "Boundary_Data/ke_subcounty.shp"
 )
@@ -126,7 +106,7 @@ subcounty_gdf["Display_Name"] = (subcounty_gdf["subcounty"].str.replace(" Sub Co
 
 
 # =========================================================
-# EMPTY figure for now
+# EMPTY FIGURE FOR NOW
 def empty_figure():
     fig = go.Figure()
     fig.update_layout(
@@ -148,7 +128,7 @@ def empty_figure():
     return fig
 
 # =========================================================
-# INITIAL CLIMATE MAP
+# CLIMATE MAP
 def create_climate_map(
     selected_variable="Average_Temp",
     selected_year="ALL"
@@ -160,7 +140,6 @@ def create_climate_map(
     if selected_year != "ALL":
         map_df = map_df[map_df["Year"] == int(selected_year)]
 
-    # AGGREGATE BY SUBCOUNTY
     map_summary = (map_df.groupby("SubCounty",as_index=False).agg({selected_variable: "mean"}))
 
     # Short display name
@@ -195,7 +174,7 @@ def create_climate_map(
 
     settings = variable_settings[selected_variable]
 
-    # MERGE BOUNDARIES + DATA
+    # BOUNDARIES + DATA
     map_gdf = subcounty_gdf.merge(
         map_summary[
             [
