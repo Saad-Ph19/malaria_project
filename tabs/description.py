@@ -1,8 +1,7 @@
 from dash import html
 import dash_bootstrap_components as dbc
 
-
-#Theme colors 
+#THEME  
 PRIMARY = "#274C77"
 TEXT = "#1F2937"
 TEXT_MUTED = "#6B7280"
@@ -20,11 +19,9 @@ CARD_STYLE = {
 }
 
 
-# =========================================================
 # LAYOUT
 layout = dbc.Container(
     [
-        # PROJECT DESCRIPTION
         dbc.Card(
             dbc.CardBody(
                 [
