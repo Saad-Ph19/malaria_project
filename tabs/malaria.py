@@ -35,7 +35,7 @@ os.makedirs(BEDNET_FOLDER,exist_ok=True)
 # Download Bednet folder from Google Drive
 gdown.download_folder(
     url=BEDNET_URL,
-    output=BEDNET_DOWNLOAD_FOLDER,
+    output=BEDNET_FOLDER,
     quiet=False,
     use_cookies=False
 )
@@ -49,9 +49,7 @@ bednet_files = glob.glob(
 )
 
 if not bednet_files:
-    raise ValueError(
-        "No Excel files were found in the Bednet Google Drive folder."
-    )
+    raise ValueError("No Excel files were found.")
 
 
 bednet_df = pd.read_excel(
