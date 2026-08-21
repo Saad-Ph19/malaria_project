@@ -26,10 +26,50 @@ CARD_STYLE = {
 
 # =========================================================
 # DATA Import 
-files = glob.glob("Climate_Data/*.csv")
+import os
+import glob
+import gdown
+import pandas as pd
+
+# =========================================================
+# DATA IMPORT FROM GOOGLE DRIVE
+# =========================================================
+
+DRIVE_FOLDER_URL = (
+    "https://drive.google.com/drive/folders/"
+    "1DeKaLUtbfvK8CHx3ZU5-tNtCuSD9PI5h?usp=sharing"
+)
+
+# Temporary folder on Render
+DOWNLOAD_FOLDER = "/tmp/Climate_Data"
+
+# Create folder if it does not exist
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
+# Download the Google Drive folder
+gdown.download_folder(
+    url=DRIVE_FOLDER_URL,
+    output=DOWNLOAD_FOLDER,
+    quiet=False,
+    use_cookies=False
+)
+
+# =========================================================
+# READ CSV FILES
+# =========================================================
+
+files = glob.glob(
+    os.path.join(DOWNLOAD_FOLDER, "*.csv")
+)
+
+if not files:
+    raise ValueError("No CSV files were found in the Google Drive folder.")
+
 df_list = []
 
 for file in files:
+    print(f"Reading: {file}")
+
     df_list.append(
         pd.read_csv(file)
     )
@@ -38,6 +78,9 @@ df = pd.concat(
     df_list,
     ignore_index=True
 )
+
+print(f"Loaded {len(files)} CSV files.")
+print(f"Total rows: {len(df)}")
 
 #=========================================================
 # DATA Cleaning
