@@ -1,7 +1,7 @@
 from dash import html
 import dash_bootstrap_components as dbc
 
-#Theme colors 
+#THEME colors 
 PRIMARY = "#274C77"
 TEXT = "#1F2937"
 TEXT_MUTED = "#6B7280"
