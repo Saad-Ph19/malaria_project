@@ -41,16 +41,10 @@ gdown.download_folder(
 )
 
 # Find Excel files
-bednet_files = glob.glob(
-    os.path.join(
-        BEDNET_FOLDER,
-        "*.xlsx"
-    )
-)
+bednet_files = glob.glob(os.path.join(BEDNET_FOLDER,"*.xlsx"))
 
 if not bednet_files:
     raise ValueError("No Excel files were found.")
-
 
 bednet_df = pd.read_excel(
     bednet_files[0],
@@ -87,7 +81,32 @@ bednet_long.rename(
 
 #==============================================================================
 # Malaria data
-files = glob.glob("Malaria_Data/*.xlsx")
+MALARIA_URL = ("https://drive.google.com/drive/folders/1Ec3SoWj54dxcceeMQd0sKO5A4l7AZt3Q?usp=sharing")
+MALARIA_FOLDER = "/tmp/Malaria_Data"
+
+os.makedirs(
+    MALARIA_FOLDER,
+    exist_ok=True
+)
+
+# Download Malaria folder from Google Drive
+gdown.download_folder(
+    url=MALARIA_URL,
+    output=MALARIA_FOLDER,
+    quiet=False,
+    use_cookies=False
+)
+
+# Find all Excel files
+files = glob.glob(os.path.join(MALARIA_FOLDER,"*.xlsx"))
+
+if not files:
+    raise ValueError("No Excel files were found")
+
+# Sort files by filename
+files = sorted(files)
+
+
 df_list = []
 for file in files:
     temp = pd.read_excel(file, header=1)
@@ -1774,7 +1793,7 @@ non_malaria_box_fig.update_layout(
 layout = dbc.Container(
     [
         # =================================================
-        # MALARIA SURVEILLANCE OVERVIEW + FILTERS
+        # MALARIA SURVEILLANCE
         dbc.Card(
             dbc.CardBody(
                 [
@@ -1972,7 +1991,6 @@ layout = dbc.Container(
         # COMMODITY / ACT DISTRIBUTION
         dbc.Row(
             [
-                # COMMODITY STOCK LEVELS
                 dbc.Col(
                     dbc.Card(
                         dbc.CardBody(
@@ -2211,7 +2229,6 @@ layout = dbc.Container(
             style=CARD_STYLE,
             className="mb-4",
         ),
-
 
         # =================================================
         # MALARIA PREVALENCE
