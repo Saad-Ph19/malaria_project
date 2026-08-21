@@ -7,8 +7,9 @@ import plotly.graph_objects as go
 import numpy as np
 import glob
 import os
+import gdown
 
-# DASHBOARD THEME
+# THEME
 PRIMARY = "#274C77"
 PRIMARY_DARK = "#1F3B5B"
 TEXT = "#1F2937"
@@ -25,9 +26,33 @@ CARD_STYLE = {
     "boxShadow": "0 2px 8px rgba(15, 23, 42, 0.05)",
 }
 
-
+#====================================================================
 # Bednet data
-bednet_files = glob.glob("Bednet_Data/*.xlsx")
+BEDNET_URL = ("https://drive.google.com/drive/folders/1M3EJCQDhv5IUjFTMSPXN4OLJm8L0dfMv?usp=sharing")
+BEDNET_FOLDER = "/tmp/Bednet_Data"
+os.makedirs(BEDNET_FOLDER,exist_ok=True)
+
+# Download Bednet folder from Google Drive
+gdown.download_folder(
+    url=BEDNET_URL,
+    output=BEDNET_DOWNLOAD_FOLDER,
+    quiet=False,
+    use_cookies=False
+)
+
+# Find Excel files
+bednet_files = glob.glob(
+    os.path.join(
+        BEDNET_FOLDER,
+        "*.xlsx"
+    )
+)
+
+if not bednet_files:
+    raise ValueError(
+        "No Excel files were found in the Bednet Google Drive folder."
+    )
+
 
 bednet_df = pd.read_excel(
     bednet_files[0],
@@ -62,6 +87,7 @@ bednet_long.rename(
     inplace=True
 )
 
+#==============================================================================
 # Malaria data
 files = glob.glob("Malaria_Data/*.xlsx")
 df_list = []
@@ -121,7 +147,6 @@ age_summary["Year"] = pd.to_numeric(
     age_summary["Year"],
     errors="coerce"
 )
-
 
 # Create required measures
 # Fever cases
@@ -328,7 +353,7 @@ prevalence_long = prevalence_long.sort_values(
 
 
 # =========================================================
-# SANKEY HELPERS
+# SANKEY - helper function 
 def format_sankey_value(value):
     if value >= 1_000_000:
         return f"{value / 1_000_000:.2f}M"
@@ -2007,7 +2032,6 @@ layout = dbc.Container(
                     className="mb-4",
                 ),
         
-        
                 # =================================================
                 # WEIGHT-BASED ACT DISTRIBUTION
                 dbc.Col(
@@ -2073,7 +2097,6 @@ layout = dbc.Container(
             className="mb-2",
         ),
 
-
         # =================================================
         # NON-MALARIAL FEVER OVER TIME
         dbc.Card(
@@ -2113,7 +2136,6 @@ layout = dbc.Container(
             className="mb-4",
         ),
 
-
         # =================================================
         # FEVER TESTING AND TREATMENT
         dbc.Card(
@@ -2152,7 +2174,6 @@ layout = dbc.Container(
             style=CARD_STYLE,
             className="mb-4",
         ),
-
 
         # =================================================
         # NON-MALARIAL FEVER BY YEAR / COUNTY / AGE
@@ -2323,7 +2344,7 @@ layout = dbc.Container(
 )
 
 # =========================================================
-# MALARIA FILTER CALLBACK
+# MALARIA CALLBACK
 @callback(
     [
         Output("malaria-sankey", "figure"),
@@ -2476,7 +2497,6 @@ def update_malaria(subcounty, year):
         gridcolor="#EDF1F4",
         zeroline=False,
     )
-    
     
     # =========================================================
     # WEIGHT-BASED ACT DISTRIBUTION
